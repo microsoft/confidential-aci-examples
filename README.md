@@ -2,6 +2,16 @@
 
 Example code and end to end test cases for confidential ACI. Contains infrastructure for deploying Confidential Azure Container Instances based on AMD SEV-SNP.
 
+## Running on ACI
+
+To use the ACI deployment infrastructure, open this repository in a codespace:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=616412316&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope)
+
+From there, log into the Azure CLI, which can be done with the command `az login` (optionally with the `--use-device-code` flag).
+
+Once logged in, running the [infra/deploy_aci.py](infra/deploy_aci.py) script with the appropriate command line arguments can both create and remove a Confidential Azure Container Instance to run examples against.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a

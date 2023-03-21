@@ -1,17 +1,43 @@
 """Deploy a Confidential Azure Container Instance for use in the examples."""
 
 from argparse import ArgumentParser
+from typing import Optional
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
+from functools import lru_cache
+
+
+@lru_cache
+def get_resource_client(subscription_id: str) -> ResourceManagementClient:
+    return ResourceManagementClient(DefaultAzureCredential(), subscription_id)
+
+
+@lru_cache
+def get_container_client(subscription_id: str) -> ContainerInstanceManagementClient:
+    return ContainerInstanceManagementClient(DefaultAzureCredential(), subscription_id)
 
 
 def deploy_aci(
     resource_client: ResourceManagementClient,
     resource_group: str,
     name: str,
+    username: Optional[str],
+    pat: Optional[str],
+    payload: Optional[str],
 ):
     """Deploy a Confidential Azure Container Instance for use in the examples."""
+    commands = []
+    if username and pat and payload:
+        commands.extend(
+            [
+                f"curl -u {username}:{pat} -LJO https://raw.githubusercontent.com/microsoft/confidential-aci-examples/main/payloads/{payload}",
+                f"python3 ./{payload}",
+            ]
+        )
+    else:
+        commands.append("tail -f /dev/null")
+
     resource_client.deployments.begin_create_or_update(
         resource_group,
         name,
@@ -34,14 +60,15 @@ def deploy_aci(
                                     {
                                         "name": f"{name}-0",
                                         "properties": {
-                                            "image": "mcr.microsoft.com/mirror/docker/library/ubuntu:22.04",
+                                            "image": "mcr.microsoft.com/devcontainers/base:bullseye",
                                             "command": [
                                                 "/bin/sh",
                                                 "-c",
-                                                "tail -f /dev/null",
+                                                " && ".join(commands),
                                             ],
                                             "ports": [
-                                                {"protocol": "TCP", "port": "22"}
+                                                {"protocol": "TCP", "port": "22"},
+                                                {"protocol": "TCP", "port": "8000"},
                                             ],
                                             "environmentVariables": [],
                                             "resources": {
@@ -53,6 +80,13 @@ def deploy_aci(
                                 "initContainers": [],
                                 "restartPolicy": "Never",
                                 "osType": "Linux",
+                                "ipAddress": {
+                                    "ports": [
+                                        {"protocol": "TCP", "port": "22"},
+                                        {"protocol": "TCP", "port": "8000"},
+                                    ],
+                                    "type": "Public",
+                                },
                                 "confidentialComputeProperties": {
                                     "ccePolicy": "cGFja2FnZSBwb2xpY3kKCmFwaV9zdm4gOj0gIjAuMTAuMCIKZnJhbWV3b3JrX3N2biA6PSAiMC4xLjAiCgptb3VudF9kZXZpY2UgOj0geyJhbGxvd2VkIjogdHJ1ZX0KbW91bnRfb3ZlcmxheSA6PSB7ImFsbG93ZWQiOiB0cnVlfQpjcmVhdGVfY29udGFpbmVyIDo9IHsiYWxsb3dlZCI6IHRydWUsICJhbGxvd19zdGRpb19hY2Nlc3MiOiB0cnVlfQp1bm1vdW50X2RldmljZSA6PSB7ImFsbG93ZWQiOiB0cnVlfQp1bm1vdW50X292ZXJsYXkgOj0geyJhbGxvd2VkIjogdHJ1ZX0KZXhlY19pbl9jb250YWluZXIgOj0geyJhbGxvd2VkIjogdHJ1ZX0KZXhlY19leHRlcm5hbCA6PSB7ImFsbG93ZWQiOiB0cnVlLCAiYWxsb3dfc3RkaW9fYWNjZXNzIjogdHJ1ZX0Kc2h1dGRvd25fY29udGFpbmVyIDo9IHsiYWxsb3dlZCI6IHRydWV9CnNpZ25hbF9jb250YWluZXJfcHJvY2VzcyA6PSB7ImFsbG93ZWQiOiB0cnVlfQpwbGFuOV9tb3VudCA6PSB7ImFsbG93ZWQiOiB0cnVlfQpwbGFuOV91bm1vdW50IDo9IHsiYWxsb3dlZCI6IHRydWV9CmdldF9wcm9wZXJ0aWVzIDo9IHsiYWxsb3dlZCI6IHRydWV9CmR1bXBfc3RhY2tzIDo9IHsiYWxsb3dlZCI6IHRydWV9CnJ1bnRpbWVfbG9nZ2luZyA6PSB7ImFsbG93ZWQiOiB0cnVlfQpsb2FkX2ZyYWdtZW50IDo9IHsiYWxsb3dlZCI6IHRydWV9CnNjcmF0Y2hfbW91bnQgOj0geyJhbGxvd2VkIjogdHJ1ZX0Kc2NyYXRjaF91bm1vdW50IDo9IHsiYWxsb3dlZCI6IHRydWV9Cg=="
                                 },
@@ -67,11 +101,35 @@ def deploy_aci(
     ).wait()
 
 
+def get_aci_ip(
+    resource_client: ResourceManagementClient,
+    container_client: ContainerInstanceManagementClient,
+    resource_group: str,
+    name: str,
+) -> Optional[str]:
+    try:
+        deployment = resource_client.deployments.get(
+            resource_group,
+            name,
+        )
+    except Exception as e:
+        return None
+
+    for resource in deployment.properties.output_resources:
+        container_group_name = resource.id.split("/")[-1]
+        container_group = container_client.container_groups.get(
+            resource_group, container_group_name
+        )
+
+    return container_group.ip_address.ip
+
+
 def remove_aci(
     resource_client: ResourceManagementClient,
     container_client: ContainerInstanceManagementClient,
     resource_group: str,
     name: str,
+    asynchronous: bool = False,
 ):
     """Remove the Confidential Azure Container Instance."""
     deployment = resource_client.deployments.get(
@@ -81,12 +139,16 @@ def remove_aci(
 
     for resource in deployment.properties.output_resources:
         container_name = resource.id.split("/")[-1]
-        container_client.container_groups.begin_delete(
+        delete_op = container_client.container_groups.begin_delete(
             resource_group,
             container_name,
-        ).wait()
+        )
+        if not asynchronous:
+            delete_op.wait()
 
-    resource_client.deployments.begin_delete(resource_group, name).wait()
+    delete_op = resource_client.deployments.begin_delete(resource_group, name)
+    if not asynchronous:
+        delete_op.wait()
 
 
 def _parse_args():
@@ -123,29 +185,43 @@ def _parse_args():
         type=str,
     )
 
+    arg_parser.add_argument(
+        "--username",
+        help="The username to authenticate with, needed while this repo is private.",
+        type=str,
+    )
+
+    arg_parser.add_argument(
+        "--pat",
+        help="The personal access token for the specified user, needed while this repo is private.",
+        type=str,
+    )
+
+    arg_parser.add_argument(
+        "--payload",
+        help="The name of the file in the payload directory to run in the container.",
+        type=str,
+    )
+
     return arg_parser.parse_args()
 
 
 if __name__ == "__main__":
     _args = _parse_args()
 
-    _resource_client = ResourceManagementClient(
-        DefaultAzureCredential(), _args.subscription_id
-    )
-    _container_client = ContainerInstanceManagementClient(
-        DefaultAzureCredential(), _args.subscription_id
-    )
-
     if _args.operation == "deploy":
         deploy_aci(
-            resource_client=_resource_client,
+            resource_client=get_resource_client(_args.subscription_id),
             resource_group=_args.resource_group,
             name=_args.name,
+            username=_args.username,
+            pat=_args.pat,
+            payload=_args.payload,
         )
     elif _args.operation == "remove":
         remove_aci(
-            resource_client=_resource_client,
-            container_client=_container_client,
+            resource_client=get_resource_client(_args.subscription_id),
+            container_client=get_container_client(_args.subscription_id),
             resource_group=_args.resource_group,
             name=_args.name,
         )

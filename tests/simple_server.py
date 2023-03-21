@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from infra import credentials
-from infra.deploy_aci import (
+from infra.containers import (
     deploy_aci,
     get_aci_ip,
     remove_aci,

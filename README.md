@@ -10,7 +10,7 @@ To use the ACI deployment infrastructure, open this repository in a codespace:
 
 From there, log into the Azure CLI, which can be done with the command `az login` (optionally with the `--use-device-code` flag).
 
-Once logged in, running the [infra/deploy_aci.py](infra/deploy_aci.py) script with the appropriate command line arguments can both create and remove a Confidential Azure Container Instance to run examples against.
+Once logged in, running the [infra/containers.py](infra/containers.py) script with the appropriate command line arguments can both create and remove a Confidential Azure Container Instance to run examples against.
 
 ## Running the tests
 

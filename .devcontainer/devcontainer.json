@@ -19,7 +19,8 @@
 			"extensions": [
 				"eamodio.gitlens",
 				"GitHub.copilot",
-				"ms-python.black-formatter"
+				"ms-python.black-formatter",
+				"ms-python.python"
 			],
 			"settings": {
 				"python.testing.unittestArgs": [

@@ -3,23 +3,17 @@ import os
 SUBSCRIPTION_ID = os.getenv("AZ_SUBSCRIPTION_ID")
 RESOURCE_GROUP = os.getenv("AZ_RESOURCE_GROUP")
 REGISTRY_PASSWORD = os.getenv("AZ_REGISTRY_PASSWORD")
-USERNAME = os.getenv("GH_USERNAME")
-PAT = os.getenv("GH_PAT")
 
 
 def set_credentials(
     subscription_id: str,
     resource_group: str,
     registry_password: str,
-    username: str,
-    pat: str,
 ):
     credentials = {
         "AZ_SUBSCRIPTION_ID": subscription_id,
         "AZ_RESOURCE_GROUP": resource_group,
         "AZ_REGISTRY_PASSWORD": registry_password,
-        "GH_USERNAME": username,
-        "GH_PAT": pat,
     }
 
     for key, value in credentials.items():
@@ -55,16 +49,10 @@ if __name__ == "__main__":
         required=True,
         type=str,
     )
-    parser.add_argument(
-        "--username",
-        help="The username to authenticate with, needed while this repo is private.",
-        type=str,
-    )
-    parser.add_argument(
-        "--pat",
-        help="The personal access token for the specified user, needed while this repo is private.",
-        type=str,
-    )
     args = parser.parse_args()
 
-    set_credentials(args.subscription_id, args.resource_group, args.username, args.pat)
+    set_credentials(
+        args.subscription_id,
+        args.resource_group,
+        args.registry_password,
+    )

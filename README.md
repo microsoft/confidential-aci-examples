@@ -5,7 +5,6 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 
 
 ## Setup Development Envrionment
---------------------------------
 
 1. Open the codespace (or checkout manually, checking the [.devcontainer](devcontainer) for dependency information)
 
@@ -35,7 +34,6 @@ python infra/credentials.py \
 From here, all infrastructre functionality should be available to use. If using VS code, there are [Run/Debug configurations](.vscode/launch.json) for managing images and containers.
 
 ## Running Tests
-----------------
 
 If running in VS Code, opening any test such as [simple_server.py](tests/simple_server.py) presents the testing view where each test can be run or debugged individually.
 

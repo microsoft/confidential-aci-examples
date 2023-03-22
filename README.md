@@ -2,25 +2,42 @@
 
 Example code and end to end test cases for confidential ACI. Contains infrastructure for deploying Confidential Azure Container Instances based on AMD SEV-SNP.
 
-## Deploy ACIs
 
-To use the ACI deployment infrastructure, open this repository in a codespace:
+
+## Setup Development Envrionment
+--------------------------------
+
+1. Open the codespace (or checkout manually, checking the [.devcontainer](devcontainer) for dependency information)
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=616412316&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope)
 
-From there, log into the Azure CLI, which can be done with the command `az login` (optionally with the `--use-device-code` flag).
-
-Once logged in, running the [infra/containers.py](infra/containers.py) script with the appropriate command line arguments can both create and remove a Confidential Azure Container Instance to run examples against.
-
-## Running the tests
-
-To run the tests, we first need to provide some secrets and configuration to deploy an appropriate ACI and give it permission to use payloads from this (currently) private repo. To do this, run `infra/credentials.py` with appropriate arguments. Then the tests can pick up the config and secrets to deploy ACIs as needed.
+2. Log into Azure CLI
 
 ```
-python infra/credentials.py --subscription-id {YOUR_AZURE_SUBSCRIPTION_ID} --resource-group {YOUR_AZURE_RESOURCE_GROUP}  --username {YOUR_GITHUB_USERNAME} --pat {YOUR_GITHUB_PERSONAL_ACCESS_TOKEN}
+az login
 ```
 
-Then run the tests as any other unittest based tests, VS code has good integration in it's testing tab
+3. Set credentials for Azure
+
+```
+python infra/credentials.py \
+    --subscription-id {YOUR_AZURE_SUBSCRIPTION_ID} \
+    --resource-group {YOUR_AZURE_RESOURCE_GROUP} \
+    --registry-password {YOUR_CONTAINER_REGISTRY_PASSWORD}
+```
+
+From here, all infrastructre functionality should be available to use. If using VS code, there are [Run/Debug configurations](.vscode/launch.json) for managing images and containers.
+
+## Running Tests
+----------------
+
+Tests are implemented as python `unittest` test.
+
+If running in VS Code, opening any test such as [simple_server.py](tests/simple_server.py) presents the testing view where each test can be run or debugged individually.
+
+Tests handle deploying and removing ACIs to test against.
+
+----------------
 
 ## Contributing
 

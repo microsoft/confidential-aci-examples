@@ -78,7 +78,7 @@ def deploy_aci(
                                     {
                                         "server": "caciexamples.azurecr.io",
                                         "username": "caciexamples",
-                                        "password": {registry_password},
+                                        "password": registry_password,
                                     }
                                 ],
                             },

@@ -2,14 +2,22 @@ import os
 
 SUBSCRIPTION_ID = os.getenv("AZ_SUBSCRIPTION_ID")
 RESOURCE_GROUP = os.getenv("AZ_RESOURCE_GROUP")
+REGISTRY_PASSWORD = os.getenv("AZ_REGISTRY_PASSWORD")
 USERNAME = os.getenv("GH_USERNAME")
 PAT = os.getenv("GH_PAT")
 
 
-def set_credentials(subscription_id: str, resource_group: str, username: str, pat: str):
+def set_credentials(
+    subscription_id: str,
+    resource_group: str,
+    registry_password: str,
+    username: str,
+    pat: str,
+):
     credentials = {
         "AZ_SUBSCRIPTION_ID": subscription_id,
         "AZ_RESOURCE_GROUP": resource_group,
+        "AZ_REGISTRY_PASSWORD": registry_password,
         "GH_USERNAME": username,
         "GH_PAT": pat,
     }
@@ -38,6 +46,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--resource-group",
         help="The resource group to deploy the ACI with.",
+        required=True,
+        type=str,
+    )
+    parser.add_argument(
+        "--registry-password",
+        help="The password for the Azure Container Registry to publish images to.",
         required=True,
         type=str,
     )

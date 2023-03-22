@@ -1,7 +1,8 @@
 import argparse
-import io
 import os
+from typing import Iterable
 import docker
+from credentials import REGISTRY_PASSWORD
 
 # Set up the Docker client
 client = docker.from_env()
@@ -28,20 +29,28 @@ def build_docker_image(payload: str, tag: str) -> docker.models.images.Image:
 
 
 def publish_docker_image(
-    image: docker.models.images.Image, registry: str, repository: str, tag: str
+    image: docker.models.images.Image,
+    registry: str,
+    registry_password: str,
+    repository: str,
+    tag: str,
 ) -> None:
     # Authenticate with the container registry
-    client.login(registry=registry)
+    client.login(
+        registry=registry,
+        username=registry.split(".")[0],
+        password=registry_password,
+    )
 
-    # Tag the Docker image with the repository and tag
-    image.tag(repository=repository, tag=tag)
+    image.tag(f"{registry}/{repository}", tag=tag)
 
     # Push the Docker image to the container registry
-    push_logs = client.images.push(repository=repository, tag=tag)
-
-    # Print the logs from the push process
-    for line in push_logs:
-        print(line.get("status", "").strip())
+    for line in client.images.push(
+        f"{registry}/{repository}",
+        tag=tag,
+        stream=True,
+    ):
+        print(line.decode().strip())
 
 
 if __name__ == "__main__":
@@ -69,4 +78,10 @@ if __name__ == "__main__":
 
     # If a container registry is specified, publish the Docker image to that registry
     if args.registry and args.repository:
-        publish_docker_image(image, args.registry, args.repository, tag=args.push_tag)
+        publish_docker_image(
+            image,
+            args.registry,
+            REGISTRY_PASSWORD,
+            args.repository,
+            tag=args.push_tag,
+        )

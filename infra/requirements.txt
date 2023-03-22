@@ -1,3 +1,4 @@
 azure-identity
 azure-mgmt-resource
 azure-mgmt-containerinstance
+docker

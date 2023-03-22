@@ -1,8 +1,6 @@
 import argparse
 import os
-from typing import Iterable
 import docker
-from credentials import REGISTRY_PASSWORD
 
 # Set up the Docker client
 client = docker.from_env()
@@ -52,22 +50,41 @@ def publish_docker_image(
     ):
         print(line.decode().strip())
 
+    print(f"Pushed image to {registry}/{repository}:{tag}")
+
 
 if __name__ == "__main__":
     # Define the command-line arguments
     parser = argparse.ArgumentParser(
         description="Build and publish a Docker image with a file mounted onto it"
     )
-    parser.add_argument("file_path", help="The path to the file to be mounted")
+
     parser.add_argument(
-        "--tag", help="The tag to use for the Docker image", required=True
+        "file_path",
+        help="The path to the file to be mounted",
     )
     parser.add_argument(
-        "--registry", help="The container registry to publish the image to"
+        "--tag",
+        help="The tag to use for the Docker image",
+        required=True,
     )
-    parser.add_argument("--repository", help="The repository name for the image")
     parser.add_argument(
-        "--push-tag", default="latest", help="The tag for the published image"
+        "--registry",
+        help="The container registry to publish the image to",
+    )
+    parser.add_argument(
+        "--registry-password",
+        help="The password to the registry to push images to.",
+        type=str,
+    )
+    parser.add_argument(
+        "--repository",
+        help="The repository name for the image",
+    )
+    parser.add_argument(
+        "--push-tag",
+        default="latest",
+        help="The tag for the published image",
     )
 
     # Parse the command-line arguments
@@ -81,7 +98,7 @@ if __name__ == "__main__":
         publish_docker_image(
             image,
             args.registry,
-            REGISTRY_PASSWORD,
+            args.registry_password,
             args.repository,
             tag=args.push_tag,
         )

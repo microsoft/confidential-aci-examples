@@ -1,0 +1,154 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Build Image",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/images.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "${input:payload}",
+                "--tag",
+                "${input:imageTag}"
+            ]
+        },
+        {
+            "name": "Build And Push Image",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/images.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "${input:payload}",
+                "--tag",
+                "${input:imageTag}",
+                "--registry",
+                "${input:containerRegistry}",
+                "--registry-password",
+                "${input:containerRegistryPassword}",
+                "--repository",
+                "${input:containerRepository}",
+                "--push-tag",
+                "${input:registryTag}",
+            ]
+        },
+        {
+            "name": "Deploy ACI",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/containers.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "deploy",
+                "--subscription-id",
+                "${input:subscriptionId}",
+                "--resource-group",
+                "${input:resourceGroup}",
+                "--name",
+                "${input:containerName}",
+                "--image",
+                "${input:containerImage}",
+                "--registry-password",
+                "${input:containerRegistryPassword}",
+            ]
+        },
+        {
+            "name": "Get ACI IP",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/containers.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "get_ip",
+                "--subscription-id",
+                "${input:subscriptionId}",
+                "--resource-group",
+                "${input:resourceGroup}",
+                "--name",
+                "${input:containerName}",
+            ]
+        },
+        {
+            "name": "Remove ACI",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/containers.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "remove",
+                "--subscription-id",
+                "${input:subscriptionId}",
+                "--resource-group",
+                "${input:resourceGroup}",
+                "--name",
+                "${input:containerName}",
+            ]
+        },
+    ],
+    "inputs": [
+        {
+            "id": "subscriptionId",
+            "type": "promptString",
+            "description": "Enter the subscription ID to use for deployment:",
+        },
+        {
+            "id": "resourceGroup",
+            "type": "promptString",
+            "description": "Enter the resource group to use for deployment:",
+        },
+        {
+            "id": "containerName",
+            "type": "promptString",
+            "description": "Enter the name of the container:",
+        },
+        {
+            "id": "containerImage",
+            "type": "promptString",
+            "description": "Enter the URL of image you want to deploy the container with:",
+        },
+        {
+            "id": "payload",
+            "type": "promptString",
+            "description": "Enter the relative path to the payload to load into the image:",
+            "default": "payloads/simple_server.py",
+        },
+        {
+            "id": "imageTag",
+            "type": "promptString",
+            "description": "Enter the tag to use for the built image:",
+            "default": "simple_server"
+        },
+        {
+            "id": "containerRegistry",
+            "type": "promptString",
+            "description": "Enter the container registry to push the image to:",
+            "default": "caciexamples.azurecr.io"
+        },
+        {
+            "id": "containerRegistryPassword",
+            "type": "promptString",
+            "description": "Enter the password for the selected container registry:",
+        },
+        {
+            "id": "containerRepository",
+            "type": "promptString",
+            "description": "Enter the repository to use for the built image:",
+            "default": "simple_server"
+        },
+        {
+            "id": "registryTag",
+            "type": "promptString",
+            "description": "Enter the tag to use in the container registry:",
+            "default": "latest"
+        },
+    ]
+}

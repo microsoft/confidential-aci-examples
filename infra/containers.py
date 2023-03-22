@@ -22,21 +22,10 @@ def deploy_aci(
     resource_client: ResourceManagementClient,
     resource_group: str,
     name: str,
-    username: Optional[str],
-    pat: Optional[str],
-    payload: Optional[str],
+    image: str,
+    registry_password: str,
 ):
     """Deploy a Confidential Azure Container Instance for use in the examples."""
-    commands = []
-    if username and pat and payload:
-        commands.extend(
-            [
-                f"curl -u {username}:{pat} -LJO https://raw.githubusercontent.com/microsoft/confidential-aci-examples/main/payloads/{payload}",
-                f"python3 ./{payload}",
-            ]
-        )
-    else:
-        commands.append("tail -f /dev/null")
 
     resource_client.deployments.begin_create_or_update(
         resource_group,
@@ -60,12 +49,7 @@ def deploy_aci(
                                     {
                                         "name": f"{name}-0",
                                         "properties": {
-                                            "image": "mcr.microsoft.com/devcontainers/base:bullseye",
-                                            "command": [
-                                                "/bin/sh",
-                                                "-c",
-                                                " && ".join(commands),
-                                            ],
+                                            "image": image,
                                             "ports": [
                                                 {"protocol": "TCP", "port": "22"},
                                                 {"protocol": "TCP", "port": "8000"},
@@ -90,6 +74,13 @@ def deploy_aci(
                                 "confidentialComputeProperties": {
                                     "ccePolicy": "cGFja2FnZSBwb2xpY3kKCmFwaV9zdm4gOj0gIjAuMTAuMCIKZnJhbWV3b3JrX3N2biA6PSAiMC4xLjAiCgptb3VudF9kZXZpY2UgOj0geyJhbGxvd2VkIjogdHJ1ZX0KbW91bnRfb3ZlcmxheSA6PSB7ImFsbG93ZWQiOiB0cnVlfQpjcmVhdGVfY29udGFpbmVyIDo9IHsiYWxsb3dlZCI6IHRydWUsICJhbGxvd19zdGRpb19hY2Nlc3MiOiB0cnVlfQp1bm1vdW50X2RldmljZSA6PSB7ImFsbG93ZWQiOiB0cnVlfQp1bm1vdW50X292ZXJsYXkgOj0geyJhbGxvd2VkIjogdHJ1ZX0KZXhlY19pbl9jb250YWluZXIgOj0geyJhbGxvd2VkIjogdHJ1ZX0KZXhlY19leHRlcm5hbCA6PSB7ImFsbG93ZWQiOiB0cnVlLCAiYWxsb3dfc3RkaW9fYWNjZXNzIjogdHJ1ZX0Kc2h1dGRvd25fY29udGFpbmVyIDo9IHsiYWxsb3dlZCI6IHRydWV9CnNpZ25hbF9jb250YWluZXJfcHJvY2VzcyA6PSB7ImFsbG93ZWQiOiB0cnVlfQpwbGFuOV9tb3VudCA6PSB7ImFsbG93ZWQiOiB0cnVlfQpwbGFuOV91bm1vdW50IDo9IHsiYWxsb3dlZCI6IHRydWV9CmdldF9wcm9wZXJ0aWVzIDo9IHsiYWxsb3dlZCI6IHRydWV9CmR1bXBfc3RhY2tzIDo9IHsiYWxsb3dlZCI6IHRydWV9CnJ1bnRpbWVfbG9nZ2luZyA6PSB7ImFsbG93ZWQiOiB0cnVlfQpsb2FkX2ZyYWdtZW50IDo9IHsiYWxsb3dlZCI6IHRydWV9CnNjcmF0Y2hfbW91bnQgOj0geyJhbGxvd2VkIjogdHJ1ZX0Kc2NyYXRjaF91bm1vdW50IDo9IHsiYWxsb3dlZCI6IHRydWV9Cg=="
                                 },
+                                "imageRegistryCredentials": [
+                                    {
+                                        "server": "caciexamples.azurecr.io",
+                                        "username": "caciexamples",
+                                        "password": {registry_password},
+                                    }
+                                ],
                             },
                         }
                     ],
@@ -152,58 +143,48 @@ def remove_aci(
 
 
 def _parse_args():
-    arg_parser = ArgumentParser()
+    parser = ArgumentParser()
 
-    arg_parser.add_argument(
+    parser.add_argument(
         "operation",
         help="Whether to deploy or remove the ACI.",
         type=str,
         choices=[
             "deploy",
+            "get_ip",
             "remove",
         ],
     )
-
-    arg_parser.add_argument(
+    parser.add_argument(
         "--subscription-id",
         help="The subscription to deploy the ACI with.",
         required=True,
         type=str,
     )
-
-    arg_parser.add_argument(
+    parser.add_argument(
         "--resource-group",
         help="The resource group to deploy the ACI with.",
         required=True,
         type=str,
     )
-
-    arg_parser.add_argument(
+    parser.add_argument(
         "--name",
         help="The name of the ACI to deploy.",
         required=True,
         type=str,
     )
-
-    arg_parser.add_argument(
-        "--username",
-        help="The username to authenticate with, needed while this repo is private.",
+    parser.add_argument(
+        "--image",
+        help="The URL for the container image to deploy.",
+        type=str,
+    )
+    parser.add_argument(
+        "--registry-password",
+        help="The password to the registry to push images to.",
         type=str,
     )
 
-    arg_parser.add_argument(
-        "--pat",
-        help="The personal access token for the specified user, needed while this repo is private.",
-        type=str,
-    )
-
-    arg_parser.add_argument(
-        "--payload",
-        help="The name of the file in the payload directory to run in the container.",
-        type=str,
-    )
-
-    return arg_parser.parse_args()
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
@@ -214,9 +195,17 @@ if __name__ == "__main__":
             resource_client=get_resource_client(_args.subscription_id),
             resource_group=_args.resource_group,
             name=_args.name,
-            username=_args.username,
-            pat=_args.pat,
-            payload=_args.payload,
+            image=_args.image,
+            registry_password=_args.registry_password,
+        )
+    elif _args.operation == "get_ip":
+        print(
+            get_aci_ip(
+                resource_client=get_resource_client(_args.subscription_id),
+                container_client=get_container_client(_args.subscription_id),
+                resource_group=_args.resource_group,
+                name=_args.name,
+            )
         )
     elif _args.operation == "remove":
         remove_aci(

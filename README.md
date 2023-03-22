@@ -17,7 +17,13 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 az login
 ```
 
-3. Set credentials for Azure
+If running in a browser, it might be easier to use:
+
+```
+az login --use-device-code
+```
+
+3. Set credentials for Azure (If using VS Code, there is a launch config for this)
 
 ```
 python infra/credentials.py \
@@ -30,8 +36,6 @@ From here, all infrastructre functionality should be available to use. If using 
 
 ## Running Tests
 ----------------
-
-Tests are implemented as python `unittest` test.
 
 If running in VS Code, opening any test such as [simple_server.py](tests/simple_server.py) presents the testing view where each test can be run or debugged individually.
 

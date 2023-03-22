@@ -5,6 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Set Credentials",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/credentials.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--subscription-id",
+                "${input:subscriptionId}",
+                "--resource-group",
+                "${input:resourceGroup}",
+                "--registry-password",
+                "${input:containerRegistryPassword}",
+            ]
+        },
+        {
             "name": "Build Image",
             "type": "python",
             "request": "launch",

@@ -6,7 +6,7 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 
 ## Setup Development Envrionment
 
-1. Open the codespace (or checkout manually, checking the [.devcontainer](devcontainer) for dependency information)
+1. Open the codespace (or checkout manually, checking the [.devcontainer](.devcontainer/devcontainer.json) for dependency information)
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=616412316&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope)
 

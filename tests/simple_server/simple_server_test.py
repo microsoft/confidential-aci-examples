@@ -2,6 +2,7 @@ import unittest
 import sys
 import requests
 import os
+from base64 import b64encode
 
 from infra.images import build_docker_image, publish_docker_image
 
@@ -46,6 +47,15 @@ class SimpleServerTest(unittest.TestCase):
                 name=self.aci_name,
                 image="caciexamples.azurecr.io/simple_server:latest",
                 registry_password=credentials.REGISTRY_PASSWORD,
+                security_policy=b64encode(
+                    open(
+                        os.path.join(
+                            os.path.abspath(os.path.dirname(__file__)),
+                            "security_policy.rego",
+                        ),
+                        "rb",
+                    ).read()
+                ).decode("utf-8"),
             )
             self.aci_ip = get_aci_ip_func()
 

@@ -2,6 +2,14 @@ name: Build Container
 
 on:
   workflow_dispatch:
+    inputs:
+      test:
+        description: 'Test to build the image for'
+        required: true
+        type: choice
+        options: [
+          "simple_server",
+        ]
 
 jobs:
   build-and-push:
@@ -20,8 +28,8 @@ jobs:
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v2
       with:
-        context: tests/simple_server
-        file: tests/simple_server/Dockerfile
+        context: tests/${{ inputs.test }}
+        file: tests/${{ inputs.test }}/Dockerfile
         push: true
         tags: |
-          caciexamples.azurecr.io/simple_server:latest
+          caciexamples.azurecr.io/${{ inputs.test }}:latest

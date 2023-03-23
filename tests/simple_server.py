@@ -47,13 +47,14 @@ class SimpleServerTest(unittest.TestCase):
             self.aci_ip = get_aci_ip_func()
 
     def tearDown(self):
-        remove_aci(
-            resource_client=get_resource_client(credentials.SUBSCRIPTION_ID),
-            container_client=get_container_client(credentials.SUBSCRIPTION_ID),
-            resource_group=credentials.RESOURCE_GROUP,
-            name=self.aci_name,
-            asynchronous=True,
-        )
+        if os.getenv("CLEANUP_ACI") not in ["0", "false", "False"]:
+            remove_aci(
+                resource_client=get_resource_client(credentials.SUBSCRIPTION_ID),
+                container_client=get_container_client(credentials.SUBSCRIPTION_ID),
+                resource_group=credentials.RESOURCE_GROUP,
+                name=self.aci_name,
+                asynchronous=True,
+            )
 
     def test_get_attestation(self):
         response = requests.get(f"http://{self.aci_ip}:8000/get_attestation")

@@ -28,7 +28,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "${input:payload}",
+                "${input:dockerFilePath}",
                 "--tag",
                 "${input:imageTag}"
             ]
@@ -41,7 +41,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "${input:payload}",
+                "${input:dockerFilePath}",
                 "--tag",
                 "${input:imageTag}",
                 "--registry",
@@ -132,10 +132,10 @@
             "description": "Enter the URL of image you want to deploy the container with:",
         },
         {
-            "id": "payload",
+            "id": "dockerFilePath",
             "type": "promptString",
-            "description": "Enter the relative path to the payload to load into the image:",
-            "default": "payloads/simple_server.py",
+            "description": "Enter the relative path to the dockerfile build the image with:",
+            "default": "tests/simple_server/Dockerfile",
         },
         {
             "id": "imageTag",

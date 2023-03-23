@@ -20,7 +20,10 @@ from infra.containers import (
 class SimpleServerTest(unittest.TestCase):
     def setUp(self):
         publish_docker_image(
-            image=build_docker_image("payloads/simple_server.py", tag="simple_server"),
+            image=build_docker_image(
+                docker_file_path="tests/simple_server/Dockerfile",
+                tag="simple_server",
+            ),
             registry="caciexamples.azurecr.io",
             registry_password=credentials.REGISTRY_PASSWORD,
             repository="simple_server",

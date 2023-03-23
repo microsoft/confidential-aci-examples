@@ -6,13 +6,12 @@ import docker
 client = docker.from_env()
 
 
-def build_docker_image(payload: str, tag: str) -> docker.models.images.Image:
+def build_docker_image(docker_file_path: str, tag: str) -> docker.models.images.Image:
     # Build the Docker image with the file path mounted onto it
     image, build_logs = client.images.build(
-        dockerfile="infra/Dockerfile",
+        dockerfile="Dockerfile",
         tag=tag,
-        path=os.path.abspath(os.path.join(os.path.dirname(__file__), "..")),
-        buildargs={"payload": payload},
+        path=os.path.abspath(os.path.dirname(docker_file_path)),
     )
 
     # Print the logs from the build process
@@ -60,7 +59,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "file_path",
+        "docker_file_path",
         help="The path to the file to be mounted",
     )
     parser.add_argument(
@@ -91,7 +90,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Build the Docker image with the provided file path
-    image = build_docker_image(args.file_path, tag=args.tag)
+    image = build_docker_image(
+        docker_file_path=args.docker_file_path,
+        tag=args.tag,
+    )
 
     # If a container registry is specified, publish the Docker image to that registry
     if args.registry and args.repository:

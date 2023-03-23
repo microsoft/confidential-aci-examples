@@ -1,5 +1,4 @@
 FROM python:latest
-ARG payload
 WORKDIR /app
-COPY $payload payload.py
+COPY simple_server_payload.py payload.py
 CMD ["python", "payload.py"]

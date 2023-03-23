@@ -1,11 +1,15 @@
 name: Build Container
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
+    inputs:
+      dockerfile:
+        description: 'Path to the Dockerfile'
+        required: true
+        default: 'Dockerfile'
+      repository:
+        description: 'Container repository to push the image to'
+        required: true
 
 jobs:
   build-and-push:
@@ -28,4 +32,4 @@ jobs:
         file: ${{ inputs.dockerfile }}
         push: true
         tags: |
-          caciexamples.azurecr.io/${{ inputs.repository }}:latest
+          ${{ inputs.repository }}:latest

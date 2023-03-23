@@ -20,7 +20,8 @@
 				"eamodio.gitlens",
 				"GitHub.copilot",
 				"ms-python.black-formatter",
-				"ms-python.python"
+				"ms-python.python",
+				"GitHub.vscode-github-actions"
 			],
 			"settings": {
 				"python.testing.unittestArgs": [

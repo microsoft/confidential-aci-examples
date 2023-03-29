@@ -21,7 +21,8 @@
 				"GitHub.copilot",
 				"ms-python.black-formatter",
 				"ms-python.python",
-				"GitHub.vscode-github-actions"
+				"GitHub.vscode-github-actions",
+				"tsandall.opa"
 			],
 			"settings": {
 				"python.testing.unittestArgs": [

@@ -3,8 +3,9 @@ import sys
 import requests
 import os
 
-print(f'Adding path: {os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))}')
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+print(f"Adding path: {ROOT_DIR}")
+sys.path.insert(0, ROOT_DIR)
 
 from infra import credentials
 from infra.images import build_docker_image, publish_docker_image

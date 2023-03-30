@@ -47,15 +47,7 @@ class SimpleServerTest(unittest.TestCase):
                 name=self.aci_name,
                 image="caciexamples.azurecr.io/simple_server:latest",
                 registry_password=credentials.REGISTRY_PASSWORD,
-                security_policy=b64encode(
-                    open(
-                        os.path.join(
-                            os.path.abspath(os.path.dirname(__file__)),
-                            "security_policy.rego",
-                        ),
-                        "rb",
-                    ).read()
-                ).decode("utf-8"),
+                arm_out="tests/simple_server/arm_template.json",
             )
             self.aci_ip = get_aci_ip_func()
 

@@ -5,11 +5,11 @@ import os
 from argparse import ArgumentParser
 from functools import lru_cache
 from typing import Optional
-from policies import template_to_security_policy
 
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 from azure.mgmt.resource import ResourceManagementClient
+from infra.policies import template_to_security_policy
 
 
 @lru_cache

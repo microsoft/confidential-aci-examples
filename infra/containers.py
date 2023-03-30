@@ -5,6 +5,7 @@ import os
 from argparse import ArgumentParser
 from functools import lru_cache
 from typing import Optional
+from policies import template_to_security_policy
 
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
@@ -31,7 +32,7 @@ def deploy_aci(
     image: str,
     registry_password: str,
     arm_out: Optional[str] = None,
-    security_policy: str = ALLOW_ALL_POLICY,
+    security_policy: Optional[str] = None,
 ):
     """Deploy a Confidential Azure Container Instance for use in the examples."""
 
@@ -90,6 +91,11 @@ def deploy_aci(
     if arm_out:
         with open(arm_out, "w") as f:
             json.dump(arm_template, f, indent=2)
+
+    if not security_policy:
+        arm_template["resources"][0]["properties"]["confidentialComputeProperties"][
+            "ccePolicy"
+        ] = template_to_security_policy(arm_template)
 
     resource_client.deployments.begin_create_or_update(
         resource_group,

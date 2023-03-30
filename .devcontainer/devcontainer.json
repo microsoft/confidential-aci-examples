@@ -40,5 +40,5 @@
 			}
 		}
 	},
-	"postCreateCommand": "pip install -r infra/requirements.txt && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash"
+	"postCreateCommand": "pip install -r infra/requirements.txt && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash && az extension add --name confcom"
 }

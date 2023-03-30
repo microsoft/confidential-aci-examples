@@ -2,3 +2,4 @@ __pycache__
 .vscode/*
 !.vscode/launch.json
 env
+**/arm_template.json

@@ -1,5 +1,6 @@
 """Deploy a Confidential Azure Container Instance for use in the examples."""
 
+import json
 import os
 from argparse import ArgumentParser
 from functools import lru_cache
@@ -29,68 +30,73 @@ def deploy_aci(
     name: str,
     image: str,
     registry_password: str,
+    arm_out: Optional[str] = None,
     security_policy: str = ALLOW_ALL_POLICY,
 ):
     """Deploy a Confidential Azure Container Instance for use in the examples."""
+
+    arm_template = {
+        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {},
+        "variables": {},
+        "resources": [
+            {
+                "type": "Microsoft.ContainerInstance/containerGroups",
+                "apiVersion": "2022-10-01-preview",
+                "name": f"{name}",
+                "location": "eastus2euap",
+                "properties": {
+                    "sku": "Confidential",
+                    "containers": [
+                        {
+                            "name": f"{name}-0",
+                            "properties": {
+                                "image": image,
+                                "ports": [
+                                    {"protocol": "TCP", "port": "22"},
+                                    {"protocol": "TCP", "port": "8000"},
+                                ],
+                                "environmentVariables": [],
+                                "resources": {"requests": {"memoryInGB": 16, "cpu": 4}},
+                            },
+                        }
+                    ],
+                    "initContainers": [],
+                    "restartPolicy": "Never",
+                    "osType": "Linux",
+                    "ipAddress": {
+                        "ports": [
+                            {"protocol": "TCP", "port": "22"},
+                            {"protocol": "TCP", "port": "8000"},
+                        ],
+                        "type": "Public",
+                    },
+                    "confidentialComputeProperties": {
+                        "ccePolicy": security_policy,
+                    },
+                    "imageRegistryCredentials": [
+                        {
+                            "server": "caciexamples.azurecr.io",
+                            "username": "caciexamples",
+                            "password": registry_password,
+                        }
+                    ],
+                },
+            }
+        ],
+    }
+
+    if arm_out:
+        with open(arm_out, "w") as f:
+            json.dump(arm_template, f, indent=2)
 
     resource_client.deployments.begin_create_or_update(
         resource_group,
         name,
         {
             "properties": {
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "type": "Microsoft.ContainerInstance/containerGroups",
-                            "apiVersion": "2022-10-01-preview",
-                            "name": f"{name}",
-                            "location": "eastus2euap",
-                            "properties": {
-                                "sku": "Confidential",
-                                "containers": [
-                                    {
-                                        "name": f"{name}-0",
-                                        "properties": {
-                                            "image": image,
-                                            "ports": [
-                                                {"protocol": "TCP", "port": "22"},
-                                                {"protocol": "TCP", "port": "8000"},
-                                            ],
-                                            "environmentVariables": [],
-                                            "resources": {
-                                                "requests": {"memoryInGB": 16, "cpu": 4}
-                                            },
-                                        },
-                                    }
-                                ],
-                                "initContainers": [],
-                                "restartPolicy": "Never",
-                                "osType": "Linux",
-                                "ipAddress": {
-                                    "ports": [
-                                        {"protocol": "TCP", "port": "22"},
-                                        {"protocol": "TCP", "port": "8000"},
-                                    ],
-                                    "type": "Public",
-                                },
-                                "confidentialComputeProperties": {
-                                    "ccePolicy": security_policy,
-                                },
-                                "imageRegistryCredentials": [
-                                    {
-                                        "server": "caciexamples.azurecr.io",
-                                        "username": "caciexamples",
-                                        "password": registry_password,
-                                    }
-                                ],
-                            },
-                        }
-                    ],
-                },
+                "template": arm_template,
                 "parameters": {},
                 "mode": "Incremental",
             }
@@ -195,6 +201,11 @@ def _parse_args():
         help="The security policy for the ACI.",
         type=str,
     )
+    parser.add_argument(
+        "--arm-out",
+        help="The path to emit the deployed ARM template to.",
+        type=str,
+    )
 
     return parser.parse_args()
 
@@ -210,6 +221,7 @@ if __name__ == "__main__":
             image=_args.image,
             registry_password=_args.registry_password,
             security_policy=_args.security_policy,
+            arm_out=_args.arm_out,
         )
     elif _args.operation == "get_ip":
         print(

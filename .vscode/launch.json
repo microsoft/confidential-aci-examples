@@ -55,6 +55,14 @@
             ]
         },
         {
+            "name": "Update Security Policies",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/policies.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+        },
+        {
             "name": "Deploy ACI",
             "type": "python",
             "request": "launch",

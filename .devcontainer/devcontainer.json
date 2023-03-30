@@ -2,7 +2,7 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-in-docker
 {
 	"name": "Confidential ACI Dev",
-	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
+	"dockerFile": "Dockerfile",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest",
@@ -40,5 +40,4 @@
 			}
 		}
 	},
-	"postCreateCommand": "pip install -r infra/requirements.txt && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash && az extension add --name confcom"
 }

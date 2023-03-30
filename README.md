@@ -22,15 +22,6 @@ If running in a browser, it might be easier to use:
 az login --use-device-code
 ```
 
-3. Set credentials for Azure (If using VS Code, there is a launch config for this)
-
-```
-python infra/credentials.py \
-    --subscription-id {YOUR_AZURE_SUBSCRIPTION_ID} \
-    --resource-group {YOUR_AZURE_RESOURCE_GROUP} \
-    --registry-password {YOUR_CONTAINER_REGISTRY_PASSWORD}
-```
-
 From here, all infrastructre functionality should be available to use. If using VS code, there are [Run/Debug configurations](.vscode/launch.json) for managing images and containers.
 
 ## Running Tests

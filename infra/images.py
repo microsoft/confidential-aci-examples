@@ -25,6 +25,14 @@ def build_docker_image(docker_file_path: str, tag: str) -> docker.models.images.
     return image
 
 
+def image_exists(image_url: str) -> bool:
+    try:
+        client.images.get(image_url)
+        return True
+    except docker.errors.ImageNotFound:
+        return False
+
+
 def publish_docker_image(
     image: docker.models.images.Image,
     registry: str,

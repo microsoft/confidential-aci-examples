@@ -8,7 +8,7 @@ print(f"Adding path: {ROOT_DIR}")
 sys.path.insert(0, ROOT_DIR)
 
 from infra import credentials
-from infra.images import build_docker_image, publish_docker_image
+from infra.images import build_docker_image, image_exists, publish_docker_image
 from infra.containers import (
     deploy_aci,
     get_aci_ip,
@@ -20,16 +20,18 @@ from infra.containers import (
 
 class SimpleServerTest(unittest.TestCase):
     def setUp(self):
-        publish_docker_image(
-            image=build_docker_image(
-                docker_file_path="tests/simple_server/Dockerfile",
-                tag="simple_server",
-            ),
-            registry="caciexamples.azurecr.io",
-            registry_password=credentials.REGISTRY_PASSWORD,
-            repository="simple_server",
-            tag="latest",
-        )
+        image_url = "caciexamples.azurecr.io/simple_server:latest"
+        if not image_exists(image_url):
+            publish_docker_image(
+                image=build_docker_image(
+                    docker_file_path="tests/simple_server/Dockerfile",
+                    tag="simple_server",
+                ),
+                registry="caciexamples.azurecr.io",
+                registry_password=credentials.REGISTRY_PASSWORD,
+                repository="simple_server",
+                tag="latest",
+            )
 
         self.aci_name = "simple-server-test"  # TODO: Avoid clashing names
         get_aci_ip_func = lambda: get_aci_ip(
@@ -45,7 +47,7 @@ class SimpleServerTest(unittest.TestCase):
                 resource_client=get_resource_client(credentials.SUBSCRIPTION_ID),
                 resource_group=credentials.RESOURCE_GROUP,
                 name=self.aci_name,
-                image="caciexamples.azurecr.io/simple_server:latest",
+                image=image_url,
                 registry_password=credentials.REGISTRY_PASSWORD,
                 arm_out="tests/simple_server/arm_template.json",
             )

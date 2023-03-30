@@ -20,17 +20,20 @@ from infra.containers import (
 
 class SimpleServerTest(unittest.TestCase):
     def setUp(self):
-        image_url = "caciexamples.azurecr.io/simple_server:latest"
-        if not image_exists(image_url):
+        registry = "caciexamples.azurecr.io"
+        repository = "simple_server"
+        tag = "latest"
+        image_url = f"{registry}/{repository}:{tag}"
+        if not image_exists(registry, credentials.REGISTRY_PASSWORD, image_url):
             publish_docker_image(
                 image=build_docker_image(
                     docker_file_path="tests/simple_server/Dockerfile",
                     tag="simple_server",
                 ),
-                registry="caciexamples.azurecr.io",
+                registry=registry,
                 registry_password=credentials.REGISTRY_PASSWORD,
-                repository="simple_server",
-                tag="latest",
+                repository=repository,
+                tag=tag,
             )
 
         self.aci_name = "simple-server-test"  # TODO: Avoid clashing names

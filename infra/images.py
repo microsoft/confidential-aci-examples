@@ -25,8 +25,17 @@ def build_docker_image(docker_file_path: str, tag: str) -> docker.models.images.
     return image
 
 
-def image_exists(image_url: str) -> bool:
+def image_exists(
+    registry: str,
+    registry_password: str,
+    image_url: str,
+) -> bool:
     try:
+        client.login(
+            registry=registry,
+            username=registry.split(".")[0],
+            password=registry_password,
+        )
         client.images.get(image_url)
         return True
     except docker.errors.ImageNotFound:

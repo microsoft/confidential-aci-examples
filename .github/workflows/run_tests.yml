@@ -1,0 +1,22 @@
+name: Run Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: 'Test to run'
+        required: true
+        type: choice
+        options: [
+          "simple_server",
+        ]
+
+jobs:
+    deploy-container:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Run Tests
+          run: python tests/${{ github.event.inputs.test }}_test.py

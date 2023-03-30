@@ -3,7 +3,7 @@ import sys
 import requests
 import os
 
-ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 print(f"Adding path: {ROOT_DIR}")
 sys.path.insert(0, ROOT_DIR)
 

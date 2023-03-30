@@ -2,7 +2,8 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-in-docker
 {
 	"name": "Confidential ACI Dev",
-	"dockerFile": "Dockerfile",
+	"dockerFile": ".devcontainer/Dockerfile",
+	"context": "..",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest",

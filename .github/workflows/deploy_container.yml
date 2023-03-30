@@ -1,0 +1,34 @@
+name: Deploy Container
+
+on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: 'Test to deploy a container for'
+        required: true
+        type: choice
+        options: [
+          "simple_server",
+        ]
+
+jobs:
+    deploy-container:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Login to Azure
+          uses: azure/login@v1
+          with:
+              creds: ${{ secrets.SP_CREDENTIALS }}
+
+        - name: Deploy Container with ACI
+          run: |
+            python infra/containers.py deploy \
+                --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }}
+                --resource-group ${{ secrets.AZ_RESOURCE_GROUP }}
+                --name ${{ github.event.inputs.test }}
+                --image ${{ secrets.ACR_LOGIN_SERVER }}/${{ github.event.inputs.test }}:latest
+                --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }}
+                --security-policy $(base64 < tests/${{ github.event.inputs.test }}/security_policy.rego)

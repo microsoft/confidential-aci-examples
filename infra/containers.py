@@ -1,11 +1,13 @@
 """Deploy a Confidential Azure Container Instance for use in the examples."""
 
+import os
 from argparse import ArgumentParser
-from typing import Optional
-from azure.identity import DefaultAzureCredential
-from azure.mgmt.resource import ResourceManagementClient
-from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 from functools import lru_cache
+from typing import Optional
+
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.containerinstance import ContainerInstanceManagementClient
+from azure.mgmt.resource import ResourceManagementClient
 
 
 @lru_cache
@@ -164,13 +166,13 @@ def _parse_args():
         "--subscription-id",
         help="The subscription to deploy the ACI with.",
         required=True,
-        type=str,
+        type=lambda sub: sub if sub != "" else os.getenv("AZ_SUBSCRIPTION_ID"),
     )
     parser.add_argument(
         "--resource-group",
         help="The resource group to deploy the ACI with.",
         required=True,
-        type=str,
+        type=lambda res: res if res != "" else os.getenv("AZ_RESOURCE_GROUP"),
     )
     parser.add_argument(
         "--name",
@@ -186,7 +188,7 @@ def _parse_args():
     parser.add_argument(
         "--registry-password",
         help="The password to the registry to push images to.",
-        type=str,
+        type=lambda pswd: pswd if pswd != "" else os.getenv("AZ_REGISTRY_PASSWORD"),
     )
     parser.add_argument(
         "--security-policy",

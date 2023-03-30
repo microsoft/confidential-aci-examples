@@ -114,22 +114,24 @@
         {
             "id": "subscriptionId",
             "type": "promptString",
-            "description": "Enter the subscription ID to use for deployment:",
+            "description": "Enter the subscription ID to use for deployment (Leave blank to use environment):",
         },
         {
             "id": "resourceGroup",
             "type": "promptString",
-            "description": "Enter the resource group to use for deployment:",
+            "description": "Enter the resource group to use for deployment (Leave blank to use environment):",
         },
         {
             "id": "containerName",
             "type": "promptString",
             "description": "Enter the name of the container:",
+            "default": "simple_server",
         },
         {
             "id": "containerImage",
             "type": "promptString",
             "description": "Enter the URL of image you want to deploy the container with:",
+            "default": "caciexamples.azurecr.io/simple_server:latest",
         },
         {
             "id": "dockerFilePath",
@@ -152,7 +154,7 @@
         {
             "id": "containerRegistryPassword",
             "type": "promptString",
-            "description": "Enter the password for the selected container registry:",
+            "description": "Enter the password for the selected container registry (Leave blank to use environment):",
         },
         {
             "id": "containerRepository",

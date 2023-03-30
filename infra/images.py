@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "docker_file_path",
-        help="The path to the file to be mounted",
+        help="The path to the dockerfile to build the image with",
     )
     parser.add_argument(
         "--tag",
@@ -73,8 +73,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--registry-password",
-        help="The password to the registry to push images to.",
-        type=str,
+        help="The password to the registry to push images to (Leave blank to use environment).",
+        type=lambda pswd: pswd if pswd != "" else os.getenv("AZ_REGISTRY_PASSWORD"),
     )
     parser.add_argument(
         "--repository",

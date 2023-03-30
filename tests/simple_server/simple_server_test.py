@@ -2,13 +2,11 @@ import unittest
 import sys
 import requests
 import os
-from base64 import b64encode
-
-from infra.images import build_docker_image, publish_docker_image
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from infra import credentials
+from infra.images import build_docker_image, publish_docker_image
 from infra.containers import (
     deploy_aci,
     get_aci_ip,

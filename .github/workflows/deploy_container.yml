@@ -29,7 +29,7 @@ jobs:
           pip install -r infra/requirements.txt
 
       - name: Log in to Azure
-        run: az login --identity
+        run: az login --identity --debug
 
       - name: Deploy Container with ACI
         run: |

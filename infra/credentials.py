@@ -1,8 +1,8 @@
 import os
 
-SUBSCRIPTION_ID = os.getenv("AZ_SUBSCRIPTION_ID")
-RESOURCE_GROUP = os.getenv("AZ_RESOURCE_GROUP")
-REGISTRY_PASSWORD = os.getenv("AZ_REGISTRY_PASSWORD")
+SUBSCRIPTION_ID = os.getenv("AZ_SUBSCRIPTION_ID", "")
+RESOURCE_GROUP = os.getenv("AZ_RESOURCE_GROUP", "")
+REGISTRY_PASSWORD = os.getenv("AZ_REGISTRY_PASSWORD", "")
 
 
 def set_credentials(

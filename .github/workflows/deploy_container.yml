@@ -12,25 +12,31 @@ on:
         ]
 
 jobs:
-    deploy-container:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Checkout
-          uses: actions/checkout@v2
+  deploy-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-        - name: Login to Azure
-          uses: azure/login@v1
-          with:
-              client-id: ${{ secrets.AZ_CLIENT_ID }}
-              tenant-id: ${{ secrets.AZ_TENANT_ID }}
-              subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
 
-        - name: Deploy Container with ACI
-          run: |
-            python infra/containers.py deploy \
-                --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }}
-                --resource-group ${{ secrets.AZ_RESOURCE_GROUP }}
-                --name ${{ github.event.inputs.test }}
-                --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest
-                --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }}
-                --security-policy $(base64 < tests/${{ github.event.inputs.test }}/security_policy.rego)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Log in to Azure
+        run: az login --identity
+
+      - name: Deploy Container with ACI
+        run: |
+          python infra/containers.py deploy \
+            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }}
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }}
+            --name ${{ github.event.inputs.test }}
+            --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest
+            --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }}
+            --security-policy $(base64 < tests/${{ github.event.inputs.test }}/security_policy.rego)

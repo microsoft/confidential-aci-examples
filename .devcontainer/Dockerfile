@@ -5,6 +5,7 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 RUN az extension add --name confcom
 
 ARG SSH_KEY
+RUN mkdir -p ~/.ssh
 RUN echo $SSH_KEY > ~/.ssh/id_rsa
 RUN ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
 

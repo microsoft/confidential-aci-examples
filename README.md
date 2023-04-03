@@ -22,7 +22,13 @@ If running in a browser, it might be easier to use:
 az login --use-device-code
 ```
 
-From here, all infrastructre functionality should be available to use. If using VS code, there are [Run/Debug configurations](.vscode/launch.json) for managing images and containers.
+3. Log into Azure Container Registry
+
+```
+az acr login --name caciexamples
+```
+
+From here, all infrastructure functionality should be available to use. If using VS code, there are [Run/Debug configurations](.vscode/launch.json) for managing images and containers.
 
 ## Running Tests
 

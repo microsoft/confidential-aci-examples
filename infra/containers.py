@@ -2,6 +2,7 @@
 
 import json
 import os
+import sys
 from argparse import ArgumentParser
 from functools import lru_cache
 from typing import Optional
@@ -9,7 +10,10 @@ from typing import Optional
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 from azure.mgmt.resource import ResourceManagementClient
-from policies import template_to_security_policy
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from infra.policies import template_to_security_policy
 
 
 @lru_cache

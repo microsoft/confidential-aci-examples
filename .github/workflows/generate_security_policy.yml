@@ -30,7 +30,7 @@ jobs:
         id: generate-security-policy
         run: |
           az confcom acipolicygen \
-              -a ${{ github.event.inputs.test }}_arm_template.json
+              -a ${{ github.event.inputs.test }}_arm_template.json \
               --outraw \
               --save-to-file ${{ github.event.inputs.test }}_security_policy.rego
 

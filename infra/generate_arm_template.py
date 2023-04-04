@@ -7,7 +7,7 @@ from typing import Optional
 def generate_arm_template(
     name: str,
     image: str,
-    out: str,
+    out: Optional[str] = None,
     security_policy: Optional[str] = None,
 ):
     arm_template = {

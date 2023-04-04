@@ -5,6 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Generate ARM Template",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/generate_arm_template.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--name",
+                "${input:containerName}",
+                "--image",
+                "${input:containerImage}",
+                "--security-policy",
+                "${input:securityPolicy}",
+            ]
+        },
+        {
             "name": "Build Image",
             "type": "python",
             "request": "launch",

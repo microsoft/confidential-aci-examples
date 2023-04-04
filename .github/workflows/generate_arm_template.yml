@@ -26,8 +26,8 @@ jobs:
         id: generate-arm-template
         run: |
           python infra/generate_arm_template.py \
-            --name "${{ github.event.inputs.test }}" \
-            --image "${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest" \
+            --name ${{ github.event.inputs.test }} \
+            --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest \
             > ${{ github.event.inputs.test }}_arm_template.json
 
       - name: Upload ARM Template Artifact

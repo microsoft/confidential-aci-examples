@@ -74,17 +74,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate ARM template")
     parser.add_argument(
         "--name",
-        "The name of the container to deploy",
+        help="The name of the container to deploy",
         required=True,
     )
     parser.add_argument(
         "--image",
-        "The image to deploy the container with",
+        help="The image to deploy the container with",
         required=True,
     )
     parser.add_argument(
         "--security-policy",
-        "The security policy to use for the container",
+        help="The security policy to use for the container",
     )
 
     generate_arm_template(**vars(parser.parse_args()))

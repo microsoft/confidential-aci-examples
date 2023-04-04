@@ -202,13 +202,11 @@ def _parse_args():
     parser.add_argument(
         "--subscription-id",
         help="The subscription to deploy the ACI with.",
-        required=True,
         type=lambda sub: sub if sub != "" else os.getenv("AZ_SUBSCRIPTION_ID"),
     )
     parser.add_argument(
         "--resource-group",
         help="The resource group to deploy the ACI with.",
-        required=True,
         type=lambda res: res if res != "" else os.getenv("AZ_RESOURCE_GROUP"),
     )
     parser.add_argument(

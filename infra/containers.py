@@ -29,17 +29,13 @@ def get_container_client(subscription_id: str) -> ContainerInstanceManagementCli
 ALLOW_ALL_POLICY = "cGFja2FnZSBwb2xpY3kKCmFwaV9zdm4gOj0gIjAuMTAuMCIKZnJhbWV3b3JrX3N2biA6PSAiMC4xLjAiCgptb3VudF9kZXZpY2UgOj0geyJhbGxvd2VkIjogdHJ1ZX0KbW91bnRfb3ZlcmxheSA6PSB7ImFsbG93ZWQiOiB0cnVlfQpjcmVhdGVfY29udGFpbmVyIDo9IHsiYWxsb3dlZCI6IHRydWUsICJhbGxvd19zdGRpb19hY2Nlc3MiOiB0cnVlfQp1bm1vdW50X2RldmljZSA6PSB7ImFsbG93ZWQiOiB0cnVlfQp1bm1vdW50X292ZXJsYXkgOj0geyJhbGxvd2VkIjogdHJ1ZX0KZXhlY19pbl9jb250YWluZXIgOj0geyJhbGxvd2VkIjogdHJ1ZX0KZXhlY19leHRlcm5hbCA6PSB7ImFsbG93ZWQiOiB0cnVlLCAiYWxsb3dfc3RkaW9fYWNjZXNzIjogdHJ1ZX0Kc2h1dGRvd25fY29udGFpbmVyIDo9IHsiYWxsb3dlZCI6IHRydWV9CnNpZ25hbF9jb250YWluZXJfcHJvY2VzcyA6PSB7ImFsbG93ZWQiOiB0cnVlfQpwbGFuOV9tb3VudCA6PSB7ImFsbG93ZWQiOiB0cnVlfQpwbGFuOV91bm1vdW50IDo9IHsiYWxsb3dlZCI6IHRydWV9CmdldF9wcm9wZXJ0aWVzIDo9IHsiYWxsb3dlZCI6IHRydWV9CmR1bXBfc3RhY2tzIDo9IHsiYWxsb3dlZCI6IHRydWV9CnJ1bnRpbWVfbG9nZ2luZyA6PSB7ImFsbG93ZWQiOiB0cnVlfQpsb2FkX2ZyYWdtZW50IDo9IHsiYWxsb3dlZCI6IHRydWV9CnNjcmF0Y2hfbW91bnQgOj0geyJhbGxvd2VkIjogdHJ1ZX0Kc2NyYXRjaF91bm1vdW50IDo9IHsiYWxsb3dlZCI6IHRydWV9Cg=="
 
 
-def deploy_aci(
-    resource_client: ResourceManagementClient,
-    resource_group: str,
+def generate_arm_template(
     name: str,
     image: str,
     registry_password: str,
     arm_out: Optional[str] = None,
     security_policy: Optional[str] = None,
 ):
-    """Deploy a Confidential Azure Container Instance for use in the examples."""
-
     arm_template = {
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
         "contentVersion": "1.0.0.0",
@@ -96,21 +92,41 @@ def deploy_aci(
         ],
     }
 
-    if arm_out:
-        with open(arm_out, "w") as f:
-            json.dump(arm_template, f, indent=2)
-
     if not security_policy:
         arm_template["resources"][0]["properties"]["confidentialComputeProperties"][
             "ccePolicy"
         ] = template_to_security_policy(arm_template)
+
+    if arm_out:
+        with open(arm_out, "w") as f:
+            json.dump(arm_template, f, indent=2)
+
+    return arm_template
+
+
+def deploy_aci(
+    resource_client: ResourceManagementClient,
+    resource_group: str,
+    name: str,
+    image: str,
+    registry_password: str,
+    arm_out: Optional[str] = None,
+    security_policy: Optional[str] = None,
+):
+    """Deploy a Confidential Azure Container Instance for use in the examples."""
 
     resource_client.deployments.begin_create_or_update(
         resource_group,
         name,
         {
             "properties": {
-                "template": arm_template,
+                "template": generate_arm_template(
+                    name,
+                    image,
+                    registry_password,
+                    arm_out,
+                    security_policy,
+                ),
                 "parameters": {},
                 "mode": "Incremental",
             }
@@ -178,6 +194,7 @@ def _parse_args():
         type=str,
         choices=[
             "deploy",
+            "generate_arm_template",
             "get_ip",
             "remove",
         ],
@@ -237,6 +254,18 @@ if __name__ == "__main__":
             registry_password=_args.registry_password,
             security_policy=_args.security_policy,
             arm_out=_args.arm_out,
+        )
+    elif _args.operation == "generate_arm_template":
+        print(
+            json.dumps(
+                generate_arm_template(
+                    name=_args.name,
+                    image=_args.image,
+                    registry_password=_args.registry_password,
+                    security_policy=_args.security_policy,
+                ),
+                indent=2,
+            )
         )
     elif _args.operation == "get_ip":
         print(

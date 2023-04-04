@@ -27,14 +27,17 @@ jobs:
           pip install -r infra/requirements.txt
 
       - name: Log into Azure
-        run: az login --service-principal --username ${{ secrets.SP_APP_ID }} --password ${{ secrets.SP_PASSWORD }} --tenant ${{ secrets.SP_TENANT }}
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
 
       - name: Deploy Container with ACI
         run: |
           python infra/containers.py deploy \
-            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }}
-            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }}
-            --name ${{ github.event.inputs.test }}
-            --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest
+            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --name ${{ github.event.inputs.test }} \
+            --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }}
-            --security-policy $(base64 < tests/${{ github.event.inputs.test }}/security_policy.rego)

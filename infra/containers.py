@@ -203,6 +203,7 @@ def _parse_args():
     parser.add_argument(
         "--image",
         help="The URL for the container image to deploy.",
+        required=True,
         type=str,
     )
     parser.add_argument(

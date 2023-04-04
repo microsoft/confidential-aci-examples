@@ -92,10 +92,10 @@ def generate_arm_template(
         ],
     }
 
-    if not security_policy:
-        arm_template["resources"][0]["properties"]["confidentialComputeProperties"][
-            "ccePolicy"
-        ] = template_to_security_policy(arm_template)
+    # if not security_policy:
+    #     arm_template["resources"][0]["properties"]["confidentialComputeProperties"][
+    #         "ccePolicy"
+    #     ] = template_to_security_policy(arm_template)
 
     if arm_out:
         with open(arm_out, "w") as f:

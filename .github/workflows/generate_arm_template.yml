@@ -35,7 +35,6 @@ jobs:
             --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }}
             --arm-out tests/${{ github.event.inputs.test }}/arm_template.json
-            --security-policy "<placeholder>"
         continue-on-error: true
 
       - name: Upload ARM Template Artifact

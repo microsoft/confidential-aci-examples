@@ -25,7 +25,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r infra/requirements.txt
-          az extension add --name confcom
 
       - name: Generate ARM Template
         id: generate-arm-template
@@ -33,7 +32,8 @@ jobs:
           python infra/containers.py generate_arm_template \
             --name ${{ github.event.inputs.test }} \
             --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest \
-            --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} > ${{ github.event.inputs.test }}_arm_template.json
+            --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
+            > ${{ github.event.inputs.test }}_arm_template.json
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2

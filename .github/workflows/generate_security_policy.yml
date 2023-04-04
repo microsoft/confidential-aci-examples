@@ -1,0 +1,40 @@
+name: Generate Security Policy
+
+on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Test to generate Security Policy for"
+        required: true
+        type: choice
+        options: ["simple_server"]
+
+jobs:
+  generate-security-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: az extension add --name confcom
+
+      - name: Download ARM Template Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ github.event.inputs.test }}_arm_template
+          path: ${{ github.event.inputs.test }}_arm_template.json
+
+      - name: Generate Security Policy
+        id: generate-security-policy
+        run: |
+          az confcom acipolicygen \
+              -a ${{ github.event.inputs.test }}_arm_template.json
+              --outraw \
+              --save-to-file ${{ github.event.inputs.test }}_security_policy.json
+
+      - name: Upload Security Policy Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.event.inputs.test }}_security_policy
+          path: ${{ github.event.inputs.test }}_security_policy.json

@@ -16,13 +16,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ github.event.inputs.test }}_arm_template
-          path: ${{ github.event.inputs.test }}_arm_template.json
 
       - name: Download Security Policy Artifact
         uses: actions/download-artifact@v2
         with:
           name: ${{ github.event.inputs.test }}_security_policy
-          path: ${{ github.event.inputs.test }}_security_policy.rego
 
       - name: Add Security Policy to ARM Template
         run: |

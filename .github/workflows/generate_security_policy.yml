@@ -22,7 +22,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ github.event.inputs.test }}_arm_template
-          path: ${{ github.event.inputs.test }}_arm_template.json
 
       - name: Give user permission to run docker
         run: sudo usermod -aG docker $USER

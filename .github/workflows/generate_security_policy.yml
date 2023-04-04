@@ -1,13 +1,12 @@
 name: Generate Security Policy
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       test:
         description: "Test to generate Security Policy for"
         required: true
-        type: choice
-        options: ["simple_server"]
+        type: string
 
 jobs:
   generate-security-policy:
@@ -31,10 +30,10 @@ jobs:
           az confcom acipolicygen \
               -a ${{ github.event.inputs.test }}_arm_template.json
               --outraw \
-              --save-to-file ${{ github.event.inputs.test }}_security_policy.json
+              --save-to-file ${{ github.event.inputs.test }}_security_policy.rego
 
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ github.event.inputs.test }}_security_policy
-          path: ${{ github.event.inputs.test }}_security_policy.json
+          path: ${{ github.event.inputs.test }}_security_policy.rego

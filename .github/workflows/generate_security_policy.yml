@@ -24,6 +24,9 @@ jobs:
           name: ${{ github.event.inputs.test }}_arm_template
           path: ${{ github.event.inputs.test }}_arm_template.json
 
+      - name: Give user permission to run docker
+        run: sudo usermod -aG docker
+
       - name: Generate Security Policy
         id: generate-security-policy
         run: |

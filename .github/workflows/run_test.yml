@@ -20,6 +20,9 @@ jobs:
     needs: generate-arm-template
     with:
       test: ${{ github.event.inputs.test }}
+      az-login-server: ${{ secrets.AZ_REGISTRY_LOGIN }}
+      az-username: ${{ secrets.AZ_REGISTRY_USERNAME }}
+      az-password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
   add-security-policy-to-arm-template:
     uses: ./.github/workflows/add_security_policy_to_arm_template.yml

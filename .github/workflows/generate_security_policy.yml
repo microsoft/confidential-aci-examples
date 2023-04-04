@@ -7,6 +7,18 @@ on:
         description: "Test to generate Security Policy for"
         required: true
         type: string
+      az-login-server:
+        description: "The login server of the Azure Container Registry"
+        required: true
+        type: string
+      az-username:
+        description: "The username of the Azure Container Registry"
+        required: true
+        type: string
+      az-password:
+        description: "The password of the Azure Container Registry"
+        required: true
+        type: string
 
 jobs:
   generate-security-policy:
@@ -26,9 +38,9 @@ jobs:
       - name: Log in to Azure Container Registry
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.AZ_REGISTRY_LOGIN }}
-          username: ${{ secrets.AZ_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+          login-server: ${{ github.event.inputs.az-login-server }}
+          username: ${{ github.event.inputs.az-username }}
+          password: ${{ github.event.inputs.az-password }}
 
       - name: Set Docker Permissions
         run: sudo usermod -aG docker $USER

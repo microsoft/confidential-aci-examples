@@ -1,0 +1,46 @@
+name: Remove Container
+
+on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Test to remove a container for"
+        required: true
+        type: choice
+        options: ["simple_server"]
+  workflow_call:
+    inputs:
+      test:
+        description: "Test to remove a container for"
+        required: true
+        type: string
+
+jobs:
+  remove-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download ARM Template Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ github.event.inputs.test }}_arm_template
+          path: ${{ github.event.inputs.test }}_arm_template.json
+
+      - name: Install dependencies
+        run: pip install -r infra/requirements.txt
+
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
+
+      - name: Remove Container on ACI
+        run: |
+          python infra/remove_container.py \
+            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --container-name ${{ github.event.inputs.test }}

@@ -1,0 +1,98 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Log into Azure",
+            "hide": true,
+            "type": "shell",
+            "command": "az",
+            "args": [
+                "login",
+                "--service-principal",
+                "--username",
+                "${env:SP_APP_ID}",
+                "--password",
+                "${env:SP_PASSWORD}",
+                "--tenant",
+                "${env:SP_TENANT}",
+            ]
+        },
+        {
+            "label": "Log into Azure Container Registry",
+            "hide": true,
+            "type": "shell",
+            "command": "az",
+            "dependsOn": [
+                "Log into Azure"
+            ],
+            "args": [
+                "acr",
+                "login",
+                "--name",
+                "caciexamples",
+            ]
+        },
+        {
+            "label": "Build Container Image",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "build",
+                "-t",
+                "caciexamples.azurecr.io/${input:testName}:latest",
+                "tests/${input:testName}"
+            ]
+        },
+        {
+            "label": "Push Container Image",
+            "type": "shell",
+            "command": "docker",
+            "dependsOn": [
+                "Log into Azure Container Registry"
+            ],
+            "args": [
+                "push",
+                "caciexamples.azurecr.io/${input:testName}:latest"
+            ]
+        },
+        {
+            "label": "Generate Security Policy",
+            "type": "shell",
+            "command": "az",
+            "args": [
+                "confcom",
+                "acipolicygen",
+                "-a",
+                "${input:armTemplatePath}",
+                "--outraw",
+                "--save-to-file",
+                "${input:securityPolicyPath}"
+            ],
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "testName",
+            "type": "pickString",
+            "description": "Enter the name of the test to build the image for:",
+            "options": [
+                "simple_server",
+            ]
+        },
+        {
+            "id": "armTemplatePath",
+            "type": "promptString",
+            "description": "Enter the path to the ARM Template to generate the Security Policy for:",
+            "default": "tests/simple_server/arm_template.json"
+        },
+        {
+            "id": "securityPolicyPath",
+            "type": "promptString",
+            "description": "Enter the path to Security Policy file:",
+            "default": "tests/simple_server/security_policy.rego"
+        },
+    ]
+}

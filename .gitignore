@@ -1,5 +1,7 @@
 __pycache__
 .vscode/*
 !.vscode/launch.json
+!.vscode/tasks.json
 env
 **/arm_template.json
+**/security_policy.rego

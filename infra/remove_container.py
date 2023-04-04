@@ -17,22 +17,27 @@ def remove_container(
     name: str,
     asynchronous: bool = False,
 ):
-    deployment = resource_client.deployments.get(
-        resource_group,
-        name,
-    )
-
-    if deployment.properties is None or deployment.properties.output_resources is None:
+    try:
+        deployment = resource_client.deployments.get(
+            resource_group,
+            name,
+        )
+    except Exception:
+        print("Deployment not found")
         return
 
-    for resource in deployment.properties.output_resources:
-        container_name = resource.id.split("/")[-1]
-        delete_op = container_client.container_groups.begin_delete(
-            resource_group,
-            container_name,
-        )
-        if not asynchronous:
-            delete_op.wait()
+    if (
+        deployment.properties is not None
+        and deployment.properties.output_resources is not None
+    ):
+        for resource in deployment.properties.output_resources:
+            container_name = resource.id.split("/")[-1]
+            delete_op = container_client.container_groups.begin_delete(
+                resource_group,
+                container_name,
+            )
+            if not asynchronous:
+                delete_op.wait()
 
     delete_op = resource_client.deployments.begin_delete(resource_group, name)
     if not asynchronous:
@@ -44,12 +49,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--subscription-id",
         help="Subscription to deploy the container with",
-        default=os.getenv("AZ_SUBSCRIPTION_ID"),
+        type=lambda x: x or os.getenv("AZ_SUBSCRIPTION_ID"),
     )
     parser.add_argument(
         "--resource-group",
         help="The resource group to deploy the container with",
-        required=True,
+        type=lambda x: x or os.getenv("AZ_RESOURCE_GROUP"),
     )
     parser.add_argument(
         "--container-name",
@@ -64,11 +69,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    with open(args.arm_template_path) as f:
-        remove_container(
-            resource_client=get_resource_client(args.subscription_id),
-            container_client=get_container_client(args.subscription_id),
-            resource_group=args.resource_group,
-            name=args.container_name,
-            asynchronous=args.asynchronous,
-        )
+    remove_container(
+        resource_client=get_resource_client(args.subscription_id),
+        container_client=get_container_client(args.subscription_id),
+        resource_group=args.resource_group,
+        name=args.container_name,
+        asynchronous=args.asynchronous,
+    )

@@ -12,6 +12,8 @@ def add_security_policy_to_arm_template(
         "ccePolicy"
     ] = b64encode(security_policy).decode("utf-8")
 
+    return arm_template
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -36,7 +38,10 @@ if __name__ == "__main__":
     with open(args.security_policy_path, "rb") as f:
         security_policy = f.read()
 
-    updated_arm_template = add_security_policy_to_arm_template(**vars())
+    updated_arm_template = add_security_policy_to_arm_template(
+        arm_template=arm_template,
+        security_policy=security_policy,
+    )
 
     with open(args.arm_template_path, "w") as f:
         json.dump(updated_arm_template, f, indent=2)

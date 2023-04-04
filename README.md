@@ -16,9 +16,17 @@ If running in VS Code, opening any test such as [simple_server.py](tests/simple_
 
 ## Managing Test Infrastructure
 
-While running tests directly will automatically manage the images and containers needed, it is also possible to use the infrastructure to manually manage these resources.
+While running tests directly will automatically manage the images and containers needed, it is also possible to use the infrastructure to manually manage these resources. Each management operation has a 1:1 mapping between running locally and in CI.
 
-Refer to [Run/Debug configurations](.vscode/launch.json) to build and push image as well as deploying and removing containers.
+| Task                     | Implementation                                                                         | Run Locally                        | Run in CI                                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Build Container Image    | Docker CLI                                                                             | [tasks.json](.vscode/tasks.json)   | [build_image.yml](.github/workflows/build_image.yml)                                                 |
+| Push Container Image     | Docker CLI                                                                             | [tasks.json](.vscode/tasks.json)   | [build_image.yml](.github/workflows/build_image.yml)                                                 |
+| Generate ARM Template    | [generate_arm_template.py](infra/generate_arm_template.py)                             | [launch.json](.vscode/launch.json) | [generate_arm_template.yml](.github/workflows/generate_arm_template.yml)                             |
+| Generate Security Policy | Azure CLI                                                                              | [tasks.json](.vscode/tasks.json)   | [generate_security_policy.yml](.github/workflows/generate_security_policy.yml)                       |
+| Add Policy to Template   | [add_security_policy_to_arm_template.py](infra/add_security_policy_to_arm_template.py) | [launch.json](.vscode/launch.json) | [add_security_policy_to_arm_template.yml](.github/workflows/add_security_policy_to_arm_template.yml) |
+| Deploy Container         | [deploy_container.py](infra/deploy_container.py)                                       | [launch.json](.vscode/launch.json) | [deploy_container.yml](.github/workflows/deploy_container.yml)                                       |
+| Remove Container         | [remove_container.py](infra/remove_container.py)                                       | [launch.json](.vscode/launch.json) | [remove_container.yml](.github/workflows/remove_container.yml)                                       |
 
 ---
 

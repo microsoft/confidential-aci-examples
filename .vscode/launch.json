@@ -23,139 +23,56 @@
             ]
         },
         {
-            "name": "Build Image",
+            "name": "Add Security Policy To ARM Template",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/images.py",
+            "program": "${workspaceFolder}/infra/add_security_policy_to_arm_template.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "${input:dockerFilePath}",
-                "--tag",
-                "${input:imageTag}"
+                "--arm-template-path",
+                "${input:armTemplatePath}",
+                "--security-policy-path",
+                "${input:securityPolicyPath}",
             ]
         },
         {
-            "name": "Build And Push Image",
+            "name": "Deploy Container",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/images.py",
+            "program": "${workspaceFolder}/infra/deploy_container.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "${input:dockerFilePath}",
-                "--tag",
-                "${input:imageTag}",
-                "--registry",
-                "${input:containerRegistry}",
-                "--registry-password",
-                "${input:containerRegistryPassword}",
-                "--repository",
-                "${input:containerRepository}",
-                "--push-tag",
-                "${input:registryTag}",
-            ]
-        },
-        {
-            "name": "Deploy ACI",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/containers.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "deploy",
                 "--subscription-id",
                 "${input:subscriptionId}",
+                "--arm-template-path",
+                "${input:armTemplatePath}",
                 "--resource-group",
                 "${input:resourceGroup}",
-                "--name",
-                "${input:containerName}",
-                "--image",
-                "${input:containerImage}",
-                "--registry-password",
-                "${input:containerRegistryPassword}",
-                "--security-policy",
-                "${input:securityPolicy}",
-                "--arm-out",
-                "tests/simple_server/arm_template.json"
-            ]
-        },
-        {
-            "name": "Get ACI IP",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/containers.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "get_ip",
-                "--subscription-id",
-                "${input:subscriptionId}",
-                "--resource-group",
-                "${input:resourceGroup}",
-                "--name",
+                "--container-name",
                 "${input:containerName}",
             ]
         },
         {
-            "name": "Remove ACI",
+            "name": "Remove Container",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/containers.py",
+            "program": "${workspaceFolder}/infra/remove_container.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "remove",
                 "--subscription-id",
                 "${input:subscriptionId}",
                 "--resource-group",
                 "${input:resourceGroup}",
-                "--name",
+                "--container-name",
                 "${input:containerName}",
-            ]
-        },
-        {
-            "name": "Update Security Policies",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/policies.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-        },
-        {
-            "name": "Update Credentials",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/credentials.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "--subscription-id",
-                "${input:subscriptionId}",
-                "--resource-group",
-                "${input:resourceGroup}",
-                "--registry-password",
-                "${input:containerRegistryPassword}",
+                "--asynchronous",
             ]
         },
     ],
     "inputs": [
-        {
-            "id": "outputFile",
-            "type": "promptString",
-            "description": "Enter the path to emit the output to (Leave blank to not emit file):",
-        },
-        {
-            "id": "subscriptionId",
-            "type": "promptString",
-            "description": "Enter the subscription ID to use for deployment (Leave blank to use environment):",
-        },
-        {
-            "id": "resourceGroup",
-            "type": "promptString",
-            "description": "Enter the resource group to use for deployment (Leave blank to use environment):",
-        },
         {
             "id": "containerName",
             "type": "promptString",
@@ -167,41 +84,6 @@
             "type": "promptString",
             "description": "Enter the URL of image you want to deploy the container with:",
             "default": "caciexamples.azurecr.io/simple_server:latest",
-        },
-        {
-            "id": "dockerFilePath",
-            "type": "promptString",
-            "description": "Enter the relative path to the dockerfile build the image with:",
-            "default": "tests/simple_server/Dockerfile",
-        },
-        {
-            "id": "imageTag",
-            "type": "promptString",
-            "description": "Enter the tag to use for the built image:",
-            "default": "simple_server"
-        },
-        {
-            "id": "containerRegistry",
-            "type": "promptString",
-            "description": "Enter the container registry to push the image to:",
-            "default": "caciexamples.azurecr.io"
-        },
-        {
-            "id": "containerRegistryPassword",
-            "type": "promptString",
-            "description": "Enter the password for the selected container registry (Leave blank to use environment):",
-        },
-        {
-            "id": "containerRepository",
-            "type": "promptString",
-            "description": "Enter the repository to use for the built image:",
-            "default": "simple_server"
-        },
-        {
-            "id": "registryTag",
-            "type": "promptString",
-            "description": "Enter the tag to use in the container registry:",
-            "default": "latest"
         },
         {
             "id": "securityPolicy",
@@ -216,11 +98,35 @@
                     "label": "allow-all",
                     "value": "cGFja2FnZSBwb2xpY3kKCmFwaV9zdm4gOj0gIjAuMTAuMCIKZnJhbWV3b3JrX3N2biA6PSAiMC4xLjAiCgptb3VudF9kZXZpY2UgOj0geyJhbGxvd2VkIjogdHJ1ZX0KbW91bnRfb3ZlcmxheSA6PSB7ImFsbG93ZWQiOiB0cnVlfQpjcmVhdGVfY29udGFpbmVyIDo9IHsiYWxsb3dlZCI6IHRydWUsICJhbGxvd19zdGRpb19hY2Nlc3MiOiB0cnVlfQp1bm1vdW50X2RldmljZSA6PSB7ImFsbG93ZWQiOiB0cnVlfQp1bm1vdW50X292ZXJsYXkgOj0geyJhbGxvd2VkIjogdHJ1ZX0KZXhlY19pbl9jb250YWluZXIgOj0geyJhbGxvd2VkIjogdHJ1ZX0KZXhlY19leHRlcm5hbCA6PSB7ImFsbG93ZWQiOiB0cnVlLCAiYWxsb3dfc3RkaW9fYWNjZXNzIjogdHJ1ZX0Kc2h1dGRvd25fY29udGFpbmVyIDo9IHsiYWxsb3dlZCI6IHRydWV9CnNpZ25hbF9jb250YWluZXJfcHJvY2VzcyA6PSB7ImFsbG93ZWQiOiB0cnVlfQpwbGFuOV9tb3VudCA6PSB7ImFsbG93ZWQiOiB0cnVlfQpwbGFuOV91bm1vdW50IDo9IHsiYWxsb3dlZCI6IHRydWV9CmdldF9wcm9wZXJ0aWVzIDo9IHsiYWxsb3dlZCI6IHRydWV9CmR1bXBfc3RhY2tzIDo9IHsiYWxsb3dlZCI6IHRydWV9CnJ1bnRpbWVfbG9nZ2luZyA6PSB7ImFsbG93ZWQiOiB0cnVlfQpsb2FkX2ZyYWdtZW50IDo9IHsiYWxsb3dlZCI6IHRydWV9CnNjcmF0Y2hfbW91bnQgOj0geyJhbGxvd2VkIjogdHJ1ZX0Kc2NyYXRjaF91bm1vdW50IDo9IHsiYWxsb3dlZCI6IHRydWV9Cg=="
                 },
-                {
-                    "label": "simple-server",
-                    "value": "cGFja2FnZSBwb2xpY3kKCmltcG9ydCBmdXR1cmUua2V5d29yZHMuZXZlcnkKaW1wb3J0IGZ1dHVyZS5rZXl3b3Jkcy5pbgoKYXBpX3N2biA6PSAiMC4xMC4wIgpmcmFtZXdvcmtfc3ZuIDo9ICIwLjEuMCIKCmZyYWdtZW50cyA6PSBbCiAgewogICAgImZlZWQiOiAibWNyLm1pY3Jvc29mdC5jb20vYWNpL2FjaS1jYy1pbmZyYS1mcmFnbWVudCIsCiAgICAiaW5jbHVkZXMiOiBbCiAgICAgICJjb250YWluZXJzIgogICAgXSwKICAgICJpc3N1ZXIiOiAiZGlkOng1MDk6MDpzaGEyNTY6SV9faXVMMjVvWEVWRmRUUF9hQkx4X2VUMVJQSGJDUV9FQ0JRZllacHQ5czo6ZWt1OjEuMy42LjEuNC4xLjMxMS43Ni41OS4xLjMiLAogICAgIm1pbmltdW1fc3ZuIjogIjEuMC4wIgogIH0KXQoKY29udGFpbmVycyA6PSBbeyJhbGxvd19lbGV2YXRlZCI6dHJ1ZSwiYWxsb3dfc3RkaW9fYWNjZXNzIjp0cnVlLCJjb21tYW5kIjpbInB5dGhvbiIsInBheWxvYWQucHkiXSwiZW52X3J1bGVzIjpbeyJwYXR0ZXJuIjoiUEFUSD0vdXNyL2xvY2FsL2JpbjovdXNyL2xvY2FsL3NiaW46L3Vzci9sb2NhbC9iaW46L3Vzci9zYmluOi91c3IvYmluOi9zYmluOi9iaW4iLCJyZXF1aXJlZCI6ZmFsc2UsInN0cmF0ZWd5Ijoic3RyaW5nIn0seyJwYXR0ZXJuIjoiTEFORz1DLlVURi04IiwicmVxdWlyZWQiOmZhbHNlLCJzdHJhdGVneSI6InN0cmluZyJ9LHsicGF0dGVybiI6IkdQR19LRVk9QTAzNUM4QzE5MjE5QkE4MjFFQ0VBODZCNjRFNjI4RjhENjg0Njk2RCIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJzdHJpbmcifSx7InBhdHRlcm4iOiJQWVRIT05fVkVSU0lPTj0zLjExLjIiLCJyZXF1aXJlZCI6ZmFsc2UsInN0cmF0ZWd5Ijoic3RyaW5nIn0seyJwYXR0ZXJuIjoiUFlUSE9OX1BJUF9WRVJTSU9OPTIyLjMuMSIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJzdHJpbmcifSx7InBhdHRlcm4iOiJQWVRIT05fU0VUVVBUT09MU19WRVJTSU9OPTY1LjUuMSIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJzdHJpbmcifSx7InBhdHRlcm4iOiJQWVRIT05fR0VUX1BJUF9VUkw9aHR0cHM6Ly9naXRodWIuY29tL3B5cGEvZ2V0LXBpcC9yYXcvZDVjYjBhZmFmMjNiODUyMGYxYmJjZmVkNTIxMDE3YjRhOTVmNWMwMS9wdWJsaWMvZ2V0LXBpcC5weSIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJzdHJpbmcifSx7InBhdHRlcm4iOiJQWVRIT05fR0VUX1BJUF9TSEEyNTY9Mzk0YmUwMGYxM2ZhMWI5YWFhNDdlOTExYmRiNTlhMDljM2IyOTg2NDcyMTMwZjMwYWEwYmZhZjdmMzk4MDYzNyIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJzdHJpbmcifSx7InBhdHRlcm4iOiJURVJNPXh0ZXJtIiwicmVxdWlyZWQiOmZhbHNlLCJzdHJhdGVneSI6InN0cmluZyJ9LHsicGF0dGVybiI6IigoP2kpRkFCUklDKV8uKz0uKyIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJyZTIifSx7InBhdHRlcm4iOiJIT1NUTkFNRT0uKyIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJyZTIifSx7InBhdHRlcm4iOiJUKEUpP01QPS4rIiwicmVxdWlyZWQiOmZhbHNlLCJzdHJhdGVneSI6InJlMiJ9LHsicGF0dGVybiI6IkZhYnJpY1BhY2thZ2VGaWxlTmFtZT0uKyIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJyZTIifSx7InBhdHRlcm4iOiJIb3N0ZWRTZXJ2aWNlTmFtZT0uKyIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJyZTIifSx7InBhdHRlcm4iOiJJREVOVElUWV9BUElfVkVSU0lPTj0uKyIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJyZTIifSx7InBhdHRlcm4iOiJJREVOVElUWV9IRUFERVI9LisiLCJyZXF1aXJlZCI6ZmFsc2UsInN0cmF0ZWd5IjoicmUyIn0seyJwYXR0ZXJuIjoiSURFTlRJVFlfU0VSVkVSX1RIVU1CUFJJTlQ9LisiLCJyZXF1aXJlZCI6ZmFsc2UsInN0cmF0ZWd5IjoicmUyIn0seyJwYXR0ZXJuIjoiYXp1cmVjb250YWluZXJpbnN0YW5jZV9yZXN0YXJ0ZWRfYnk9LisiLCJyZXF1aXJlZCI6ZmFsc2UsInN0cmF0ZWd5IjoicmUyIn1dLCJleGVjX3Byb2Nlc3NlcyI6W10sImlkIjoiY2FjaWV4YW1wbGVzLmF6dXJlY3IuaW8vc2ltcGxlX3NlcnZlcjpsYXRlc3QiLCJsYXllcnMiOlsiMGYxOTEyNGMwZDg4MjliNDYxNzRhZDM4OWRhYTljODNjMWIzNWVhYzFmOTBjMGU2MmE2YzI1OGE3ZjQwNzA5OCIsIjIwMjYzYmM4OGE1NWE2ZWJkZjZiMTY2ZGYwMmY4NGMzYzBiYzA2NTI0YzI5MDY5NzM2MzgzN2IwYzVhYTc2MGYiLCI4MGNmYmYyNDVmNWJiMzBkOTAyZDQxMjQ0NmY1Njc4NmY2MGU5MzljZTVjMjM0Yzc1N2JhMzM3MDljZWFmOTk3IiwiMDI5YmZlNTdlZTk4NGE3ZDdhNmQ5ZWRhMDVjZDVkYzFkYTBkYzU4Y2IwZjM5Y2Q1ODk0MjMyYTUwZWZlMzFmZCIsIjA3OTgxM2IzZGEzOGYwYjE4NTNhNDk4NTRjM2NiNDQ3MWE1NjEyYTkxNWJiMDhiNGNhOGNmM2M5MjA2MGNiYzUiLCJkNGRhMTJmMzQyYzZiZDg1NGQ1YmU1ZmU1NWI2NjdlNDVmMGYzOTFlMGJjZGJiM2RjNzQxYTMyODJmOWU3YzhkIiwiMWQzYzEzNjExZGNkMTc4MTg5ZWM3YmMzOTY1NjY4NGI2ZGRiMGJlNTcwNDgxODI4YzQwNzRhZjVkMmNlODhmZCIsIjRkN2VhMGFmOTViMTFiZWM2ODQ3NTUzZGFiZjMxNDExNzUzN2I3YWViOGI5ZWEwYzM0MGJiYWQ4NDBlMTk3OGIiLCI1NGU4ZjUzMTdhYzVjYmY4YWIwYzMzODFkZDdmZTA0MDMyZDI4MTY3YmEzYjQ0M2Q4NWYyNzdmZTgwZjE3N2VmIiwiOGMwYThlMzdlZjY3MjYyYTM2Y2RiNDNhOGZjMDIyMjc3MThiMmU3N2Q5NmI4ODhkNjNmMGI5NTYzZjNiNTlmMyIsIjVjY2NjOTNhNDQ0OTEyODg5YTI3OGNkYjA0Yjg4Y2VmZTQwOGJjYTkzZTQzZTBkMDVjMmUzNTM2OTI1N2QyY2QiXSwibW91bnRzIjpbeyJkZXN0aW5hdGlvbiI6Ii9ldGMvcmVzb2x2LmNvbmYiLCJvcHRpb25zIjpbInJiaW5kIiwicnNoYXJlZCIsInJ3Il0sInNvdXJjZSI6InNhbmRib3g6Ly8vdG1wL2F0bGFzL3Jlc29sdmNvbmYvLisiLCJ0eXBlIjoiYmluZCJ9XSwic2lnbmFscyI6W10sIndvcmtpbmdfZGlyIjoiL2FwcCJ9LHsiYWxsb3dfZWxldmF0ZWQiOmZhbHNlLCJhbGxvd19zdGRpb19hY2Nlc3MiOnRydWUsImNvbW1hbmQiOlsiL3BhdXNlIl0sImVudl9ydWxlcyI6W3sicGF0dGVybiI6IlBBVEg9L3Vzci9sb2NhbC9zYmluOi91c3IvbG9jYWwvYmluOi91c3Ivc2JpbjovdXNyL2Jpbjovc2JpbjovYmluIiwicmVxdWlyZWQiOnRydWUsInN0cmF0ZWd5Ijoic3RyaW5nIn0seyJwYXR0ZXJuIjoiVEVSTT14dGVybSIsInJlcXVpcmVkIjpmYWxzZSwic3RyYXRlZ3kiOiJzdHJpbmcifV0sImV4ZWNfcHJvY2Vzc2VzIjpbXSwibGF5ZXJzIjpbIjE2YjUxNDA1N2EwNmFkNjY1ZjkyYzAyODYzYWNhMDc0ZmQ1OTc2Yzc1NWQyNmJmZjE2MzY1Mjk5MTY5ZTg0MTUiXSwibW91bnRzIjpbXSwic2lnbmFscyI6W10sIndvcmtpbmdfZGlyIjoiLyJ9XQoKYWxsb3dfcHJvcGVydGllc19hY2Nlc3MgOj0gZmFsc2UKYWxsb3dfZHVtcF9zdGFja3MgOj0gZmFsc2UKYWxsb3dfcnVudGltZV9sb2dnaW5nIDo9IGZhbHNlCmFsbG93X2Vudmlyb25tZW50X3ZhcmlhYmxlX2Ryb3BwaW5nIDo9IHRydWUKYWxsb3dfdW5lbmNyeXB0ZWRfc2NyYXRjaCA6PSBmYWxzZQoKCgptb3VudF9kZXZpY2UgOj0gZGF0YS5mcmFtZXdvcmsubW91bnRfZGV2aWNlCnVubW91bnRfZGV2aWNlIDo9IGRhdGEuZnJhbWV3b3JrLnVubW91bnRfZGV2aWNlCm1vdW50X292ZXJsYXkgOj0gZGF0YS5mcmFtZXdvcmsubW91bnRfb3ZlcmxheQp1bm1vdW50X292ZXJsYXkgOj0gZGF0YS5mcmFtZXdvcmsudW5tb3VudF9vdmVybGF5CmNyZWF0ZV9jb250YWluZXIgOj0gZGF0YS5mcmFtZXdvcmsuY3JlYXRlX2NvbnRhaW5lcgpleGVjX2luX2NvbnRhaW5lciA6PSBkYXRhLmZyYW1ld29yay5leGVjX2luX2NvbnRhaW5lcgpleGVjX2V4dGVybmFsIDo9IGRhdGEuZnJhbWV3b3JrLmV4ZWNfZXh0ZXJuYWwKc2h1dGRvd25fY29udGFpbmVyIDo9IGRhdGEuZnJhbWV3b3JrLnNodXRkb3duX2NvbnRhaW5lcgpzaWduYWxfY29udGFpbmVyX3Byb2Nlc3MgOj0gZGF0YS5mcmFtZXdvcmsuc2lnbmFsX2NvbnRhaW5lcl9wcm9jZXNzCnBsYW45X21vdW50IDo9IGRhdGEuZnJhbWV3b3JrLnBsYW45X21vdW50CnBsYW45X3VubW91bnQgOj0gZGF0YS5mcmFtZXdvcmsucGxhbjlfdW5tb3VudApnZXRfcHJvcGVydGllcyA6PSBkYXRhLmZyYW1ld29yay5nZXRfcHJvcGVydGllcwpkdW1wX3N0YWNrcyA6PSBkYXRhLmZyYW1ld29yay5kdW1wX3N0YWNrcwpydW50aW1lX2xvZ2dpbmcgOj0gZGF0YS5mcmFtZXdvcmsucnVudGltZV9sb2dnaW5nCmxvYWRfZnJhZ21lbnQgOj0gZGF0YS5mcmFtZXdvcmsubG9hZF9mcmFnbWVudApzY3JhdGNoX21vdW50IDo9IGRhdGEuZnJhbWV3b3JrLnNjcmF0Y2hfbW91bnQKc2NyYXRjaF91bm1vdW50IDo9IGRhdGEuZnJhbWV3b3JrLnNjcmF0Y2hfdW5tb3VudAoKcmVhc29uIDo9IHsiZXJyb3JzIjogZGF0YS5mcmFtZXdvcmsuZXJyb3JzfQ=="
-                },
             ]
+        },
+        {
+            "id": "outputFile",
+            "type": "promptString",
+            "description": "Enter the path to emit the output to (Leave blank to not emit file):",
+            "default": "tests/simple_server/arm_template.json"
+        },
+        {
+            "id": "armTemplatePath",
+            "type": "promptString",
+            "description": "Enter the path to the ARM Template to add the Security Policy to:",
+            "default": "tests/simple_server/arm_template.json"
+        },
+        {
+            "id": "securityPolicyPath",
+            "type": "promptString",
+            "description": "Enter the path to Security Policy file:",
+            "default": "tests/simple_server/security_policy.rego"
+        },
+        {
+            "id": "subscriptionId",
+            "type": "promptString",
+            "description": "Enter the subscription ID to use for deployment (Leave blank to use environment):",
+        },
+        {
+            "id": "resourceGroup",
+            "type": "promptString",
+            "description": "Enter the resource group to use for deployment (Leave blank to use environment):",
         },
     ]
 }

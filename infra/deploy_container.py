@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--subscription-id",
         help="Subscription to deploy the container with",
-        default=os.getenv("AZ_SUBSCRIPTION_ID"),
+        type=lambda x: x or os.getenv("AZ_SUBSCRIPTION_ID"),
     )
     parser.add_argument(
         "--arm-template-path",
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--resource-group",
         help="The resource group to deploy the container with",
-        required=True,
+        type=lambda x: x or os.getenv("AZ_RESOURCE_GROUP"),
     )
     parser.add_argument(
         "--container-name",
@@ -58,5 +58,5 @@ if __name__ == "__main__":
             resource_client=get_resource_client(args.subscription_id),
             arm_template=json.load(f),
             resource_group=args.resource_group,
-            name=args.name,
+            name=args.container_name,
         )

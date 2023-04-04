@@ -25,8 +25,9 @@ jobs:
       - name: Generate ARM Template
         id: generate-arm-template
         run: |
+          DASH_CASE_TEST=$(echo ${{ github.event.inputs.test }} | sed 's/_/-/g')
           python infra/generate_arm_template.py \
-            --name ${{ github.event.inputs.test }} \
+            --name $DASH_CASE_TEST \
             --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest \
             > ${{ github.event.inputs.test }}_arm_template.json
 

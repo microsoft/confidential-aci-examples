@@ -18,6 +18,8 @@
                 "${input:containerImage}",
                 "--security-policy",
                 "${input:securityPolicy}",
+                "--out",
+                "${input:outputFile}"
             ]
         },
         {
@@ -139,6 +141,11 @@
         },
     ],
     "inputs": [
+        {
+            "id": "outputFile",
+            "type": "promptString",
+            "description": "Enter the path to emit the output to (Leave blank to not emit file):",
+        },
         {
             "id": "subscriptionId",
             "type": "promptString",

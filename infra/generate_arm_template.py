@@ -7,6 +7,7 @@ from typing import Optional
 def generate_arm_template(
     name: str,
     image: str,
+    out: str,
     security_policy: Optional[str] = None,
 ):
     arm_template = {
@@ -65,7 +66,12 @@ def generate_arm_template(
         ],
     }
 
-    print(json.dumps(arm_template, indent=2))
+    template_str = json.dumps(arm_template, indent=2)
+    print(template_str)
+
+    if out:
+        with open(out, "w") as f:
+            f.write(template_str)
 
     return arm_template
 
@@ -85,6 +91,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--security-policy",
         help="The security policy to use for the container",
+    )
+    parser.add_argument(
+        "--out",
+        help="Path to save the ARM template to",
     )
 
     generate_arm_template(**vars(parser.parse_args()))

@@ -2,7 +2,6 @@ FROM mcr.microsoft.com/devcontainers/universal:linux
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-RUN az extension add --name confcom
 
 # Clone microsoft/hcsshim and setup
 WORKDIR /home/vscode

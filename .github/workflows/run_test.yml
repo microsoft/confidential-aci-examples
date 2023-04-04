@@ -9,6 +9,11 @@ on:
         type: choice
         options: ["simple_server"]
 
+env:
+  AZ_REGISTRY_LOGIN: ${{ secrets.AZ_REGISTRY_LOGIN }}
+  AZ_REGISTRY_USERNAME: ${{ secrets.AZ_REGISTRY_USERNAME }}
+  AZ_REGISTRY_PASSWORD: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+
 jobs:
   generate-arm-template:
     uses: ./.github/workflows/generate_arm_template.yml
@@ -20,9 +25,9 @@ jobs:
     needs: generate-arm-template
     with:
       test: ${{ github.event.inputs.test }}
-      az-login-server: ${{ secrets.AZ_REGISTRY_LOGIN }}
-      az-username: ${{ secrets.AZ_REGISTRY_USERNAME }}
-      az-password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+      az-login-server: $AZ_REGISTRY_LOGIN
+      az-username: $AZ_REGISTRY_USERNAME
+      az-password: $AZ_REGISTRY_PASSWORD
 
   add-security-policy-to-arm-template:
     uses: ./.github/workflows/add_security_policy_to_arm_template.yml

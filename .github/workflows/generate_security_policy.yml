@@ -23,7 +23,10 @@ jobs:
         with:
           name: ${{ github.event.inputs.test }}_arm_template
 
-      - name: Give user permission to run docker
+      - name: Print ARM Template
+        run: cat ${{ github.event.inputs.test }}_arm_template.json
+
+      - name: Set Docker Permissions
         run: sudo usermod -aG docker $USER
 
       - name: Generate Security Policy

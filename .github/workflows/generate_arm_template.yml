@@ -33,7 +33,7 @@ jobs:
           python infra/containers.py generate_arm_template \
             --name ${{ github.event.inputs.test }} \
             --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest \
-            --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }}
+            --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --arm-out tests/${{ github.event.inputs.test }}/arm_template.json
         continue-on-error: true
 

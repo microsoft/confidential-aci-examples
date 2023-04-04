@@ -8,6 +8,12 @@ on:
         required: true
         type: choice
         options: ["simple_server"]
+  workflow_call:
+    inputs:
+      test:
+        description: "Test to deploy a container for"
+        required: true
+        type: string
 
 jobs:
   deploy-container:
@@ -16,16 +22,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Download ARM Template Artifact
+        uses: actions/download-artifact@v2
         with:
-          python-version: "3.8"
+          name: ${{ github.event.inputs.test }}_arm_template
+          path: ${{ github.event.inputs.test }}_arm_template.json
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r infra/requirements.txt
-          az extension add --name confcom
+        run: pip install -r infra/requirements.txt
 
       - name: Log into Azure
         run: |
@@ -34,11 +38,10 @@ jobs:
             --password ${{ secrets.SP_PASSWORD }} \
             --tenant ${{ secrets.SP_TENANT }}
 
-      - name: Deploy Container with ACI
+      - name: Deploy Container on ACI
         run: |
-          python infra/containers.py deploy \
+          python infra/deploy_container.py \
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
+            --arm-template-path ${{ github.event.inputs.test }}_arm_template.json \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --name ${{ github.event.inputs.test }} \
-            --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest \
-            --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }}
+            --container-name ${{ github.event.inputs.test }}

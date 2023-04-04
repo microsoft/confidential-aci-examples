@@ -8,6 +8,12 @@ on:
         required: true
         type: choice
         options: ["simple_server"]
+  workflow_call:
+    inputs:
+      test:
+        description: "Test to generate ARM template for"
+        required: true
+        type: string
 
 jobs:
   generate-arm-template:
@@ -16,23 +22,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r infra/requirements.txt
-
       - name: Generate ARM Template
         id: generate-arm-template
         run: |
-          python infra/containers.py generate_arm_template \
+          python infra/generate_arm_template.py \
             --name ${{ github.event.inputs.test }} \
             --image ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest \
-            --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             > ${{ github.event.inputs.test }}_arm_template.json
 
       - name: Upload ARM Template Artifact

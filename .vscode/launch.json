@@ -5,22 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Set Credentials",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/credentials.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "--subscription-id",
-                "${input:subscriptionId}",
-                "--resource-group",
-                "${input:resourceGroup}",
-                "--registry-password",
-                "${input:containerRegistryPassword}",
-            ]
-        },
-        {
             "name": "Build Image",
             "type": "python",
             "request": "launch",
@@ -53,14 +37,6 @@
                 "--push-tag",
                 "${input:registryTag}",
             ]
-        },
-        {
-            "name": "Update Security Policies",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/policies.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
         },
         {
             "name": "Deploy ACI",
@@ -119,6 +95,30 @@
                 "${input:resourceGroup}",
                 "--name",
                 "${input:containerName}",
+            ]
+        },
+        {
+            "name": "Update Security Policies",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/policies.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+        },
+        {
+            "name": "Update Credentials",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/credentials.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--subscription-id",
+                "${input:subscriptionId}",
+                "--resource-group",
+                "${input:resourceGroup}",
+                "--registry-password",
+                "${input:containerRegistryPassword}",
             ]
         },
     ],

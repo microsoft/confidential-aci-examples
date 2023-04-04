@@ -51,6 +51,10 @@ def deploy_aci(
                 "apiVersion": "2022-10-01-preview",
                 "name": f"{name}",
                 "location": "eastus2euap",
+                "tags": {
+                    "Owner": "c-aci-examples",
+                    "GithubRepo": "microsoft/c-aci-examples",
+                },
                 "properties": {
                     "sku": "Confidential",
                     "containers": [

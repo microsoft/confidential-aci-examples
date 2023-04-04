@@ -2,45 +2,29 @@
 
 Example code and end to end test cases for confidential ACI. Contains infrastructure for deploying Confidential Azure Container Instances based on AMD SEV-SNP.
 
+## Setup Development Environment
 
-
-## Setup Development Envrionment
-
-1. Open the codespace (or checkout manually, checking the [.devcontainer](.devcontainer/devcontainer.json) for dependency information)
+You can use Github Codespaces to create a fully ready to use development environment.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=616412316&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope)
 
-2. Log into Azure CLI
-
-```
-az login
-```
-
-If running in a browser, it might be easier to use:
-
-```
-az login --use-device-code
-```
-
-3. Log into Azure Container Registry
-
-```
-az acr login --name caciexamples
-```
-
-From here, all infrastructure functionality should be available to use. If using VS code, there are [Run/Debug configurations](.vscode/launch.json) for managing images and containers.
+> To checkout and setup manually, please refer to the [Dockerfile](.devcontainer/Dockerfile) and [.devcontainer](.devcontainer/devcontainer.json) to follow the setup process.
 
 ## Running Tests
 
-If running in VS Code, opening any test such as [simple_server.py](tests/simple_server.py) presents the testing view where each test can be run or debugged individually.
+If running in VS Code, opening any test such as [simple_server.py](tests/simple_server/simple_server_test.py) presents the testing view where each test can be run or debugged individually.
 
-Tests handle deploying and removing ACIs to test against.
+## Managing Test Infrastructure
 
-----------------
+While running tests directly will automatically manage the images and containers needed, it is also possible to use the infrastructure to manually manage these resources.
+
+Refer to [Run/Debug configurations](.vscode/launch.json) to build and push image as well as deploying and removing containers.
+
+---
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
 

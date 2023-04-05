@@ -33,4 +33,4 @@ jobs:
           file: tests/${{ matrix.test }}/Dockerfile
           push: true
           tags: |
-            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ env.DASH_CASE_TEST }}:latest
+            ${{ secrets.AZ_REGISTRY_LOGIN }}/$DASH_CASE_TEST:latest

@@ -8,10 +8,13 @@ on:
         required: true
         type: choice
         options: ["simple_server"]
+  push:
+    branches:
+      - main
 
 jobs:
   generate-arm-template:
-    uses: ./.github/workflows/generate_arm_template.yml
+    uses: ./.github/workflows/generate_arm_template.yml#generate-arm-template
     secrets: inherit
     with:
       test: ${{ github.event.inputs.test }}

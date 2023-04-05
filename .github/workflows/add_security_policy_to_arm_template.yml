@@ -18,21 +18,21 @@ jobs:
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ github.event.inputs.test }}_arm_template
+          name: ${{ inputs.test }}_arm_template
 
       - name: Download Security Policy Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ github.event.inputs.test }}_security_policy
+          name: ${{ inputs.test }}_security_policy
 
       - name: Add Security Policy to ARM Template
         run: |
           python infra/add_security_policy_to_arm_template.py \
-            --arm-template-path ${{ github.event.inputs.test }}_arm_template.json \
-            --security-policy-path ${{ github.event.inputs.test }}_security_policy.rego
+            --arm-template-path ${{ inputs.test }}_arm_template.json \
+            --security-policy-path ${{ inputs.test }}_security_policy.rego
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ github.event.inputs.test }}_arm_template
-          path: ${{ github.event.inputs.test }}_arm_template.json
+          name: ${{ inputs.test }}_arm_template
+          path: ${{ inputs.test }}_arm_template.json

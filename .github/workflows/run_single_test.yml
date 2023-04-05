@@ -15,4 +15,4 @@ jobs:
     uses: ./.github/workflows/end_to_end_test.yml
     secrets: inherit
     with:
-      test: ${{ github.event.inputs.test }}
+      test: ${{ inputs.test }}

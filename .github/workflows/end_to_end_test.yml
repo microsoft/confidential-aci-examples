@@ -13,27 +13,27 @@ jobs:
     uses: ./.github/workflows/generate_arm_template.yml
     secrets: inherit
     with:
-      test: ${{ github.event.inputs.test }}
+      test: ${{ inputs.test }}
 
   generate-security-policy:
     uses: ./.github/workflows/generate_security_policy.yml
     secrets: inherit
     needs: generate-arm-template
     with:
-      test: ${{ github.event.inputs.test }}
+      test: ${{ inputs.test }}
 
   add-security-policy-to-arm-template:
     uses: ./.github/workflows/add_security_policy_to_arm_template.yml
     needs: generate-security-policy
     with:
-      test: ${{ github.event.inputs.test }}
+      test: ${{ inputs.test }}
 
   deploy-container:
     uses: ./.github/workflows/deploy_container.yml
     secrets: inherit
     needs: add-security-policy-to-arm-template
     with:
-      test: ${{ github.event.inputs.test }}
+      test: ${{ inputs.test }}
 
   run-test:
     runs-on: ubuntu-latest
@@ -54,13 +54,13 @@ jobs:
 
       - name: Run Tests
         env:
-          CONTAINER_NAME: ${{ github.event.inputs.test }}
+          CONTAINER_NAME: ${{ inputs.test }}
           AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           AZ_RESOURCE_GROUP: ${{ secrets.AZ_RESOURCE_GROUP }}
           CLEANUP_ACI: 0
         run: |
           python -m unittest \
-            tests.${{ github.event.inputs.test }}.${{ github.event.inputs.test }}_test \
+            tests.${{ inputs.test }}.${{ inputs.test }}_test \
             -v
 
   remove-container:
@@ -69,4 +69,4 @@ jobs:
     needs: run-test
     if: always()
     with:
-      test: ${{ github.event.inputs.test }}
+      test: ${{ inputs.test }}

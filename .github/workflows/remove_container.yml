@@ -25,7 +25,7 @@ jobs:
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ github.event.inputs.test }}_arm_template
+          name: ${{ inputs.test }}_arm_template
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -42,4 +42,4 @@ jobs:
           python infra/remove_container.py \
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --container-name ${{ github.event.inputs.test }}
+            --container-name ${{ inputs.test }}

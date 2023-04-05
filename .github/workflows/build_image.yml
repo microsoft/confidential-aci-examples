@@ -30,13 +30,13 @@ jobs:
           password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
       - name: Sanitise Test Name
-        run: export DASH_CASE_TEST=$(echo ${{ github.event.inputs.test }} | sed 's/_/-/g')
+        run: export DASH_CASE_TEST=$(echo ${{ inputs.test }} | sed 's/_/-/g')
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         with:
-          context: tests/${{ github.event.inputs.test }}
-          file: tests/${{ github.event.inputs.test }}/Dockerfile
+          context: tests/${{ inputs.test }}
+          file: tests/${{ inputs.test }}/Dockerfile
           push: true
           tags: |
             caciexamples.azurecr.io/simple-server:latest

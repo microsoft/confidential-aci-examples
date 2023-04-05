@@ -25,15 +25,15 @@ jobs:
       - name: Generate ARM Template
         id: generate-arm-template
         run: |
-          DASH_CASE_TEST=$(echo ${{ github.event.inputs.test }} | sed 's/_/-/g')
+          DASH_CASE_TEST=$(echo ${{ inputs.test }} | sed 's/_/-/g')
           python infra/generate_arm_template.py \
             --name $DASH_CASE_TEST \
-            --image caciexamples.azurecr.io/${{ github.event.inputs.test }}:latest \
+            --image caciexamples.azurecr.io/${{ inputs.test }}:latest \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
-            > ${{ github.event.inputs.test }}_arm_template.json
+            > ${{ inputs.test }}_arm_template.json
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ github.event.inputs.test }}_arm_template
-          path: ${{ github.event.inputs.test }}_arm_template.json
+          name: ${{ inputs.test }}_arm_template
+          path: ${{ inputs.test }}_arm_template.json

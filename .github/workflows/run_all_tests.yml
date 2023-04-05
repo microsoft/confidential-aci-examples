@@ -7,5 +7,8 @@ jobs:
   run-simple-server:
     uses: ./.github/workflows/end_to_end_test.yml
     secrets: inherit
+    strategy:
+      matrix:
+        test: [simple_server]
     with:
-      test: "simple_server"
+      test: ${{ matrix.test }}

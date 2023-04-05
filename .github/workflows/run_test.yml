@@ -9,11 +9,6 @@ on:
         type: choice
         options: ["simple_server"]
 
-env:
-  AZ_REGISTRY_LOGIN: "caciexamples.azurecr.io"
-  AZ_REGISTRY_USERNAME: ${{ secrets.AZ_REGISTRY_USERNAME }}
-  AZ_REGISTRY_PASSWORD: ${{ secrets.AZ_REGISTRY_PASSWORD }}
-
 jobs:
   generate-arm-template:
     uses: ./.github/workflows/generate_arm_template.yml
@@ -29,6 +24,7 @@ jobs:
   add-security-policy-to-arm-template:
     uses: ./.github/workflows/add_security_policy_to_arm_template.yml
     needs: generate-security-policy
+    secrets: inherit
     with:
       test: ${{ github.event.inputs.test }}
 

@@ -1,18 +1,16 @@
 name: Build and Push Container Image
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      test:
+        description: "Test to build and push the Docker image for"
+        required: true
+        type: string
 
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test: [{ snake-case: simple_server, dash-case: simple-server }]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -24,11 +22,16 @@ jobs:
           username: ${{ secrets.AZ_REGISTRY_USERNAME }}
           password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
+      - name: Sanitise Test Name
+        run: echo DASH_TEST_CASE=$(echo ${{ inputs.test }} | sed 's/_/-/g') >> $GITHUB_ENV
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
+        env:
+          DASH_TEST_CASE: ${{ env.DASH_TEST_CASE }}
         with:
-          context: tests/${{ matrix.test.snake-case }}
-          file: tests/${{ matrix.test.snake-case }}/Dockerfile
+          context: tests/${{ inputs.test }}
+          file: tests/${{ inputs.test }}/Dockerfile
           push: true
           tags: |
-            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ matrix.test.dash-case }}:latest
+            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ env.DASH_TEST_CASE }}:latest

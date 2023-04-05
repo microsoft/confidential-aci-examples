@@ -8,9 +8,12 @@ on:
         required: true
         type: choice
         options: ["simple_server"]
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      test:
+        description: "Test to run"
+        required: true
+        type: string
 
 jobs:
   build-and-push-image:

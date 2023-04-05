@@ -1,0 +1,14 @@
+name: Run All Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-all-tests:
+    uses: ./.github/workflows/run_test.yml
+    secrets: inherit
+    strategy:
+      matrix:
+        test: ["simple_server"]
+    with:
+      test: ${{ matrix.test }}

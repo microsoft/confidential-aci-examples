@@ -12,6 +12,7 @@ on:
 jobs:
   generate-arm-template:
     uses: ./.github/workflows/generate_arm_template.yml
+    secrets: inherit
     with:
       test: ${{ github.event.inputs.test }}
 

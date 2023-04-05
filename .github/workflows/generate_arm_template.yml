@@ -29,6 +29,7 @@ jobs:
           python infra/generate_arm_template.py \
             --name $DASH_CASE_TEST \
             --image caciexamples.azurecr.io/${{ github.event.inputs.test }}:latest \
+            --registry-password ${{ secrets.REGISTRY_PASSWORD }} \
             > ${{ github.event.inputs.test }}_arm_template.json
 
       - name: Upload ARM Template Artifact

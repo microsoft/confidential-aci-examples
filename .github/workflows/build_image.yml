@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
       - name: Sanitise Test Name
-        run: export DASH_CASE_TEST=$(echo ${{ matrix.test }} | sed 's/_/-/g') >> $GITHUB_ENV
+        run: echo DASH_CASE_TEST=$(echo ${{ matrix.test }} | sed 's/_/-/g') >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2

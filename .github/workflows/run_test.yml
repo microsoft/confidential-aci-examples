@@ -1,14 +1,6 @@
-name: Run Tests
+name: Run Test
 
 on:
-  workflow_dispatch:
-    inputs:
-      test:
-        description: "Test to run"
-        required: true
-        type: choice
-        options:
-          - simple_server
   workflow_call:
     inputs:
       test:

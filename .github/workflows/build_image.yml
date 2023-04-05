@@ -2,22 +2,16 @@ name: Build and Push Container Image
 
 on:
   workflow_dispatch:
-    inputs:
-      test:
-        description: "Test to build the image for"
-        required: true
-        type: choice
-        options: ["simple_server"]
-  workflow_call:
-    inputs:
-      test:
-        description: "Test to build the container image for"
-        required: true
-        type: string
+  push:
+    branches:
+      - main
 
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test: [simple-server]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -30,13 +24,13 @@ jobs:
           password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
       - name: Sanitise Test Name
-        run: export DASH_CASE_TEST=$(echo ${{ inputs.test }} | sed 's/_/-/g')
+        run: export DASH_CASE_TEST=$(echo ${{ matrix.test }} | sed 's/_/-/g')
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         with:
-          context: tests/${{ inputs.test }}
-          file: tests/${{ inputs.test }}/Dockerfile
+          context: tests/${{ matrix.test }}
+          file: tests/${{ matrix.test }}/Dockerfile
           push: true
           tags: |
-            caciexamples.azurecr.io/simple-server:latest
+            ${{ secrets.AZ_REGISTRY_LOGIN }}/$DASH_CASE_TEST:latest

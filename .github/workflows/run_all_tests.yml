@@ -12,4 +12,4 @@ jobs:
         test:
           - simple_server
     with:
-      test: simple_server
+      test: "simple_server"

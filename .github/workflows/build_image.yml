@@ -27,8 +27,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         with:
-          context: tests/${{ matrix.test }}
-          file: tests/${{ matrix.test }}/Dockerfile
+          context: tests/${{ matrix.test.snake-case }}
+          file: tests/${{ matrix.test.snake-case }}/Dockerfile
           push: true
           tags: |
             ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ matrix.test.dash-case }}:latest

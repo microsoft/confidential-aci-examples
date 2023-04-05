@@ -27,7 +27,7 @@ jobs:
         run: |
           DASH_CASE_TEST=$(echo ${{ inputs.test }} | sed 's/_/-/g')
           python infra/generate_arm_template.py \
-            --name $DASH_CASE_TEST \
+            --name $DASH_CASE_TEST-${{ github.run_id }} \
             --image caciexamples.azurecr.io/${{ inputs.test }}:latest \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             > ${{ inputs.test }}_arm_template.json

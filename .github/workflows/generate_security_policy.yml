@@ -7,18 +7,6 @@ on:
         description: "Test to generate Security Policy for"
         required: true
         type: string
-      az-login-server:
-        description: "The login server of the Azure Container Registry"
-        required: true
-        type: string
-      az-username:
-        description: "The username of the Azure Container Registry"
-        required: true
-        type: string
-      az-password:
-        description: "The password of the Azure Container Registry"
-        required: true
-        type: string
 
 jobs:
   generate-security-policy:

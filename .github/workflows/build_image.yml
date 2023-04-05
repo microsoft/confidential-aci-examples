@@ -1,4 +1,4 @@
-name: Build Container Image
+name: Build and Push Container Image
 
 on:
   workflow_dispatch:
@@ -8,9 +8,15 @@ on:
         required: true
         type: choice
         options: ["simple_server"]
+  workflow_call:
+    inputs:
+      test:
+        description: "Test to build the container image for"
+        required: true
+        type: string
 
 jobs:
-  build-and-push:
+  build-and-push-image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

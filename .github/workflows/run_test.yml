@@ -16,12 +16,6 @@ on:
         type: string
 
 jobs:
-  build-and-push-image:
-    uses: ./.github/workflows/build_image.yml
-    secrets: inherit
-    with:
-      test: ${{ github.event.inputs.test }}
-
   generate-arm-template:
     uses: ./.github/workflows/generate_arm_template.yml
     secrets: inherit

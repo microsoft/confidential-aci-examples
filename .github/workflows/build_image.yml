@@ -32,8 +32,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         with:
-          context: tests/${{ inputs.test }}
-          file: tests/${{ inputs.test }}/Dockerfile
+          context: tests/${{ github.event.inputs.test }}
+          file: tests/${{ github.event.inputs.test }}/Dockerfile
           push: true
           tags: |
-            caciexamples.azurecr.io/${{ inputs.test }}:latest
+            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest

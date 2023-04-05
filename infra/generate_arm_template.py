@@ -7,7 +7,7 @@ from typing import Optional
 def generate_arm_template(
     name: str,
     image: str,
-    registry_password: str,
+    registry_password: Optional[str] = None,
     out: Optional[str] = None,
     security_policy: Optional[str] = None,
 ):
@@ -59,7 +59,8 @@ def generate_arm_template(
                         {
                             "server": "caciexamples.azurecr.io",
                             "username": "caciexamples",
-                            "password": registry_password,
+                            "password": registry_password
+                            or os.getenv("AZ_REGISTRY_PASSWORD", ""),
                         }
                     ],
                 },
@@ -96,7 +97,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--registry-password",
         help="The password to the container registry containing the image",
-        type=lambda x: x or os.getenv("AZ_REGISTRY_PASSWORD"),
     )
     parser.add_argument(
         "--out",

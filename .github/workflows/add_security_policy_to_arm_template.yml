@@ -30,3 +30,9 @@ jobs:
           python infra/add_security_policy_to_arm_template.py \
             --arm-template-path ${{ github.event.inputs.test }}_arm_template.json \
             --security-policy-path ${{ github.event.inputs.test }}_security_policy.rego
+
+      - name: Upload ARM Template Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.event.inputs.test }}_arm_template
+          path: ${{ github.event.inputs.test }}_arm_template.json

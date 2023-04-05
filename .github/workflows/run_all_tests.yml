@@ -5,10 +5,11 @@ on:
 
 jobs:
   run-all-tests:
-    uses: ./.github/workflows/run_test.yml
+    uses: ./.github/workflows/end_to_end_test.yml
     secrets: inherit
     strategy:
       matrix:
-        test: [simple_server]
+        test:
+          - simple_server
     with:
       test: ${{ matrix.test }}

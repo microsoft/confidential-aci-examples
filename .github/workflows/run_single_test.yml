@@ -11,8 +11,8 @@ on:
           - simple_server
 
 jobs:
-  run-single-tests:
-    uses: ./.github/workflows/run_test.yml
+  run-single-test:
+    uses: ./.github/workflows/end_to_end_test.yml
     secrets: inherit
     with:
       test: ${{ github.event.inputs.test }}

@@ -1,4 +1,4 @@
-name: Run Single Tests
+name: Run Single Test
 
 on:
   workflow_dispatch:

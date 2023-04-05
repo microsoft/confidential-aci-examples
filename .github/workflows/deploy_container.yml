@@ -43,4 +43,4 @@ jobs:
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
             --arm-template-path ${{ inputs.test }}_arm_template.json \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --container-name ${{ inputs.test }}
+            --container-name ${{ inputs.test }}-${{ github.run_id }}

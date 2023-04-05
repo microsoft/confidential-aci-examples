@@ -20,7 +20,7 @@ from infra.resource_client import get_resource_client
 
 class SimpleServerTest(unittest.TestCase):
     def setUp(self):
-        self.container_name = "simple-server-test"  # TODO: Avoid clashing names
+        self.container_name = os.getenv("CONTAINER_NAME", "simple-server")
 
         # Check if the container already exists
         get_container_ip_func = lambda: get_container_ip(
@@ -55,6 +55,7 @@ class SimpleServerTest(unittest.TestCase):
             name=self.container_name,
             image=f"{registry}/{repository}:{tag}",
             out="tests/simple_server/arm_template.json",
+            registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),
         )
         deploy_container(
             resource_client=get_resource_client(os.getenv("AZ_SUBSCRIPTION_ID")),

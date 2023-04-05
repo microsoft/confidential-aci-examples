@@ -23,6 +23,9 @@ jobs:
           username: ${{ secrets.AZ_REGISTRY_USERNAME }}
           password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
+      - name: Sanitise Test Name
+        run: export DASH_CASE_TEST=$(echo ${{ matrix.test }} | sed 's/_/-/g')
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         with:
@@ -30,4 +33,4 @@ jobs:
           file: tests/${{ matrix.test }}/Dockerfile
           push: true
           tags: |
-            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ matrix.test }}:latest
+            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ env.DASH_CASE_TEST }}:latest

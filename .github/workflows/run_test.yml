@@ -10,7 +10,7 @@ on:
         options: ["simple_server"]
 
 env:
-  AZ_REGISTRY_LOGIN: ${{ secrets.AZ_REGISTRY_LOGIN }}
+  AZ_REGISTRY_LOGIN: "caciexamples.azurecr.io"
   AZ_REGISTRY_USERNAME: ${{ secrets.AZ_REGISTRY_USERNAME }}
   AZ_REGISTRY_PASSWORD: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 

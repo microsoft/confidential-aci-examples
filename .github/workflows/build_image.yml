@@ -29,6 +29,9 @@ jobs:
           username: ${{ secrets.AZ_REGISTRY_USERNAME }}
           password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
+      - name: Sanitise Test Name
+        run: export DASH_CASE_NAME=$(echo ${{ github.event.inputs.test }} | sed 's/_/-/g')
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         with:
@@ -36,4 +39,4 @@ jobs:
           file: tests/${{ github.event.inputs.test }}/Dockerfile
           push: true
           tags: |
-            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ github.event.inputs.test }}:latest
+            caciexamples.azurecr.io/${{ env.DASH_CASE_NAME }}:latest

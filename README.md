@@ -2,6 +2,8 @@
 
 Example code and end to end test cases for confidential ACI. Contains infrastructure for deploying Confidential Azure Container Instances based on AMD SEV-SNP.
 
+[![Tests](https://github.com/microsoft/confidential-aci-examples/actions/workflows/run_all_tests.yml/badge.svg)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/run_all_tests.yml)
+
 ## Setup Development Environment
 
 You can use Github Codespaces to create a fully ready to use development environment.

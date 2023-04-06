@@ -31,6 +31,9 @@ jobs:
             --arm-template-path ${{ inputs.test }}_arm_template.json \
             --security-policy-path ${{ inputs.test }}_security_policy.rego
 
+      - name: Print Updated ARM Template
+        run: cat ${{ inputs.test }}_arm_template.json
+
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2
         with:

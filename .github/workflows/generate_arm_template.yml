@@ -32,6 +32,9 @@ jobs:
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             > ${{ inputs.test }}_arm_template.json
 
+      - name: Print ARM Template
+        run: cat ${{ inputs.test }}_arm_template.json
+
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2
         with:

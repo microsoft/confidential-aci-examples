@@ -41,6 +41,9 @@ jobs:
               --outraw \
               --save-to-file ${{ inputs.test }}_security_policy.rego
 
+      - name: Print Security Policy
+        run: cat ${{ inputs.test }}_security_policy.rego
+
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v2
         with:

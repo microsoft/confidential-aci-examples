@@ -8,6 +8,11 @@ from typing import Any, Dict
 def generate_security_policy(
     arm_template: Dict[str, Any],
 ) -> bytes:
+    subprocess.run(
+        "az login --service-principal --username $SP_APP_ID --password $SP_PASSWORD --tenant $SP_TENANT && az acr login --name caciexamples",
+        shell=True,
+    )
+
     with tempfile.TemporaryDirectory() as tmp_dir:
         arm_template_path = os.path.join(tmp_dir, "arm_template.json")
         security_policy_path = os.path.join(tmp_dir, "security_policy.rego")

@@ -86,6 +86,7 @@ class SimpleServerTest(unittest.TestCase):
             )
 
     def test_get_attestation(self):
+        assert self.container_ip is not None
         response = requests.get(
             f"http://{self.container_ip}:8000/get_attestation",
             timeout=10,

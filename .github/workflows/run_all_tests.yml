@@ -1,6 +1,8 @@
 name: Run All Tests
 
 on:
+  schedule:
+    - cron: "0 9 * * *"
   workflow_dispatch:
   push:
     branches:

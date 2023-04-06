@@ -75,6 +75,8 @@ class SimpleServerTest(unittest.TestCase):
             name=self.container_name,
         )
 
+        self.container_ip = get_container_ip_func()
+
     def tearDown(self):
         if os.getenv("CLEANUP_ACI") not in ["0", "false", "False"]:
             remove_container(

@@ -1,5 +1,6 @@
 import unittest
 import sys
+import uuid
 import requests
 import os
 
@@ -20,7 +21,9 @@ from infra.resource_client import get_resource_client
 
 class SimpleServerTest(unittest.TestCase):
     def setUp(self):
-        self.container_name = os.getenv("CONTAINER_NAME", "simple-server")
+        self.container_name = os.getenv(
+            "CONTAINER_NAME", f"simple-server-{uuid.uuid4()}"
+        )
 
         # Check if the container already exists
         get_container_ip_func = lambda: get_container_ip(
@@ -57,11 +60,16 @@ class SimpleServerTest(unittest.TestCase):
             out="tests/simple_server/arm_template.json",
             registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),
         )
+
+        security_policy = generate_security_policy(arm_template)
+        with open("tests/simple_server/security_policy.rego", "w") as f:
+            f.write(security_policy.decode("utf-8"))
+
         deploy_container(
             resource_client=get_resource_client(os.getenv("AZ_SUBSCRIPTION_ID")),
             arm_template=add_security_policy_to_arm_template(
                 arm_template=arm_template,
-                security_policy=generate_security_policy(arm_template),
+                security_policy=security_policy,
             ),
             resource_group=os.getenv("AZ_RESOURCE_GROUP", ""),
             name=self.container_name,
@@ -78,7 +86,10 @@ class SimpleServerTest(unittest.TestCase):
             )
 
     def test_get_attestation(self):
-        response = requests.get(f"http://{self.container_ip}:8000/get_attestation")
+        response = requests.get(
+            f"http://{self.container_ip}:8000/get_attestation",
+            timeout=10,
+        )
         assert response.status_code == 200
         assert response.content == b"Getting attestation\n"
 

@@ -89,7 +89,7 @@ class SimpleServerTest(unittest.TestCase):
 
     def test_get_attestation(self):
         assert self.container_ip is not None
-        response = requests.get(f"{self.container_ip}:8000/get_attestation")
+        response = requests.get(f"http://{self.container_ip}:8000/get_attestation")
         assert response.status_code == 200
         assert response.content == b"Getting attestation\n"
 

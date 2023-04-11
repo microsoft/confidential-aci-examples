@@ -1,6 +1,5 @@
 import unittest
 import sys
-import uuid
 import requests
 import os
 

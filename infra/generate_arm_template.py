@@ -6,6 +6,7 @@ from typing import Optional
 
 def generate_arm_template(
     name: str,
+    location: str,
     image: str,
     registry_password: Optional[str] = None,
     out: Optional[str] = None,
@@ -20,8 +21,8 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2022-10-01-preview",
-                "name": f"{name}",
-                "location": "eastus2euap",
+                "name": name,
+                "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
                     "GithubRepo": "microsoft/c-aci-examples",
@@ -84,6 +85,11 @@ if __name__ == "__main__":
         "--name",
         help="The name of the container to deploy",
         required=True,
+    )
+    parser.add_argument(
+        "--location",
+        help="The location of the container to deploy",
+        default="eastus2euap",
     )
     parser.add_argument(
         "--image",

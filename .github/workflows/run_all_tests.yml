@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         test: [simple_server]
-        location: [eastus2euap]
+        location: [eastus2euap, northeurope]
     with:
       test: ${{ matrix.test }}
       location: ${{ matrix.location }}

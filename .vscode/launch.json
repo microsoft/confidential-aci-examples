@@ -14,6 +14,8 @@
             "args": [
                 "--name",
                 "${input:containerName}",
+                "--location",
+                "${input:containerLocation}",
                 "--image",
                 "${input:containerImage}",
                 "--security-policy",
@@ -78,6 +80,12 @@
             "type": "promptString",
             "description": "Enter the name of the container:",
             "default": "simple-server",
+        },
+        {
+            "id": "containerLocation",
+            "type": "promptString",
+            "description": "Enter the location of the container:",
+            "default": "eastus2euap",
         },
         {
             "id": "containerImage",

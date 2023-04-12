@@ -65,7 +65,7 @@ jobs:
 
       - name: Run Tests
         env:
-          CONTAINER_NAME: ${{ inputs.test }}-${{ github.run_id }}-${{ github.job }}
+          CONTAINER_NAME: ${{ inputs.test }}-${{ inputs.location }}-${{ github.run_id }}
           AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           AZ_RESOURCE_GROUP: ${{ secrets.AZ_RESOURCE_GROUP }}
           CLEANUP_ACI: 0

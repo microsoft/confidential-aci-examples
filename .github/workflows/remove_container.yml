@@ -1,17 +1,14 @@
 name: Remove Container
 
 on:
-  workflow_dispatch:
-    inputs:
-      test:
-        description: "Test to remove a container for"
-        required: true
-        type: choice
-        options: ["simple_server"]
   workflow_call:
     inputs:
       test:
         description: "Test to remove a container for"
+        required: true
+        type: string
+      location:
+        description: "Location to deploy ACI to"
         required: true
         type: string
 
@@ -42,4 +39,4 @@ jobs:
           python infra/remove_container.py \
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --container-name ${{ inputs.test }}-${{ github.run_id }}-${{ github.job }}
+            --container-name ${{ inputs.test }}-${{ inputs.location }}-${{ github.run_id }}

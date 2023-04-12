@@ -45,6 +45,7 @@ jobs:
     needs: [build-and-push-image, add-security-policy-to-arm-template]
     with:
       test: ${{ inputs.test }}
+      location: ${{ inputs.location }}
 
   run-test:
     runs-on: ubuntu-latest
@@ -81,3 +82,4 @@ jobs:
     if: always()
     with:
       test: ${{ inputs.test }}
+      location: ${{ inputs.location }}

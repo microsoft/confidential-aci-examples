@@ -12,10 +12,8 @@ on:
       location:
         description: "Location to deploy ACI to"
         required: true
-        type: choice
-        options:
-          - eastus2euap
-          - northeurope
+        type: string
+        default: eastus2euap
 
 jobs:
   run-single-test:

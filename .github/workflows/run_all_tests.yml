@@ -7,13 +7,19 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   run-simple-server:
     uses: ./.github/workflows/end_to_end_test.yml
     secrets: inherit
     strategy:
+      fail-fast: false
       matrix:
         test: [simple_server]
+        location: [eastus2euap, northeurope]
     with:
       test: ${{ matrix.test }}
+      location: ${{ matrix.location }}

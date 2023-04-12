@@ -9,6 +9,11 @@ on:
         type: choice
         options:
           - simple_server
+      location:
+        description: "Location to deploy ACI to"
+        required: true
+        type: string
+        default: eastus2euap
 
 jobs:
   run-single-test:
@@ -16,3 +21,4 @@ jobs:
     secrets: inherit
     with:
       test: ${{ inputs.test }}
+      location: ${{ inputs.location }}

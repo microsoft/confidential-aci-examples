@@ -1,17 +1,14 @@
 name: Generate ARM Template
 
 on:
-  workflow_dispatch:
-    inputs:
-      test:
-        description: "Test to generate ARM template for"
-        required: true
-        type: choice
-        options: ["simple_server"]
   workflow_call:
     inputs:
       test:
         description: "Test to generate ARM template for"
+        required: true
+        type: string
+      location:
+        description: "Location to deploy ACI to"
         required: true
         type: string
 
@@ -27,7 +24,8 @@ jobs:
         run: |
           DASH_CASE_TEST=$(echo ${{ inputs.test }} | sed 's/_/-/g')
           python infra/generate_arm_template.py \
-            --name $DASH_CASE_TEST-${{ github.run_id }} \
+            --name $DASH_CASE_TEST-${{ inputs.location }}-${{ github.run_id }} \
+            --location ${{ inputs.location }} \
             --image caciexamples.azurecr.io/${{ inputs.test }}:latest \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             > ${{ inputs.test }}_arm_template.json

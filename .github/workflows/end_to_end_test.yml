@@ -7,6 +7,10 @@ on:
         description: "Test to run"
         required: true
         type: string
+      location:
+        description: "Location to deploy ACI to"
+        required: true
+        type: string
 
 jobs:
   build-and-push-image:
@@ -20,6 +24,7 @@ jobs:
     secrets: inherit
     with:
       test: ${{ inputs.test }}
+      location: ${{ inputs.location }}
 
   generate-security-policy:
     uses: ./.github/workflows/generate_security_policy.yml
@@ -40,6 +45,7 @@ jobs:
     needs: [build-and-push-image, add-security-policy-to-arm-template]
     with:
       test: ${{ inputs.test }}
+      location: ${{ inputs.location }}
 
   run-test:
     runs-on: ubuntu-latest
@@ -60,7 +66,7 @@ jobs:
 
       - name: Run Tests
         env:
-          CONTAINER_NAME: ${{ inputs.test }}-${{ github.run_id }}
+          CONTAINER_NAME: ${{ inputs.test }}-${{ inputs.location }}-${{ github.run_id }}
           AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           AZ_RESOURCE_GROUP: ${{ secrets.AZ_RESOURCE_GROUP }}
           CLEANUP_ACI: 0
@@ -76,3 +82,4 @@ jobs:
     if: always()
     with:
       test: ${{ inputs.test }}
+      location: ${{ inputs.location }}

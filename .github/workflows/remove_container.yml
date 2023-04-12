@@ -42,4 +42,4 @@ jobs:
           python infra/remove_container.py \
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --container-name ${{ inputs.test }}-${{ github.run_id }}
+            --container-name ${{ inputs.test }}-${{ github.run_id }}-${{ github.job }}

@@ -25,7 +25,7 @@ def deploy_container(
                 "mode": "Incremental",
             }
         },  # type: ignore
-    ).wait()
+    ).wait(10 * 60)
 
 
 if __name__ == "__main__":

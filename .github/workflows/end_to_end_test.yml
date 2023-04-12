@@ -7,6 +7,10 @@ on:
         description: "Test to run"
         required: true
         type: string
+      location:
+        description: "Location to deploy ACI to"
+        required: true
+        type: string
 
 jobs:
   build-and-push-image:
@@ -20,6 +24,7 @@ jobs:
     secrets: inherit
     with:
       test: ${{ inputs.test }}
+      location: ${{ inputs.location }}
 
   generate-security-policy:
     uses: ./.github/workflows/generate_security_policy.yml

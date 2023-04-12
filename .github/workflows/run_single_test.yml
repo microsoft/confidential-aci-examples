@@ -9,6 +9,13 @@ on:
         type: choice
         options:
           - simple_server
+      location:
+        description: "Location to deploy ACI to"
+        required: true
+        type: choice
+        options:
+          - eastus2euap
+          - northeurope
 
 jobs:
   run-single-test:
@@ -16,3 +23,4 @@ jobs:
     secrets: inherit
     with:
       test: ${{ inputs.test }}
+      location: ${{ inputs.location }}

@@ -43,10 +43,10 @@ jobs:
           az confcom acipolicygen \
               -a ${{ inputs.test }}_arm_template.json \
               --outraw \
-              --save-to-file ${{ inputs.test }}_security_policy.rego
+              --save-to-file ${{ inputs.test }}_${{ inputs.location }}_security_policy.rego
 
       - name: Print Security Policy
-        run: cat ${{ inputs.test }}_security_policy.rego
+        run: cat ${{ inputs.test }}_${{ inputs.location }}_security_policy.rego
 
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v2

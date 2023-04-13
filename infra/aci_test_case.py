@@ -61,6 +61,7 @@ class AciTestCase(unittest.TestCase):
         arm_template = generate_arm_template(
             name=self.container_name,
             image=f"{registry}/{repository}:{tag}",
+            location="eastus2euap",
             out=f"tests/{snake_case_test_name}/arm_template.json",
             registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),
         )

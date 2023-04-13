@@ -29,7 +29,7 @@ jobs:
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ inputs.test }}_arm_template
+          name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
 
       - name: Install dependencies
         run: pip install -r requirements.txt

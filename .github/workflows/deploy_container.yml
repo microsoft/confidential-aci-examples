@@ -29,7 +29,7 @@ jobs:
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ inputs.test }}_arm_template
+          name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -45,6 +45,6 @@ jobs:
         run: |
           python infra/deploy_container.py \
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
-            --arm-template-path ${{ inputs.test }}_arm_template.json \
+            --arm-template-path ${{ inputs.test }}_${{ inputs.location }}_arm_template.json \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
             --container-name ${{ inputs.test }}-${{ inputs.location }}-${{ github.run_id }}

@@ -28,13 +28,13 @@ jobs:
             --location ${{ inputs.location }} \
             --image caciexamples.azurecr.io/${{ inputs.test }}:latest \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
-            > ${{ inputs.test }}_arm_template.json
+            > ${{ inputs.test }}_${{ inputs.location }}_arm_template.json
 
       - name: Print ARM Template
-        run: cat ${{ inputs.test }}_arm_template.json
+        run: cat ${{ inputs.test }}_${{ inputs.location }}_arm_template.json
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.test }}_arm_template
-          path: ${{ inputs.test }}_arm_template.json
+          name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
+          path: ${{ inputs.test }}_${{ inputs.location }}_arm_template.json

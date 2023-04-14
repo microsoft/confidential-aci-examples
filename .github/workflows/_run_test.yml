@@ -13,6 +13,7 @@ jobs:
     uses: ./.github/workflows/build_and_push_image.yml
     secrets: inherit
     with:
+      dockerfile: tests/${{ inputs.test }}/Dockerfile
       test: ${{ inputs.test }}
 
   deploy-and-run-test:

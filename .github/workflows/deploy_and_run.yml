@@ -19,54 +19,27 @@ on:
         description: "Image to deploy to ACI"
         required: true
         type: string
-      policy:
+      security-policy:
         description: "Security Policy to use for ACI"
         required: true
         type: string
 
 jobs:
-  generate-security-policy:
-    uses: ./.github/workflows/_generate_security_policy.yml
-    if: ${{ inputs.policy == 'generate' }}
-    secrets: inherit
-    with:
-      container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}
-      location: ${{ inputs.location }}
-      image: ${{ inputs.image }}
-      artifact-name: ${{ inputs.test }}_${{ inputs.location }}_security_policy
-
-  set-security-policy:
-    runs-on: ubuntu-latest
-    if: ${{ inputs.policy != 'generate' }}
-    outputs:
-      policy_generated: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Upload Security Policy Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ inputs.test }}_${{ inputs.location }}_security_policy
-          path: ${{ inputs.policy }}
-
   generate-arm-template:
     uses: ./.github/workflows/_generate_arm_template.yml
-    needs: [generate-security-policy, set-security-policy]
-    if: always() && (needs.generate-security-policy.outputs.policy_generated || needs.set-security-policy.outputs.policy_generated)
     secrets: inherit
     with:
       container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
-      security-policy: ${{ inputs.test }}_${{ inputs.location }}_security_policy
+      security-policy-artifact-name: ${{ inputs.test }}_security_policies
+      security-policy: ${{ inputs.security-policy }}
       artifact-name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
 
   deploy-container:
     uses: ./.github/workflows/deploy_container.yml
     secrets: inherit
     needs: generate-arm-template
-    if: always() && needs.generate-arm-template.result == 'success'
     with:
       test: ${{ inputs.test }}
       location: ${{ inputs.location }}
@@ -74,7 +47,6 @@ jobs:
   run-test:
     runs-on: ubuntu-latest
     needs: deploy-container
-    if: always() && needs.deploy-container.result == 'success'
     steps:
       - name: Checkout
         uses: actions/checkout@v2

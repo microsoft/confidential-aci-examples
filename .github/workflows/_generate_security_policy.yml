@@ -3,16 +3,12 @@ name: Generate Security Policy
 on:
   workflow_call:
     inputs:
-      container-group-name:
-        description: "Name of the container group to deploy"
-        required: true
-        type: string
-      location:
-        description: "Location to deploy ACI to"
-        required: true
-        type: string
       image:
         description: "Image to deploy to ACI"
+        required: true
+        type: string
+      test:
+        description: "Name of the test to put the policy in"
         required: true
         type: string
       artifact-name:
@@ -36,8 +32,8 @@ jobs:
         id: generate-arm-template
         run: |
           python infra/generate_arm_template.py \
-            --container-group-name ${{ inputs.container-group-name }} \
-            --location ${{ inputs.location }} \
+            --container-group-name "not-relevant" \
+            --location "not-relevant" \
             --image ${{ inputs.image }} \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --out arm_template.json
@@ -52,16 +48,19 @@ jobs:
       - name: Set Docker Permissions
         run: sudo usermod -aG docker $USER
 
+      - name: Make Security Policies Directory
+        run: mkdir -p /tests/${{ inputs.test }}/security_policies
+
       - name: Generate Security Policy
         id: generate-security-policy
         run: |
           az confcom acipolicygen \
               -a arm_template.json \
               --outraw \
-              --save-to-file security_policy.rego
+              --save-to-file tests/${{ inputs.test }}/security_policies/_generated.rego
 
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.artifact-name }}
-          path: security_policy.rego
+          name: ${{ inputs.test }}_security_policies
+          path: tests/${{ inputs.test }}/security_policies

@@ -15,8 +15,12 @@ on:
         description: "Image to deploy to ACI"
         required: true
         type: string
+      security-policy-artifact-name:
+        description: "Security policy artifact name containing all policies"
+        required: true
+        type: string
       security-policy:
-        description: "Security policy artifact name to use for ACI"
+        description: "Security policy within the artifact to use for ACI"
         required: true
         type: string
       artifact-name:
@@ -34,7 +38,8 @@ jobs:
       - name: Download Security Policy Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ inputs.security-policy }}
+          name: ${{ inputs.security-policy-artifact-name }}
+          path: security_policies
 
       - name: Generate ARM Template
         id: generate-arm-template
@@ -43,7 +48,7 @@ jobs:
             --container-group-name ${{ inputs.container-group-name }} \
             --location ${{ inputs.location }} \
             --image ${{ inputs.image }} \
-            --security-policy "$(cat security_policy.rego | base64)" \
+            --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --out arm_template.json
 

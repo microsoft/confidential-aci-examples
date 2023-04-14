@@ -26,6 +26,13 @@ jobs:
       dockerfile: tests/${{ inputs.test }}/Dockerfile
       tag: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
 
+  generate-security-policy:
+    uses: ./.github/workflows/_generate_security_policy.yml
+    secrets: inherit
+    with:
+      image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
+      test: ${{ inputs.test }}
+
   deploy-and-run-test:
     uses: ./.github/workflows/deploy_and_run.yml
     needs: [build-and-push-image, get-dash-case]
@@ -34,10 +41,10 @@ jobs:
       fail-fast: false
       matrix:
         location: [eastus2euap, westeurope]
-        policy: ["generate", "tests/simple_server/allow_all.rego"]
+        security-policy: ["_generated.rego", "allow_all.rego"]
     with:
       test: ${{ inputs.test }}
       dash-case: "${{ needs.get-dash-case.outputs.dashcase }}"
       location: ${{ matrix.location }}
       image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
-      policy: ${{ matrix.policy }}
+      security-policy: ${{ matrix.security-policy }}

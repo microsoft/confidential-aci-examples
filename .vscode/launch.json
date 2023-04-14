@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--name",
+                "--container-group-name",
                 "${input:containerName}",
                 "--location",
                 "${input:containerLocation}",
@@ -52,7 +52,7 @@
                 "${input:armTemplatePath}",
                 "--resource-group",
                 "${input:resourceGroup}",
-                "--container-name",
+                "--deployment-name",
                 "${input:containerName}",
             ]
         },

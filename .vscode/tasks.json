@@ -92,7 +92,7 @@
             "id": "securityPolicyPath",
             "type": "promptString",
             "description": "Enter the path to Security Policy file:",
-            "default": "tests/simple_server/security_policy.rego"
+            "default": "tests/simple_server/security_policies/_generated.rego"
         },
     ]
 }

@@ -37,6 +37,6 @@ jobs:
         location: [eastus2euap, westeurope]
     with:
       test: ${{ inputs.test }}
-      dash-case: ${{ needs.get-dash-case.outputs.dashcase }}
+      dash-case: "simple-server"
       location: ${{ matrix.location }}
       image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest

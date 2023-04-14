@@ -7,8 +7,8 @@ on:
         description: "Dockerfile to build and push"
         required: true
         type: string
-      test:
-        description: "Test to build and push the Docker image for"
+      tag:
+        description: "Tag to build and push"
         required: true
         type: string
 
@@ -39,4 +39,4 @@ jobs:
           file: ${{ inputs.dockerfile }}
           push: true
           tags: |
-            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ inputs.test }}:latest
+            ${{ inputs.tag }}

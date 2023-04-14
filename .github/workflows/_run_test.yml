@@ -40,6 +40,9 @@ jobs:
     outputs:
       security-policies: ${{ steps.find-policies.outputs.security-policies }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Find All Security Policies
         id: find-policies
         run: |

@@ -9,6 +9,17 @@ on:
         type: string
 
 jobs:
+  get-dash-case:
+    runs-on: ubuntu-latest
+    outputs:
+      dashcase: ${{ steps.convert.outputs.dashcase }}
+    steps:
+      - name: Convert Test Name to Dash Case
+        id: convert
+        run: |
+          echo dashcase="$(echo ${{ inputs.test }} | sed 's/_/-/g')"
+          echo "dashcase="$(echo ${{ inputs.test }} | sed 's/_/-/g')" >> $GITHUB_OUTPUT"
+
   build-and-push-image:
     uses: ./.github/workflows/_build_and_push_image.yml
     secrets: inherit
@@ -18,7 +29,7 @@ jobs:
 
   deploy-and-run-test:
     uses: ./.github/workflows/deploy_and_run.yml
-    needs: build-and-push-image
+    needs: [build-and-push-image, get-dash-case]
     secrets: inherit
     strategy:
       fail-fast: false
@@ -26,5 +37,6 @@ jobs:
         location: [eastus2euap, westeurope]
     with:
       test: ${{ inputs.test }}
+      dash-case: ${{ needs.get-dash-case.outputs.dashcase }}
       location: ${{ matrix.location }}
       image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest

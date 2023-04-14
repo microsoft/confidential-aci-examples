@@ -7,6 +7,10 @@ on:
         description: "Test to run"
         required: true
         type: string
+      dash-case:
+        description: "Dash Case Version of Test to run"
+        required: true
+        type: string
       location:
         description: "Location to deploy ACI to"
         required: true
@@ -17,23 +21,11 @@ on:
         type: string
 
 jobs:
-  get-dash-case:
-    runs-on: ubuntu-latest
-    outputs:
-      dashcase: ${{ steps.convert.outputs.dashcase }}
-    steps:
-      - name: Convert Test Name to Dash Case
-        id: convert
-        run: |
-          echo "dashcase=$(echo ${{ inputs.test }} | sed 's/_/-/g')"
-          echo "dashcase=$(echo ${{ inputs.test }} | sed 's/_/-/g') >> $GITHUB_OUTPUT"
-
   generate-arm-template:
     uses: ./.github/workflows/_generate_arm_template.yml
     secrets: inherit
-    needs: get-dash-case
     with:
-      container-group-name: ${{ needs.get-dash-case.outputs.dashcase }}-${{ inputs.location }}-${{ github.run_id }}
+      container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
       artifact-name: ${{ inputs.test }}_${{ inputs.location }}_arm_template

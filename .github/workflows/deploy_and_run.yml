@@ -21,34 +21,30 @@ on:
         type: string
 
 jobs:
-  generate-arm-template:
-    uses: ./.github/workflows/_generate_arm_template.yml
+  generate-security-policy:
+    uses: ./.github/workflows/_generate_security_policy.yml
     secrets: inherit
     with:
       container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
-      artifact-name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
+      artifact-name: ${{ inputs.test }}_${{ inputs.location }}_security_policy
 
-  generate-security-policy:
-    uses: ./.github/workflows/generate_security_policy.yml
-    secrets: inherit
-    needs: generate-arm-template
-    with:
-      test: ${{ inputs.test }}
-      location: ${{ inputs.location }}
-
-  add-security-policy-to-arm-template:
-    uses: ./.github/workflows/add_security_policy_to_arm_template.yml
+  generate-arm-template:
+    uses: ./.github/workflows/_generate_arm_template.yml
     needs: generate-security-policy
+    secrets: inherit
     with:
-      test: ${{ inputs.test }}
+      container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}
       location: ${{ inputs.location }}
+      image: ${{ inputs.image }}
+      security-policy: ${{ inputs.test }}_${{ inputs.location }}_security_policy
+      artifact-name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
 
   deploy-container:
     uses: ./.github/workflows/deploy_container.yml
     secrets: inherit
-    needs: [add-security-policy-to-arm-template]
+    needs: generate-arm-template
     with:
       test: ${{ inputs.test }}
       location: ${{ inputs.location }}

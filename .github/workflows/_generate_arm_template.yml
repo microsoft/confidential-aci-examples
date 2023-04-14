@@ -16,7 +16,8 @@ on:
         required: true
         type: string
       security-policy:
-        description: "Security policy to use for ACI"
+        description: "Security policy artifact name to use for ACI"
+        required: true
         type: string
       artifact-name:
         description: "Name of the generated template artifact"
@@ -30,6 +31,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Download Security Policy Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.security-policy }}
+
       - name: Generate ARM Template
         id: generate-arm-template
         run: |
@@ -37,7 +43,7 @@ jobs:
             --container-group-name ${{ inputs.container-group-name }} \
             --location ${{ inputs.location }} \
             --image ${{ inputs.image }} \
-            --security-policy "${{ inputs.security-policy }}" \
+            --security-policy "$(cat security_policy.rego | base64)" \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --out arm_template.json
 

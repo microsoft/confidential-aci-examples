@@ -12,7 +12,7 @@ on:
       - main
 
 jobs:
-  run-simple-server:
+  run-all:
     uses: ./.github/workflows/run_test_in_all_locations.yml
     secrets: inherit
     strategy:

@@ -1,21 +1,14 @@
 name: Deploy Container
 
 on:
-  workflow_dispatch:
-    inputs:
-      test:
-        description: "Test to deploy a container for"
-        required: true
-        type: choice
-        options: ["simple_server"]
   workflow_call:
     inputs:
-      test:
-        description: "Test to deploy a container for"
+      arm-template:
+        description: "ARM Template to deploy"
         required: true
         type: string
-      location:
-        description: "Location to deploy ACI to"
+      deployment-name:
+        description: "Name of the deployment"
         required: true
         type: string
 
@@ -29,7 +22,7 @@ jobs:
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
+          name: ${{ inputs.arm-template }}
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -47,4 +40,4 @@ jobs:
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
             --arm-template-path arm_template.json \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --container-name ${{ inputs.test }}-${{ inputs.location }}-${{ github.run_id }}
+            --deployment-name ${{ inputs.deployment-name }} \

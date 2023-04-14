@@ -26,7 +26,7 @@ class AciTestCase(unittest.TestCase):
         dash_case_test_name = re.sub(r"(?<!^)(?=[A-Z])", "-", test_name).lower()
 
         self.container_name = os.getenv(
-            "CONTAINER_NAME", f"{dash_case_test_name}-{uuid.uuid4()}"
+            "DEPLOYMENT_NAME", f"{dash_case_test_name}-{uuid.uuid4()}"
         )
 
         # Check if the container already exists
@@ -77,7 +77,7 @@ class AciTestCase(unittest.TestCase):
                 security_policy=security_policy,
             ),
             resource_group=os.getenv("AZ_RESOURCE_GROUP", ""),
-            name=self.container_name,
+            deployment_name=self.container_name,
         )
 
         self.container_ip = get_container_ip_func()

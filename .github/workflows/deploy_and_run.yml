@@ -29,28 +29,39 @@ on:
         type: string
 
 jobs:
+  gen-group-name:
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.generate-name.outputs.container-group-name }}
+    steps:
+      - name: Generate Unique Container Group Name
+        id: generate-name
+        run: |
+          echo "::set-output name=container-group-name::$(echo ${{ inputs.dash-case }}-${{ inputs.location }}-$RANDOM)"
+
   generate-arm-template:
     uses: ./.github/workflows/_generate_arm_template.yml
+    needs: gen-group-name
     secrets: inherit
     with:
-      container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}
+      container-group-name: ${{ needs.gen-group-name.outputs.name }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
       security-policy-artifact-name: ${{ inputs.security-policy-artifact-name }}
       security-policy: ${{ inputs.security-policy }}
-      artifact-name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
+      artifact-name: ${{ needs.gen-group-name.outputs.name }}_arm_template
 
   deploy-container:
     uses: ./.github/workflows/deploy_container.yml
     secrets: inherit
-    needs: generate-arm-template
+    needs: [gen-group-name, generate-arm-template]
     with:
-      test: ${{ inputs.test }}
-      location: ${{ inputs.location }}
+      arm-template: ${{ needs.gen-group-name.outputs.name }}_arm_template
+      deployment-name: ${{ needs.gen-group-name.outputs.name }}-deployment
 
   run-test:
     runs-on: ubuntu-latest
-    needs: deploy-container
+    needs: [gen-group-name, deploy-container]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -67,7 +78,7 @@ jobs:
 
       - name: Run Tests
         env:
-          CONTAINER_NAME: ${{ inputs.test }}-${{ inputs.location }}-${{ github.run_id }}
+          DEPLOYMENT_NAME: ${{ needs.gen-group-name.outputs.name }}-deployment
           AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           AZ_RESOURCE_GROUP: ${{ secrets.AZ_RESOURCE_GROUP }}
           CLEANUP_ACI: 0
@@ -79,8 +90,7 @@ jobs:
   remove-container:
     uses: ./.github/workflows/remove_container.yml
     secrets: inherit
-    needs: run-test
+    needs: [gen-group-name, run-test]
     if: always()
     with:
-      test: ${{ inputs.test }}
-      location: ${{ inputs.location }}
+      deployment-name: ${{ needs.gen-group-name.outputs.name }}-deployment

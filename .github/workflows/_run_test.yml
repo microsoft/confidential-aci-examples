@@ -10,6 +10,7 @@ on:
 
 jobs:
   get-dash-case:
+    name: Get Dash Case (${{ inputs.test }})
     runs-on: ubuntu-latest
     outputs:
       dashcase: ${{ steps.convert.outputs.dashcase }}

@@ -26,9 +26,6 @@ jobs:
           username: ${{ secrets.AZ_REGISTRY_USERNAME }}
           password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
-      - name: Sanitise Test Name
-        run: echo DASH_TEST_CASE=$(echo ${{ inputs.test }} | sed 's/_/-/g') >> $GITHUB_ENV
-
       - name: Get Dockerfile Context
         run: |
           echo DOCKERFILE_CONTEXT=$(dirname ${{ inputs.dockerfile }}) >> $GITHUB_ENV
@@ -37,10 +34,9 @@ jobs:
         uses: docker/build-push-action@v2
         env:
           DOCKERFILE_CONTEXT: ${{ env.DOCKERFILE_CONTEXT }}
-          DASH_TEST_CASE: ${{ env.DASH_TEST_CASE }}
         with:
           context: ${{ env.DOCKERFILE_CONTEXT }}
           file: ${{ inputs.dockerfile }}
           push: true
           tags: |
-            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ env.DASH_TEST_CASE }}:latest
+            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ inputs.test }}:latest

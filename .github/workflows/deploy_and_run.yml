@@ -37,6 +37,7 @@ jobs:
 
   set-security-policy:
     runs-on: ubuntu-latest
+    if: ${{ inputs.policy != 'generate' }}
     outputs:
       policy_generated: true
     steps:

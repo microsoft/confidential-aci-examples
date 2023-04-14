@@ -37,7 +37,7 @@ jobs:
 
   deploy-and-run-test:
     uses: ./.github/workflows/_deploy_and_run.yml
-    needs: [build-and-push-image, get-dash-case]
+    needs: [get-dash-case, generate-security-policy]
     secrets: inherit
     strategy:
       fail-fast: false

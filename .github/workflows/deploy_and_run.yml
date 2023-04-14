@@ -51,6 +51,7 @@ jobs:
   generate-arm-template:
     uses: ./.github/workflows/_generate_arm_template.yml
     needs: [generate-security-policy, set-security-policy]
+    if: ${{ needs.generate-security-policy.result == 'success' || needs.set-security-policy.result == 'success' }}
     secrets: inherit
     with:
       container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}

@@ -41,11 +41,11 @@ jobs:
           echo "::set-output name=container-group-name::$(echo ${{ inputs.dash-case }}-${{ inputs.location }}-$(shuf -i 1-100000000 -n 1))"
 
   generate-arm-template:
-    name: Generate ARM Template (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
     uses: ./.github/workflows/_generate_arm_template.yml
     needs: generate_unique_name
     secrets: inherit
     with:
+      label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
       container-group-name: ${{ needs.generate_unique_name.outputs.name }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
@@ -54,11 +54,11 @@ jobs:
       artifact-name: ${{ needs.generate_unique_name.outputs.name }}_arm_template
 
   deploy-container:
-    name: Deploy Container (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
     uses: ./.github/workflows/_deploy_container.yml
     secrets: inherit
     needs: [generate_unique_name, generate-arm-template]
     with:
+      label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
       arm-template: ${{ needs.generate_unique_name.outputs.name }}_arm_template
       deployment-name: ${{ needs.generate_unique_name.outputs.name }}-deployment
 
@@ -92,10 +92,10 @@ jobs:
             -v
 
   remove-container:
-    name: Remove Container (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
     uses: ./.github/workflows/_remove_container.yml
     secrets: inherit
     needs: [generate_unique_name, run-test]
     if: always()
     with:
+      label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
       deployment-name: ${{ needs.generate_unique_name.outputs.name }}-deployment

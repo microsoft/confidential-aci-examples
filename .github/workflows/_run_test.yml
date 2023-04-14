@@ -21,15 +21,14 @@ jobs:
           echo "::set-output name=dashcase::$(echo ${{ inputs.test }} | sed 's/_/-/g')"
 
   build-and-push-image:
-    name: Build and Push Image (${{ inputs.test }})
     uses: ./.github/workflows/_build_and_push_image.yml
     secrets: inherit
     with:
+      label: ${{ inputs.test }}
       dockerfile: tests/${{ inputs.test }}/Dockerfile
       tag: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
 
   generate-security-policy:
-    name: Generate Security Policy (${{ inputs.test }})
     uses: ./.github/workflows/_generate_security_policy.yml
     needs: build-and-push-image
     secrets: inherit

@@ -3,6 +3,10 @@ name: Remove Container
 on:
   workflow_call:
     inputs:
+      label:
+        description: "Label for the workflow"
+        required: true
+        type: string
       deployment-name:
         description: "Deployment to remove"
         required: true
@@ -10,6 +14,7 @@ on:
 
 jobs:
   remove-container:
+    name: Remove Container (${{ inputs.label }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

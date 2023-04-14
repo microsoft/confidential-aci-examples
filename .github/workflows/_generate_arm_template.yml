@@ -3,6 +3,10 @@ name: Generate ARM Template
 on:
   workflow_call:
     inputs:
+      label:
+        description: "Label for the workflow"
+        required: true
+        type: string
       container-group-name:
         description: "Name of the container group to deploy"
         required: true
@@ -30,6 +34,7 @@ on:
 
 jobs:
   generate-arm-template:
+    name: Generate ARM Template (${{ inputs.label }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -18,6 +18,7 @@ on:
 
 jobs:
   generate-security-policy:
+    name: Generate Security Policy (${{ inputs.test }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

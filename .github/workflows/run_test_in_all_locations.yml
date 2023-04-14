@@ -13,8 +13,7 @@ jobs:
     uses: ./.github/workflows/build_and_push_image.yml
     secrets: inherit
     with:
-      dockerfile: tests/${{ inputs.test }}/Dockerfile
-      tag: ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ inputs.test }}:latest
+      test: ${{ inputs.test }}
 
   deploy-and-run-test:
     uses: ./.github/workflows/deploy_and_run.yml

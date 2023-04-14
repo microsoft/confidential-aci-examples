@@ -12,8 +12,8 @@ on:
       - main
 
 jobs:
-  run-all:
-    uses: ./.github/workflows/_run_test.yml
+  run-simple-server:
+    uses: ./.github/workflows/run_test_in_all_locations.yml
     secrets: inherit
     strategy:
       fail-fast: false

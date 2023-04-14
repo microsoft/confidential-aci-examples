@@ -30,6 +30,7 @@ on:
 
 jobs:
   generate_unique_name:
+    name: Generate Unique Name (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
     outputs:
       name: ${{ steps.generate-name.outputs.container-group-name }}
@@ -40,6 +41,7 @@ jobs:
           echo "::set-output name=container-group-name::$(echo ${{ inputs.dash-case }}-${{ inputs.location }}-$(shuf -i 1-100000000 -n 1))"
 
   generate-arm-template:
+    name: Generate ARM Template (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
     uses: ./.github/workflows/_generate_arm_template.yml
     needs: generate_unique_name
     secrets: inherit
@@ -52,6 +54,7 @@ jobs:
       artifact-name: ${{ needs.generate_unique_name.outputs.name }}_arm_template
 
   deploy-container:
+    name: Deploy Container (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
     uses: ./.github/workflows/_deploy_container.yml
     secrets: inherit
     needs: [generate_unique_name, generate-arm-template]
@@ -60,6 +63,7 @@ jobs:
       deployment-name: ${{ needs.generate_unique_name.outputs.name }}-deployment
 
   run-test:
+    name: Run Test (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
     needs: [generate_unique_name, deploy-container]
     steps:
@@ -88,6 +92,7 @@ jobs:
             -v
 
   remove-container:
+    name: Remove Container (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
     uses: ./.github/workflows/_remove_container.yml
     secrets: inherit
     needs: [generate_unique_name, run-test]

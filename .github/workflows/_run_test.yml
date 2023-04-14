@@ -46,6 +46,7 @@ jobs:
       - name: Find All Security Policies
         id: find-policies
         run: |
+          echo "name=security-policies::[$(find tests/simple_server/security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
           echo "::set-output name=security-policies::[$(find tests/simple_server/security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
 
   deploy-and-run-test:

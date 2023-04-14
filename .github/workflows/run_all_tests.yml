@@ -13,13 +13,11 @@ on:
 
 jobs:
   run-simple-server:
-    uses: ./.github/workflows/end_to_end_test.yml
+    uses: ./.github/workflows/run_test_in_all_locations.yml
     secrets: inherit
     strategy:
       fail-fast: false
       matrix:
         test: [simple_server]
-        location: [eastus2euap, westeurope]
     with:
       test: ${{ matrix.test }}
-      location: ${{ matrix.location }}

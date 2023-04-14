@@ -19,8 +19,6 @@ on:
 jobs:
   generate-security-policy:
     runs-on: ubuntu-latest
-    outputs:
-      policy_generated: true
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -49,7 +47,7 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Make Security Policies Directory
-        run: mkdir -p /tests/${{ inputs.test }}/security_policies
+        run: mkdir -p tests/${{ inputs.test }}/security_policies
 
       - name: Generate Security Policy
         id: generate-security-policy
@@ -62,5 +60,5 @@ jobs:
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.test }}_security_policies
+          name: ${{ inputs.artifact-name }}
           path: tests/${{ inputs.test }}/security_policies

@@ -32,6 +32,7 @@ jobs:
     with:
       image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
       test: ${{ inputs.test }}
+      artifact-name: ${{ inputs.test }}_security_policies
 
   deploy-and-run-test:
     uses: ./.github/workflows/deploy_and_run.yml
@@ -47,4 +48,5 @@ jobs:
       dash-case: "${{ needs.get-dash-case.outputs.dashcase }}"
       location: ${{ matrix.location }}
       image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
+      security-policy-artifact-name: ${{ inputs.test }}_security_policies
       security-policy: ${{ matrix.security-policy }}

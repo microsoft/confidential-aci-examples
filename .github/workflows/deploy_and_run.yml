@@ -19,6 +19,10 @@ on:
         description: "Image to deploy to ACI"
         required: true
         type: string
+      security-policy-artifact-name:
+        description: "Security policy artifact name containing all policies"
+        required: true
+        type: string
       security-policy:
         description: "Security Policy to use for ACI"
         required: true
@@ -32,7 +36,7 @@ jobs:
       container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
-      security-policy-artifact-name: ${{ inputs.test }}_security_policies
+      security-policy-artifact-name: ${{ inputs.security-policy-artifact-name }}
       security-policy: ${{ inputs.security-policy }}
       artifact-name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
 

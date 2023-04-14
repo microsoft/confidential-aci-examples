@@ -13,7 +13,7 @@ on:
 
 jobs:
   run-all:
-    uses: ./.github/workflows/components/_run_test.yml
+    uses: ./.github/workflows/_run_test.yml
     secrets: inherit
     strategy:
       fail-fast: false

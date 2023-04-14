@@ -32,7 +32,7 @@ jobs:
       - name: Add Security Policy to ARM Template
         run: |
           python infra/add_security_policy_to_arm_template.py \
-            --arm-template-path ${{ inputs.test }}_${{ inputs.location }}_arm_template.json \
+            --arm-template-path arm_template.json \
             --security-policy-path ${{ inputs.test }}_${{ inputs.location }}_security_policy.rego
 
       - name: Print Updated ARM Template
@@ -42,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
-          path: ${{ inputs.test }}_${{ inputs.location }}_arm_template.json
+          path: arm_template.json

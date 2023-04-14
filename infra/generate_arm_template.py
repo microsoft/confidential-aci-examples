@@ -5,7 +5,7 @@ from typing import Optional
 
 
 def generate_arm_template(
-    name: str,
+    container_group_name: str,
     location: str,
     image: str,
     registry_password: Optional[str] = None,
@@ -21,7 +21,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2022-10-01-preview",
-                "name": name,
+                "name": container_group_name,
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -31,7 +31,7 @@ def generate_arm_template(
                     "sku": "Confidential",
                     "containers": [
                         {
-                            "name": f"{name}-0",
+                            "name": f"{container_group_name}-0",
                             "properties": {
                                 "image": image,
                                 "ports": [
@@ -69,12 +69,9 @@ def generate_arm_template(
         ],
     }
 
-    template_str = json.dumps(arm_template, indent=2)
-    print(template_str)
-
     if out:
         with open(out, "w") as f:
-            f.write(template_str)
+            f.write(json.dumps(arm_template, indent=2))
 
     return arm_template
 
@@ -82,8 +79,8 @@ def generate_arm_template(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate ARM template")
     parser.add_argument(
-        "--name",
-        help="The name of the container to deploy",
+        "--container-group-name",
+        help="The name of the container group to deploy",
         required=True,
     )
     parser.add_argument(

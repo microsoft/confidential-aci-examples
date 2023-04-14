@@ -3,13 +3,22 @@ name: Build and Push Container Image
 on:
   workflow_call:
     inputs:
-      test:
-        description: "Test to build and push the Docker image for"
+      label:
+        description: "Label for the workflow"
+        required: true
+        type: string
+      dockerfile:
+        description: "Dockerfile to build and push"
+        required: true
+        type: string
+      tag:
+        description: "Tag to build and push"
         required: true
         type: string
 
 jobs:
   build-and-push-image:
+    name: Build and Push Image (${{ inputs.label }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,16 +31,17 @@ jobs:
           username: ${{ secrets.AZ_REGISTRY_USERNAME }}
           password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
-      - name: Sanitise Test Name
-        run: echo DASH_TEST_CASE=$(echo ${{ inputs.test }} | sed 's/_/-/g') >> $GITHUB_ENV
+      - name: Get Dockerfile Context
+        run: |
+          echo DOCKERFILE_CONTEXT=$(dirname ${{ inputs.dockerfile }}) >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         env:
-          DASH_TEST_CASE: ${{ env.DASH_TEST_CASE }}
+          DOCKERFILE_CONTEXT: ${{ env.DOCKERFILE_CONTEXT }}
         with:
-          context: tests/${{ inputs.test }}
-          file: tests/${{ inputs.test }}/Dockerfile
+          context: ${{ env.DOCKERFILE_CONTEXT }}
+          file: ${{ inputs.dockerfile }}
           push: true
           tags: |
-            ${{ secrets.AZ_REGISTRY_LOGIN }}/${{ env.DASH_TEST_CASE }}:latest
+            ${{ inputs.tag }}

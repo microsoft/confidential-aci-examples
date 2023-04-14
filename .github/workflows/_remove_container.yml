@@ -3,26 +3,22 @@ name: Remove Container
 on:
   workflow_call:
     inputs:
-      test:
-        description: "Test to remove a container for"
+      label:
+        description: "Label for the workflow"
         required: true
         type: string
-      location:
-        description: "Location to deploy ACI to"
+      deployment-name:
+        description: "Deployment to remove"
         required: true
         type: string
 
 jobs:
   remove-container:
+    name: Remove Container (${{ inputs.label }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Download ARM Template Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -39,4 +35,4 @@ jobs:
           python infra/remove_container.py \
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --container-name ${{ inputs.test }}-${{ inputs.location }}-${{ github.run_id }}
+            --container-name ${{ inputs.deployment-name }}

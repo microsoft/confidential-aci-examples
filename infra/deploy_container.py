@@ -13,11 +13,11 @@ def deploy_container(
     resource_client: ResourceManagementClient,
     arm_template: dict,
     resource_group: str,
-    name: str,
+    deployment_name: str,
 ):
     resource_client.deployments.begin_create_or_update(
         resource_group,
-        name,
+        deployment_name,
         {
             "properties": {
                 "template": arm_template,
@@ -44,8 +44,8 @@ if __name__ == "__main__":
         help="The resource group to deploy the container with",
     )
     parser.add_argument(
-        "--container-name",
-        help="The name of the container to deploy",
+        "--deployment-name",
+        help="The name of the container deployment",
         required=True,
     )
 
@@ -58,5 +58,5 @@ if __name__ == "__main__":
             ),
             arm_template=json.load(f),
             resource_group=args.resource_group or os.getenv("AZ_RESOURCE_GROUP", ""),
-            name=args.container_name,
+            deployment_name=args.deployment_name,
         )

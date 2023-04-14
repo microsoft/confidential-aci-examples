@@ -11,14 +11,31 @@ on:
         description: "Location to deploy ACI to"
         required: true
         type: string
+      image:
+        description: "Image to deploy to ACI"
+        required: true
+        type: string
 
 jobs:
+  get-dash-case:
+    runs-on: ubuntu-latest
+    outputs:
+      dash-case-test: ${{ steps.convert.outputs.dash-case-test }}
+    steps:
+      - name: Convert Test Name to Dash Case
+        id: convert
+        run: |
+          echo "dash-case-test=$(echo ${{ inputs.test }} | sed 's/_/-/g') >> $GITHUB_OUTPUT"
+
   generate-arm-template:
     uses: ./.github/workflows/_generate_arm_template.yml
     secrets: inherit
+    needs: get-dash-case
     with:
-      test: ${{ inputs.test }}
+      container-group-name: ${{ needs.get-dash-case.outputs.dash-case-test }}-${{ inputs.location }}-${{ github.run_id }}
       location: ${{ inputs.location }}
+      image: ${{ inputs.image }}
+      artifact-name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
 
   generate-security-policy:
     uses: ./.github/workflows/generate_security_policy.yml

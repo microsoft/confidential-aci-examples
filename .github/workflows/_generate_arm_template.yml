@@ -3,12 +3,23 @@ name: Generate ARM Template
 on:
   workflow_call:
     inputs:
-      test:
-        description: "Test to generate ARM template for"
+      container-group-name:
+        description: "Name of the container group to deploy"
         required: true
         type: string
       location:
         description: "Location to deploy ACI to"
+        required: true
+        type: string
+      image:
+        description: "Image to deploy to ACI"
+        required: true
+        type: string
+      security-policy:
+        description: "Security policy to use for ACI"
+        type: string
+      artifact-name:
+        description: "Name of the generated template artifact"
         required: true
         type: string
 
@@ -22,16 +33,16 @@ jobs:
       - name: Generate ARM Template
         id: generate-arm-template
         run: |
-          DASH_CASE_TEST=$(echo ${{ inputs.test }} | sed 's/_/-/g')
           python infra/generate_arm_template.py \
-            --container-group-name $DASH_CASE_TEST-${{ inputs.location }}-${{ github.run_id }} \
+            --container-group-name ${{ inputs.container-group-name }} \
             --location ${{ inputs.location }} \
-            --image caciexamples.azurecr.io/${{ inputs.test }}:latest \
+            --image ${{ inputs.image }} \
+            --security-policy ${{ inputs.security-policy }} \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --out arm_template.json
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.test }}_${{ inputs.location }}_arm_template
+          name: ${{ inputs.artifact-name }}
           path: arm_template.json

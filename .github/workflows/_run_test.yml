@@ -27,3 +27,4 @@ jobs:
     with:
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
+      image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest

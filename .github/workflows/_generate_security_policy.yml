@@ -23,6 +23,8 @@ on:
 jobs:
   generate-security-policy:
     runs-on: ubuntu-latest
+    outputs:
+      policy_generated: true
     steps:
       - name: Checkout
         uses: actions/checkout@v2

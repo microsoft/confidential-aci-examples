@@ -36,8 +36,9 @@ jobs:
       artifact-name: ${{ inputs.test }}_${{ inputs.location }}_security_policy
 
   set-security-policy:
-    if: ${{ inputs.policy != 'generate' }}
     runs-on: ubuntu-latest
+    outputs:
+      policy_generated: true
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -51,10 +52,7 @@ jobs:
   generate-arm-template:
     uses: ./.github/workflows/_generate_arm_template.yml
     needs: [generate-security-policy, set-security-policy]
-    if: |
-      always() &&
-      (${{ needs.generate-security-policy.result == 'success' }} ||
-      ${{ needs.set-security-policy.result == 'success' }})
+    if: always() && (needs.generate-security-policy.outputs.policy_generated || needs.set-security-policy.outputs.policy_generated)
     secrets: inherit
     with:
       container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}

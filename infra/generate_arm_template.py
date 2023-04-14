@@ -69,12 +69,9 @@ def generate_arm_template(
         ],
     }
 
-    template_str = json.dumps(arm_template, indent=2)
-    print(template_str)
-
     if out:
         with open(out, "w") as f:
-            f.write(template_str)
+            f.write(json.dumps(arm_template, indent=2))
 
     return arm_template
 

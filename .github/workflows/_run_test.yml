@@ -34,8 +34,10 @@ jobs:
       fail-fast: false
       matrix:
         location: [eastus2euap, westeurope]
+        policy: ["generate", "tests/simple_server/allow_all.rego"]
     with:
       test: ${{ inputs.test }}
       dash-case: "${{ needs.get-dash-case.outputs.dashcase }}"
       location: ${{ matrix.location }}
       image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
+      policy: ${{ matrix.policy }}

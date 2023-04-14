@@ -19,10 +19,15 @@ on:
         description: "Image to deploy to ACI"
         required: true
         type: string
+      policy:
+        description: "Security Policy to use for ACI"
+        required: true
+        type: string
 
 jobs:
   generate-security-policy:
     uses: ./.github/workflows/_generate_security_policy.yml
+    if: ${{ inputs.policy == 'generate' }}
     secrets: inherit
     with:
       container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}
@@ -30,9 +35,22 @@ jobs:
       image: ${{ inputs.image }}
       artifact-name: ${{ inputs.test }}_${{ inputs.location }}_security_policy
 
+  set-security-policy:
+    if: ${{ inputs.policy != 'generate' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Upload Security Policy Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ inputs.test }}_${{ inputs.location }}_security_policy
+          path: ${{ inputs.policy }}
+
   generate-arm-template:
     uses: ./.github/workflows/_generate_arm_template.yml
-    needs: generate-security-policy
+    needs: [generate-security-policy, set-security-policy]
     secrets: inherit
     with:
       container-group-name: ${{ inputs.dash-case }}-${{ inputs.location }}-${{ github.run_id }}

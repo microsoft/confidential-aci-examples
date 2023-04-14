@@ -41,6 +41,9 @@ jobs:
           name: ${{ inputs.security-policy-artifact-name }}
           path: security_policies
 
+      - name: Print Security Policy
+        run: cat security_policies/${{ inputs.security-policy }}
+
       - name: Generate ARM Template
         id: generate-arm-template
         run: |
@@ -51,6 +54,9 @@ jobs:
             --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --out arm_template.json
+
+      - name: Print ARM Template
+        run: cat arm_template.json
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2

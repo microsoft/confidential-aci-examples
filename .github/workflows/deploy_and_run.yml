@@ -13,12 +13,6 @@ on:
         type: string
 
 jobs:
-  build-and-push-image:
-    uses: ./.github/workflows/build_and_push_image.yml
-    secrets: inherit
-    with:
-      test: ${{ inputs.test }}
-
   generate-arm-template:
     uses: ./.github/workflows/generate_arm_template.yml
     secrets: inherit
@@ -44,7 +38,7 @@ jobs:
   deploy-container:
     uses: ./.github/workflows/deploy_container.yml
     secrets: inherit
-    needs: [build-and-push-image, add-security-policy-to-arm-template]
+    needs: [add-security-policy-to-arm-template]
     with:
       test: ${{ inputs.test }}
       location: ${{ inputs.location }}

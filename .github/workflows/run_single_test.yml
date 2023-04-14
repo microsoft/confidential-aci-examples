@@ -17,7 +17,7 @@ on:
 
 jobs:
   run-single-test:
-    uses: ./.github/workflows/end_to_end_test.yml
+    uses: ./.github/workflows/deploy_and_run.yml
     secrets: inherit
     with:
       test: ${{ inputs.test }}

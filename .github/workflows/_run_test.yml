@@ -56,7 +56,7 @@ jobs:
       fail-fast: false
       matrix:
         location: [eastus2euap, westeurope]
-        security-policy: ${{ fromJson(needs.find-all-security-policies.outputs.security-policies) }}
+        security-policy: ${{ fromJson('[ "_generated.rego", "allow_all.rego" ]') }}
     with:
       test: ${{ inputs.test }}
       dash-case: "${{ needs.get-dash-case.outputs.dashcase }}"

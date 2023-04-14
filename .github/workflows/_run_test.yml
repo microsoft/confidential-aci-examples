@@ -17,8 +17,7 @@ jobs:
       - name: Convert Test Name to Dash Case
         id: convert
         run: |
-          echo dashcase="$(echo ${{ inputs.test }} | sed 's/_/-/g')"
-          echo "dashcase="$(echo ${{ inputs.test }} | sed 's/_/-/g')" >> $GITHUB_OUTPUT"
+          echo "::set-output name=dashcase::$(echo ${{ inputs.test }} | sed 's/_/-/g')"
 
   build-and-push-image:
     uses: ./.github/workflows/_build_and_push_image.yml
@@ -37,6 +36,6 @@ jobs:
         location: [eastus2euap, westeurope]
     with:
       test: ${{ inputs.test }}
-      dash-case: "simple-server"
+      dash-case: "${{ needs.get-dash-case.outputs.dashcase }}"
       location: ${{ matrix.location }}
       image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest

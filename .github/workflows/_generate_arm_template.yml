@@ -37,7 +37,7 @@ jobs:
             --container-group-name ${{ inputs.container-group-name }} \
             --location ${{ inputs.location }} \
             --image ${{ inputs.image }} \
-            --security-policy ${{ inputs.security-policy }} \
+            --security-policy "${{ inputs.security-policy }}" \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --out arm_template.json
 

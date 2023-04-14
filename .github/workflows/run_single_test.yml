@@ -16,9 +16,39 @@ on:
         default: eastus2euap
 
 jobs:
+  get-dash-case:
+    runs-on: ubuntu-latest
+    outputs:
+      dashcase: ${{ steps.convert.outputs.dashcase }}
+    steps:
+      - name: Convert Test Name to Dash Case
+        id: convert
+        run: |
+          echo "::set-output name=dashcase::$(echo ${{ inputs.test }} | sed 's/_/-/g')"
+
+  build-and-push-image:
+    uses: ./.github/workflows/_build_and_push_image.yml
+    secrets: inherit
+    with:
+      dockerfile: tests/${{ inputs.test }}/Dockerfile
+      tag: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
+
+  generate-security-policy:
+    uses: ./.github/workflows/_generate_security_policy.yml
+    secrets: inherit
+    with:
+      image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
+      test: ${{ inputs.test }}
+      artifact-name: ${{ inputs.test }}_security_policies
+
   run-single-test:
-    uses: ./.github/workflows/deploy_and_run.yml
+    uses: ./.github/workflows/_deploy_and_run.yml
+    needs: [get-dash-case, build-and-push-image, generate-security-policy]
     secrets: inherit
     with:
       test: ${{ inputs.test }}
+      dash-case: "${{ needs.get-dash-case.outputs.dashcase }}"
       location: ${{ inputs.location }}
+      image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
+      security-policy-artifact-name: ${{ inputs.test }}_security_policies
+      security-policy: "_generated.rego"

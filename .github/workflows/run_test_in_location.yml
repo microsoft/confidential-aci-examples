@@ -1,4 +1,4 @@
-name: Run Single Test
+name: Run Test in Location
 
 on:
   workflow_dispatch:

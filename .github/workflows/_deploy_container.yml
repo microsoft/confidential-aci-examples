@@ -1,4 +1,4 @@
-name: Deploy Container
+name: _Deploy Container
 
 on:
   workflow_call:

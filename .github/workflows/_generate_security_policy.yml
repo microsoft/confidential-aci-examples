@@ -1,4 +1,4 @@
-name: Generate Security Policy
+name: _Generate Security Policy
 
 on:
   workflow_call:

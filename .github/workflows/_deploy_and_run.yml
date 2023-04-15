@@ -1,4 +1,4 @@
-name: End to End Test
+name: _Deploy and Run Test
 
 on:
   workflow_call:

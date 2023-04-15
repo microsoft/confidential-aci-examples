@@ -1,4 +1,4 @@
-name: Build and Push Container Image
+name: _Build and Push Container Image
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: Remove Container
+name: _Remove Container
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: Generate ARM Template
+name: _Generate ARM Template
 
 on:
   workflow_call:

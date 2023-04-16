@@ -39,7 +39,7 @@ def generate_arm_template(
                                     {"protocol": "TCP", "port": "8000"},
                                 ],
                                 "environmentVariables": [],
-                                "resources": {"requests": {"memoryInGB": 16, "cpu": 4}},
+                                "resources": {"requests": {"memoryInGB": 2, "cpu": 1}},
                             },
                         }
                     ],

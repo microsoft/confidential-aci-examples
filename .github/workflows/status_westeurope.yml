@@ -6,23 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  simple-server-westeurope-0:
-    name: Simple Server on East US 2 EUAP
-    uses: ./.github/workflows/run_test.yml
-    secrets: inherit
-    with:
-      test: simple_server
-      locations: '["westeurope"]'
-
-  simple-server-westeurope-1:
-    name: Simple Server on East US 2 EUAP
-    uses: ./.github/workflows/run_test.yml
-    secrets: inherit
-    with:
-      test: simple_server
-      locations: '["westeurope"]'
-
-  simple-server-westeurope-2:
+  simple-server-westeurope:
     name: Simple Server on East US 2 EUAP
     uses: ./.github/workflows/run_test.yml
     secrets: inherit

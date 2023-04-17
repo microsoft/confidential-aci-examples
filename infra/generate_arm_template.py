@@ -67,7 +67,7 @@ def generate_arm_template(
                     ],
                 },
             }
-            for container_group_manifest in manifest["container_groups"]
+            for container_group_manifest in manifest["containerGroups"]
         ],
     }
 

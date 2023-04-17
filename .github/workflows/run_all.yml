@@ -14,7 +14,7 @@ on:
 jobs:
   run-all:
     name: Run All Tests
-    uses: ./.github/workflows/_run_test.yml
+    uses: ./.github/workflows/run_test.yml
     secrets: inherit
     strategy:
       fail-fast: false

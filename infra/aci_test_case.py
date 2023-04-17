@@ -67,7 +67,9 @@ class AciTestCase(unittest.TestCase):
         )
 
         security_policy = generate_security_policy(arm_template)
-        with open(f"tests/{snake_case_test_name}/security_policy.rego", "w") as f:
+        with open(
+            f"tests/{snake_case_test_name}/security_policies/_generated.rego", "w"
+        ) as f:
             f.write(security_policy.decode("utf-8"))
 
         deploy_container(

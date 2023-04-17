@@ -7,7 +7,7 @@ on:
 
 jobs:
   simple-server-northeurope:
-    name: Simple Server on East US 2 EUAP
+    name: Simple Server on North Europe
     uses: ./.github/workflows/run_test.yml
     secrets: inherit
     with:

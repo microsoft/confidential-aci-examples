@@ -38,6 +38,7 @@
             "label": "Build Container Image",
             "type": "shell",
             "command": "docker",
+            "hide": true,
             "args": [
                 "build",
                 "-t",
@@ -46,11 +47,12 @@
             ]
         },
         {
-            "label": "Push Container Image",
+            "label": "Build and Push Container Image",
             "type": "shell",
             "command": "docker",
             "dependsOn": [
-                "Log into Azure Container Registry"
+                "Log into Azure Container Registry",
+                "Build Container Image"
             ],
             "args": [
                 "push",

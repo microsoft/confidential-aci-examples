@@ -1,18 +1,18 @@
-name: _Generate Security Policy
+name: Generate Security Policy
 
 on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Test to generate the Security Policy for"
+        required: true
+        type: choice
+        options:
+          - simple_server
   workflow_call:
     inputs:
-      image:
-        description: "Image to deploy to ACI"
-        required: true
-        type: string
       test:
-        description: "Name of the test to put the policy in"
-        required: true
-        type: string
-      artifact-name:
-        description: "Name of the generated template artifact"
+        description: "Name of the Test to generate the Security Policy for"
         required: true
         type: string
     outputs:
@@ -38,7 +38,7 @@ jobs:
           python infra/generate_arm_template.py \
             --container-group-name "not-relevant" \
             --location "not-relevant" \
-            --image ${{ inputs.image }} \
+            --manifest-path tests/${{ inputs.test }}/manifest.json \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --out arm_template.json
 
@@ -53,7 +53,12 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Make Security Policies Directory
-        run: mkdir -p tests/${{ inputs.test }}/security_policies
+        run: |
+          mkdir -p security_policies
+          POLICIES=($(python infra/read_manifest_security_policies.py tests/simple_server/manifest.json | tr -d '[],'"'"))
+          for POLICY in "${POLICIES[@]}"; do
+            cp tests/simple_server/$POLICY security_policies/
+          done
 
       - name: Generate Security Policy
         id: generate-security-policy
@@ -61,16 +66,19 @@ jobs:
           az confcom acipolicygen \
               -a arm_template.json \
               --outraw \
-              --save-to-file tests/${{ inputs.test }}/security_policies/_generated.rego
+              --save-to-file security_policies/_generated.rego
+
+      - name: Print Security Policy
+        run: cat security_policies/_generated.rego
 
       - name: Find All Security Policies
         id: find-policies
         run: |
-          echo "name=security-policies::[$(find tests/${{ inputs.test }}/security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
-          echo "::set-output name=security-policies::[$(find tests/${{ inputs.test }}/security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
+          echo "name=security-policies::[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
+          echo "::set-output name=security-policies::[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
 
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.artifact-name }}
-          path: tests/${{ inputs.test }}/security_policies
+          name: ${{ inputs.test }}_security_policies
+          path: security_policies

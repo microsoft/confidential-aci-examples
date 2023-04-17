@@ -1,0 +1,18 @@
+{
+    "testName": "simple_server",
+    "images": {
+        "Dockerfile": "latest"
+    },
+    "containerGroups": [
+        {
+            "containers": [
+                {
+                    "imageTag": "latest"
+                }
+            ]
+        }
+    ],
+    "security_policies": [
+        "security_policies/allow_all.rego"
+    ]
+}

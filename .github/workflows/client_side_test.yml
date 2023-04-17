@@ -1,0 +1,59 @@
+name: Client Side Test
+
+on:
+  workflow_call:
+    inputs:
+      test:
+        description: "Test to run"
+        required: true
+        type: string
+      location:
+        description: "Location to deploy to"
+        required: true
+        type: string
+      security-policy:
+        description: "Security policy to use for ACI"
+        required: true
+        type: string
+
+jobs:
+  client-side-test:
+    name: Client Side Test (${{ inputs.location }}/${{ inputs.security-policy }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Generate Matrix Cell Name
+        id: generate-name
+        run: echo "::set-output name=name::$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} | md5sum | sed 's/ //g' | sed 's/-//g')"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
+
+      - name: Check Deployment Succeeded
+        run: |
+          [[ $(az deployment group show \
+            --name deployment-${{ steps.generate-name.outputs.name }} \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --query "properties.provisioningState" \
+            --output tsv) == "Succeeded" ]] && exit 0 || exit 1
+
+
+      - name: Run Tests
+        env:
+          DEPLOYMENT_NAME: deployment-${{ steps.generate-name.outputs.name }}
+          AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+          AZ_RESOURCE_GROUP: ${{ secrets.AZ_RESOURCE_GROUP }}
+          CLEANUP_ACI: 0
+        run: |
+          python -m unittest \
+            tests.${{ inputs.test }}.${{ inputs.test }}_test \
+            -v

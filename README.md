@@ -20,14 +20,13 @@ If running in VS Code, open the testing view where all available tests are both 
 
 While running tests directly will automatically manage the images and containers needed, it is also possible to use the infrastructure to manually manage these resources. Each management operation has a 1:1 mapping between running locally and in CI.
 
-| Task                     | Implementation                                                | Run Locally                        | Run in CI                                                                         |
-| ------------------------ | ------------------------------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------- |
-| Build Container Image    | Docker CLI                                                    | [tasks.json](.vscode/tasks.json)   | [\_build_and_push_image.yml](.github/workflows/_build_and_push_image.yml)         |
-| Push Container Image     | Docker CLI                                                    | [tasks.json](.vscode/tasks.json)   | [\_build_and_push_image.yml](.github/workflows/_build_and_push_image.yml)         |
-| Generate ARM Template    | [\_generate_arm_template.py](infra/_generate_arm_template.py) | [launch.json](.vscode/launch.json) | [\_generate_arm_template.yml](.github/workflows/_generate_arm_template.yml)       |
-| Generate Security Policy | Azure CLI                                                     | [tasks.json](.vscode/tasks.json)   | [\_generate_security_policy.yml](.github/workflows/_generate_security_policy.yml) |
-| Deploy Container         | [\_deploy_container.py](infra/_deploy_container.py)           | [launch.json](.vscode/launch.json) | [\_deploy_container.yml](.github/workflows/_deploy_container.yml)                 |
-| Remove Container         | [\_remove_container.py](infra/_remove_container.py)           | [launch.json](.vscode/launch.json) | [\_remove_container.yml](.github/workflows/_remove_container.yml)                 |
+| Task                           | Implementation                                             | Run Locally                        | Run in CI                                                                         |
+| ------------------------------ | ---------------------------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------- |
+| Build and Push Container Image | Docker CLI                                                 | [tasks.json](.vscode/tasks.json)   | [build_and_push_images.yml](.github/workflows/build_and_push_images.yml)        |
+| Generate Security Policy       | Azure CLI                                                  | [tasks.json](.vscode/tasks.json)   | [generate_security_policy.yml](.github/workflows/generate_security_policy.yml) |
+| Generate ARM Template          | [generate_arm_template.py](infra/generate_arm_template.py) | [launch.json](.vscode/launch.json) | [generate_arm_template.yml](.github/workflows/generate_arm_template.yml)       |
+| Deploy Container               | [deploy_container.py](infra/deploy_container.py)           | [launch.json](.vscode/launch.json) | [deploy_container.yml](.github/workflows/deploy_container.yml)                 |
+| Remove Container               | [remove_container.py](infra/remove_container.py)           | [launch.json](.vscode/launch.json) | [remove_container.yml](.github/workflows/remove_container.yml)                 |
 
 ---
 

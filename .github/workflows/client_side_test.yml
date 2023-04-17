@@ -1,4 +1,4 @@
-name: _Client Side Test
+name: Client Side Test
 
 on:
   workflow_call:
@@ -8,11 +8,11 @@ on:
         required: true
         type: string
       location:
-        description: "Location to deploy ACI to"
+        description: "Location to deploy to"
         required: true
         type: string
       security-policy:
-        description: "Security policy within the artifact to use for ACI"
+        description: "Security policy to use for ACI"
         required: true
         type: string
 

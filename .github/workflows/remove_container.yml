@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       test:
-        description: "Test to run"
+        description: "Test to remove the ACI for"
         required: true
         type: string
       location:

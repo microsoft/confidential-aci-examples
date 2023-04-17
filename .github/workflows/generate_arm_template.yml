@@ -1,18 +1,34 @@
-name: _Generate ARM Template
+name: Generate ARM Template
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       test:
-        description: "Test to run"
+        description: "Test to generate the ARM template for"
         required: true
-        type: string
+        type: choice
+        options:
+          - simple_server
       location:
-        description: "Location to deploy ACI to"
+        description: "Location to deploy to"
         required: true
         type: string
       security-policy:
-        description: "Security policy within the artifact to use for ACI"
+        description: "Security policy to use for ACI"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      test:
+        description: "Test to generate the ARM template for"
+        required: true
+        type: string
+      location:
+        description: "Location to deploy to"
+        required: true
+        type: string
+      security-policy:
+        description: "Security policy to use for ACI"
         required: true
         type: string
 

@@ -1,10 +1,18 @@
-name: _Generate Security Policy
+name: Generate Security Policy
 
 on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Test to generate the Security Policy for"
+        required: true
+        type: choice
+        options:
+          - simple_server
   workflow_call:
     inputs:
       test:
-        description: "Name of the test to put the policy in"
+        description: "Name of the Test to generate the Security Policy for"
         required: true
         type: string
     outputs:
@@ -59,6 +67,9 @@ jobs:
               -a arm_template.json \
               --outraw \
               --save-to-file security_policies/_generated.rego
+
+      - name: Print Security Policy
+        run: cat security_policies/_generated.rego
 
       - name: Find All Security Policies
         id: find-policies

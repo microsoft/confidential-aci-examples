@@ -1,18 +1,34 @@
-name: _Deploy Container
+name: Deploy Container
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       test:
-        description: "Test to run"
+        description: "Test to deploy ACI for"
         required: true
-        type: string
+        type: choice
+        options:
+          - simple_server
       location:
-        description: "Location to deploy ACI to"
+        description: "Location to deploy to"
         required: true
         type: string
       security-policy:
-        description: "Security policy within the artifact to use for ACI"
+        description: "Security policy to use for ACI"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      test:
+        description: "Test to deploy ACI for"
+        required: true
+        type: string
+      location:
+        description: "Location to deploy to"
+        required: true
+        type: string
+      security-policy:
+        description: "Security policy to use for ACI"
         required: true
         type: string
 

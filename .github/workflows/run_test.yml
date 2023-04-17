@@ -28,22 +28,23 @@ on:
 
 jobs:
   build-and-push-images:
-    name: " "
+    name: "Build and Push Images"
     uses: ./.github/workflows/build_and_push_images.yml
     secrets: inherit
     with:
       test: ${{ inputs.test }}
 
   generate-security-policy:
-    name: " "
-    uses: ./.github/workflows/_generate_security_policy.yml
+    name: "Generate Security Policy"
+    uses: ./.github/workflows/generate_security_policy.yml
     needs: build-and-push-images
     secrets: inherit
     with:
       test: ${{ inputs.test }}
 
   generate-arm-templates:
-    uses: ./.github/workflows/_generate_arm_template.yml
+    name: "Generate ARM Templates"
+    uses: ./.github/workflows/generate_arm_template.yml
     needs: generate-security-policy
     secrets: inherit
     strategy:
@@ -56,7 +57,8 @@ jobs:
       security-policy: ${{ matrix.security-policy }}
 
   deploy-containers:
-    uses: ./.github/workflows/_deploy_container.yml
+    name: "Deploy Containers"
+    uses: ./.github/workflows/deploy_container.yml
     needs: [generate-security-policy, generate-arm-templates]
     secrets: inherit
     strategy:
@@ -70,6 +72,7 @@ jobs:
       security-policy: ${{ matrix.security-policy }}
 
   client-side-tests:
+    name: "Run Client Side Tests"
     uses: ./.github/workflows/_client_side_test.yml
     needs: [generate-security-policy, deploy-containers]
     secrets: inherit
@@ -84,7 +87,8 @@ jobs:
       security-policy: ${{ matrix.security-policy }}
 
   remove-containers:
-    uses: ./.github/workflows/_remove_container.yml
+    name: "Remove Containers"
+    uses: ./.github/workflows/remove_container.yml
     needs: [generate-security-policy, client-side-tests]
     secrets: inherit
     if: always()

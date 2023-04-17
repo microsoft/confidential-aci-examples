@@ -26,6 +26,7 @@ on:
 
 jobs:
   names:
+    name: "Generate Unique Name"
     runs-on: ubuntu-latest
     outputs:
       name: ${{ steps.generate-name.outputs.name }}
@@ -33,7 +34,7 @@ jobs:
       - name: Generate Unique Container Group Name
         id: generate-name
         run: |
-          BASENAME=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} | md5sum)
+          BASENAME=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} | md5sum | sed 's/ //g' | sed 's/-//g')
           echo "::set-output name=name::$(echo $BASENAME)"
 
   generate-arm-template:

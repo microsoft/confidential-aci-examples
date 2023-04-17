@@ -11,13 +11,17 @@ on:
 jobs:
 
   get-images-to-build:
-    name: Get Images to Build (TODO)
+    name: Get Images to Build
     runs-on: ubuntu-latest
     outputs:
-      image_to_tag: '["Dockerfile:latest"]'
+      image_to_tag: ${{ steps.get-images-to-build.outputs.image_to_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Get Images to Build
+        id: get-images-to-build
+        run: echo "::set-output name=image_to_tag::$(python infra/read_manifest_images.py tests/${{ inputs.test }}/manifest.json)"
 
   build-and-push-image:
     name: Build and Push Images

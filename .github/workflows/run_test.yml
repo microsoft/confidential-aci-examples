@@ -27,37 +27,36 @@ on:
         type: string
 
 jobs:
-  build-and-push-image:
+  build-and-push-images:
     name: " "
-    uses: ./.github/workflows/_build_and_push_image.yml
+    uses: ./.github/workflows/_build_and_push_images.yml
     secrets: inherit
-    with:
-      dockerfile: tests/${{ inputs.test }}/Dockerfile
-      tag: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
-
-  generate-security-policy:
-    name: " "
-    uses: ./.github/workflows/_generate_security_policy.yml
-    needs: build-and-push-image
-    secrets: inherit
-    with:
-      image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
-      test: ${{ inputs.test }}
-      artifact-name: ${{ inputs.test }}_security_policies
-
-  deploy-and-run:
-    name: " "
-    uses: ./.github/workflows/_deploy_and_run.yml
-    needs: generate-security-policy
-    secrets: inherit
-    strategy:
-      fail-fast: false
-      matrix:
-        location: ${{ fromJson(inputs.locations) }}
-        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
     with:
       test: ${{ inputs.test }}
-      location: ${{ matrix.location }}
-      image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
-      security-policy-artifact-name: ${{ inputs.test }}_security_policies
-      security-policy: ${{ matrix.security-policy }}
+
+  # generate-security-policy:
+  #   name: " "
+  #   uses: ./.github/workflows/_generate_security_policy.yml
+  #   needs: build-and-push-image
+  #   secrets: inherit
+  #   with:
+  #     image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
+  #     test: ${{ inputs.test }}
+  #     artifact-name: ${{ inputs.test }}_security_policies
+
+  # deploy-and-run:
+  #   name: " "
+  #   uses: ./.github/workflows/_deploy_and_run.yml
+  #   needs: generate-security-policy
+  #   secrets: inherit
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       location: ${{ fromJson(inputs.locations) }}
+  #       security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+  #   with:
+  #     test: ${{ inputs.test }}
+  #     location: ${{ matrix.location }}
+  #     image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
+  #     security-policy-artifact-name: ${{ inputs.test }}_security_policies
+  #     security-policy: ${{ matrix.security-policy }}

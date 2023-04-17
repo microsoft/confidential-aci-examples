@@ -12,13 +12,9 @@ on:
       - main
 
 jobs:
-  run-all:
+  run-simple-server:
     name: Run All Tests
     uses: ./.github/workflows/run_test.yml
     secrets: inherit
-    strategy:
-      fail-fast: false
-      matrix:
-        test: [simple_server]
     with:
-      test: ${{ matrix.test }}
+      test: simple_server

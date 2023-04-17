@@ -7,10 +7,6 @@ on:
         description: "Test to run"
         required: true
         type: string
-      dash-case:
-        description: "Dash Case Version of Test to run"
-        required: true
-        type: string
       location:
         description: "Location to deploy ACI to"
         required: true
@@ -38,7 +34,8 @@ jobs:
       - name: Generate Unique Container Group Name
         id: generate-name
         run: |
-          echo "::set-output name=container-group-name::$(echo ${{ inputs.dash-case }}-${{ inputs.location }}-$(shuf -i 1-100000000 -n 1))"
+          DASHCASE=$(echo ${{ inputs.test }} | sed 's/_/-/g')
+          echo "::set-output name=container-group-name::$(echo $DASHCASE-${{ inputs.location }}-$(shuf -i 1-100000000 -n 1))"
 
   generate-arm-template:
     uses: ./.github/workflows/_generate_arm_template.yml

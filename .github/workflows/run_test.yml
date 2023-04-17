@@ -25,17 +25,6 @@ on:
         type: string
 
 jobs:
-  get-dash-case:
-    name: Get Dash Case (${{ inputs.test }})
-    runs-on: ubuntu-latest
-    outputs:
-      dashcase: ${{ steps.convert.outputs.dashcase }}
-    steps:
-      - name: Convert Test Name to Dash Case
-        id: convert
-        run: |
-          echo "::set-output name=dashcase::$(echo ${{ inputs.test }} | sed 's/_/-/g')"
-
   build-and-push-image:
     uses: ./.github/workflows/_build_and_push_image.yml
     secrets: inherit
@@ -92,13 +81,7 @@ jobs:
 
   deploy-and-run-test:
     uses: ./.github/workflows/_deploy_and_run.yml
-    needs:
-      [
-        get-dash-case,
-        set-locations,
-        find-all-security-policies,
-        generate-security-policy,
-      ]
+    needs: [set-locations, find-all-security-policies, generate-security-policy]
     secrets: inherit
     strategy:
       fail-fast: false
@@ -107,7 +90,6 @@ jobs:
         security-policy: ${{ fromJson(needs.find-all-security-policies.outputs.security-policies) }}
     with:
       test: ${{ inputs.test }}
-      dash-case: "${{ needs.get-dash-case.outputs.dashcase }}"
       location: ${{ matrix.location }}
       image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
       security-policy-artifact-name: ${{ inputs.test }}_security_policies

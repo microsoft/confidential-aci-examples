@@ -71,3 +71,10 @@ jobs:
         with:
           name: ${{ inputs.artifact-name }}
           path: tests/${{ inputs.test }}/security_policies
+
+  test-output:
+    runs-on: ubuntu-latest
+    needs: generate-security-policy
+    steps:
+      - name: Print Security Policies
+        run: echo ${{ needs.generate-security-policy.outputs.security-policies }}

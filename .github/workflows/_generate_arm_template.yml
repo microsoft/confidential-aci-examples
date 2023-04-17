@@ -3,59 +3,44 @@ name: _Generate ARM Template
 on:
   workflow_call:
     inputs:
-      label:
-        description: "Label for the workflow"
-        required: true
-        type: string
-      container-group-name:
-        description: "Name of the container group to deploy"
+      test:
+        description: "Test to run"
         required: true
         type: string
       location:
         description: "Location to deploy ACI to"
         required: true
         type: string
-      image:
-        description: "Image to deploy to ACI"
-        required: true
-        type: string
-      security-policy-artifact-name:
-        description: "Security policy artifact name containing all policies"
-        required: true
-        type: string
       security-policy:
         description: "Security policy within the artifact to use for ACI"
-        required: true
-        type: string
-      artifact-name:
-        description: "Name of the generated template artifact"
         required: true
         type: string
 
 jobs:
   generate-arm-template:
-    name: Generate ARM Template (${{ inputs.label }})
+    name: Generate ARM Template (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Generate Matrix Cell Name
+        id: generate-name
+        run: echo "::set-output name=name::$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} | md5sum | sed 's/ //g' | sed 's/-//g')"
+
       - name: Download Security Policy Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ inputs.security-policy-artifact-name }}
+          name: ${{ inputs.test }}_security_policies
           path: security_policies
-
-      - name: Print Security Policy
-        run: cat security_policies/${{ inputs.security-policy }}
 
       - name: Generate ARM Template
         id: generate-arm-template
         run: |
           python infra/generate_arm_template.py \
-            --container-group-name ${{ inputs.container-group-name }} \
+            --container-group-name ${{ steps.generate-name.outputs.name }}-group \
             --location ${{ inputs.location }} \
-            --image ${{ inputs.image }} \
+            --manifest-path tests/${{ inputs.test }}/manifest.json \
             --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
             --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --out arm_template.json
@@ -66,5 +51,5 @@ jobs:
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.artifact-name }}
+          name: ${{ steps.generate-name.outputs.name }}_arm_template
           path: arm_template.json

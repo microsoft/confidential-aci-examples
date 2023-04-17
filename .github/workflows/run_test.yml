@@ -42,6 +42,21 @@ jobs:
     with:
       test: ${{ inputs.test }}
 
+  generate-arm-template:
+    name: " "
+    uses: ./.github/workflows/_generate_arm_template.yml
+    needs: generate-security-policy
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+    with:
+      test: ${{ inputs.test }}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
+
   # deploy-and-run:
   #   name: " "
   #   uses: ./.github/workflows/_deploy_and_run.yml

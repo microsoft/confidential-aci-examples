@@ -28,17 +28,13 @@ jobs:
   names:
     runs-on: ubuntu-latest
     outputs:
-      container-group: ${{ steps.names.outputs.container-group }}
-      arm-template: ${{ steps.names.outputs.arm-template }}
-      deployment: ${{ steps.names.outputs.deployment }}
+      name: ${{ steps.generate-name.outputs.name }}
     steps:
-      - name: Generate names
-        id: names
+      - name: Generate Unique Container Group Name
+        id: generate-name
         run: |
-          BASENAME=${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}
-          echo "::set-output name=container-group::$BASENAME-group"
-          echo "::set-output name=arm-template::$BASENAME_arm_template"
-          echo "::set-output name=deployment::$(echo $BASENAME | md5sum)" # Deployment has 64 character limit
+          BASENAME=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} | md5sum)
+          echo "::set-output name=name::$(echo $BASENAME)"
 
   generate-arm-template:
     name: " "
@@ -47,12 +43,12 @@ jobs:
     secrets: inherit
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
-      container-group-name: ${{ needs.names.outputs.container-group }}
+      container-group-name: ${{ needs.names.outputs.name }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
       security-policy-artifact-name: ${{ inputs.security-policy-artifact-name }}
       security-policy: ${{ inputs.security-policy }}
-      artifact-name: ${{ needs.names.outputs.arm-template }}
+      artifact-name: ${{ needs.names.outputs.name }}_arm_template
 
   deploy-container:
     name: " "
@@ -61,8 +57,8 @@ jobs:
     needs: [names, generate-arm-template]
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
-      arm-template: ${{ needs.names.outputs.arm-template }}
-      deployment-name: ${{ needs.names.outputs.deployment }}
+      arm-template: ${{ needs.names.outputs.name }}_arm_template
+      deployment-name: ${{ needs.names.outputs.name }}-deployment
 
   client-side-test:
     name: " "
@@ -72,7 +68,7 @@ jobs:
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
       test: ${{ inputs.test }}
-      deployment-name: ${{ needs.names.outputs.deployment }}
+      deployment-name: ${{ needs.names.outputs.name }}-deployment
 
   remove-container:
     name: " "
@@ -82,4 +78,4 @@ jobs:
     if: always()
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
-      deployment-name: ${{ needs.names.outputs.deployment }}
+      deployment-name: ${{ needs.names.outputs.name }}-deployment

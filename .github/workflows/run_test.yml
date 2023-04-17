@@ -44,37 +44,15 @@ jobs:
       test: ${{ inputs.test }}
       artifact-name: ${{ inputs.test }}_security_policies
 
-  find-all-security-policies:
-    name: Find Security Policies (${{ inputs.test }})
-    runs-on: ubuntu-latest
-    needs: generate-security-policy
-    outputs:
-      security-policies: ${{ steps.find-policies.outputs.security-policies }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Download Security Policy Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ inputs.test }}_security_policies
-          path: security_policies
-
-      - name: Find All Security Policies
-        id: find-policies
-        run: |
-          echo "name=security-policies::[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
-          echo "::set-output name=security-policies::[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
-
   deploy-and-run-test:
     uses: ./.github/workflows/_deploy_and_run.yml
-    needs: [find-all-security-policies, generate-security-policy]
+    needs: generate-security-policy
     secrets: inherit
     strategy:
       fail-fast: false
       matrix:
         location: ${{ fromJson(inputs.locations) }}
-        security-policy: ${{ fromJson(needs.find-all-security-policies.outputs.security-policies) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
     with:
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}

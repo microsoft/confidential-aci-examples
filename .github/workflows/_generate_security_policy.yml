@@ -20,6 +20,8 @@ jobs:
   generate-security-policy:
     name: Generate Security Policy (${{ inputs.test }})
     runs-on: ubuntu-latest
+    outputs:
+      security-policies: ${{ steps.find-policies.outputs.security-policies }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -57,6 +59,12 @@ jobs:
               -a arm_template.json \
               --outraw \
               --save-to-file tests/${{ inputs.test }}/security_policies/_generated.rego
+
+      - name: Find All Security Policies
+        id: find-policies
+        run: |
+          echo "name=security-policies::[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
+          echo "::set-output name=security-policies::[$(find tests/${{ inputs.test }}/security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
 
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v2

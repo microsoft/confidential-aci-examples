@@ -26,7 +26,7 @@ on:
 
 jobs:
   generate-unique-name:
-    name: Generate Unique Name (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
+    name: Generate Unique Name (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
     outputs:
       name: ${{ steps.generate-name.outputs.container-group-name }}
@@ -43,7 +43,7 @@ jobs:
     needs: generate-unique-name
     secrets: inherit
     with:
-      label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
+      label: ${{ inputs.location }}/${{ inputs.security-policy }}
       container-group-name: ${{ needs.generate-unique-name.outputs.name }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
@@ -57,7 +57,7 @@ jobs:
     secrets: inherit
     needs: [generate-unique-name, generate-arm-template]
     with:
-      label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
+      label: ${{ inputs.location }}/${{ inputs.security-policy }}
       arm-template: ${{ needs.generate-unique-name.outputs.name }}_arm_template
       deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment
 
@@ -67,7 +67,7 @@ jobs:
     secrets: inherit
     needs: [generate-unique-name, deploy-container]
     with:
-      label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
+      label: ${{ inputs.location }}/${{ inputs.security-policy }}
       test: ${{ inputs.test }}
       deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment
 
@@ -78,5 +78,5 @@ jobs:
     needs: [generate-unique-name, client-side-test]
     if: always()
     with:
-      label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
+      label: ${{ inputs.location }}/${{ inputs.security-policy }}
       deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment

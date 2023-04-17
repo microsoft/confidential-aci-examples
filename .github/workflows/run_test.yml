@@ -10,7 +10,8 @@ on:
         options:
           - simple_server
       location:
-        description: "Location to deploy ACI to"
+        description: "Locations to deploy ACIs to"
+        default: '["eastus2euap", "westeurope"]'
         required: false
         type: string
   workflow_call:
@@ -20,7 +21,7 @@ on:
         required: true
         type: string
       locations:
-        description: "Locations to run the test"
+        description: "Locations to deploy ACIs to"
         default: '["eastus2euap", "westeurope"]'
         required: false
         type: string

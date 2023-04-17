@@ -1,6 +1,18 @@
-name: _Run Test
+name: Run Test
 
 on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Test to run"
+        required: true
+        type: choice
+        options:
+          - simple_server
+      location:
+        description: "Location to deploy ACI to"
+        required: false
+        type: string
   workflow_call:
     inputs:
       test:

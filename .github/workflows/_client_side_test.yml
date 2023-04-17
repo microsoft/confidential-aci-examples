@@ -1,0 +1,46 @@
+name: _Client Side Test
+
+on:
+  workflow_call:
+    inputs:
+      label:
+        description: "Label for the workflow"
+        required: true
+        type: string
+      test:
+        description: "Test to run"
+        required: true
+        type: string
+      deployment-name:
+        description: "Name of the deployment to use"
+        required: true
+        type: string
+
+jobs:
+  client-side-test:
+    name: Client Side Test (${{ inputs.label }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
+
+      - name: Run Tests
+        env:
+          DEPLOYMENT_NAME: ${{ inputs.deployment-name }}
+          AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+          AZ_RESOURCE_GROUP: ${{ secrets.AZ_RESOURCE_GROUP }}
+          CLEANUP_ACI: 0
+        run: |
+          python -m unittest \
+            tests.${{ inputs.test }}.${{ inputs.test }}_test \
+            -v

@@ -22,7 +22,7 @@ While running tests directly will automatically manage the images and containers
 
 | Task                           | Implementation                                             | Run Locally                        | Run in CI                                                                         |
 | ------------------------------ | ---------------------------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------- |
-| Build and Push Container Image | Docker CLI                                                 | [tasks.json](.vscode/tasks.json)   | [\_build_and_push_image.yml](.github/workflows/_build_and_push_images.yml)        |
+| Build and Push Container Image | Docker CLI                                                 | [tasks.json](.vscode/tasks.json)   | [build_and_push_images.yml](.github/workflows/build_and_push_images.yml)        |
 | Generate ARM Template          | [generate_arm_template.py](infra/generate_arm_template.py) | [launch.json](.vscode/launch.json) | [\_generate_arm_template.yml](.github/workflows/_generate_arm_template.yml)       |
 | Generate Security Policy       | Azure CLI                                                  | [tasks.json](.vscode/tasks.json)   | [\_generate_security_policy.yml](.github/workflows/_generate_security_policy.yml) |
 | Deploy Container               | [deploy_container.py](infra/deploy_container.py)           | [launch.json](.vscode/launch.json) | [\_deploy_container.yml](.github/workflows/_deploy_container.yml)                 |

@@ -1,6 +1,14 @@
-name: _Build and Push Container Images
+name: Build and Push Container Images
 
 on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Test to build and push images for"
+        required: true
+        type: choice
+        options:
+          - simple_server
   workflow_call:
     inputs:
       test:

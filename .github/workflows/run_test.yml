@@ -29,7 +29,7 @@ on:
 jobs:
   build-and-push-images:
     name: " "
-    uses: ./.github/workflows/_build_and_push_images.yml
+    uses: ./.github/workflows/build_and_push_images.yml
     secrets: inherit
     with:
       test: ${{ inputs.test }}
@@ -97,20 +97,3 @@ jobs:
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}
-
-  # deploy-and-run:
-  #   name: " "
-  #   uses: ./.github/workflows/_deploy_and_run.yml
-  #   needs: generate-security-policy
-  #   secrets: inherit
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       location: ${{ fromJson(inputs.locations) }}
-  #       security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
-  #   with:
-  #     test: ${{ inputs.test }}
-  #     location: ${{ matrix.location }}
-  #     image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
-  #     security-policy-artifact-name: ${{ inputs.test }}_security_policies
-  #     security-policy: ${{ matrix.security-policy }}

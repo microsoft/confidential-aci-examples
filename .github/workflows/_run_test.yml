@@ -73,7 +73,7 @@ jobs:
         id: set-locations
         run: |
           if [ "${{ inputs.location }}" == "" ]; then
-            echo "::set-output name=locations::[eastus2euap, westeurope]"
+            echo "::set-output name=locations::[eastus2euap, westeurope, northeurope]"
           else
             echo "::set-output name=locations::[${{ inputs.location }}]"
           fi

@@ -1,4 +1,4 @@
-name: Run All Tests on West Europe
+name: Status of West Europe
 
 on:
   schedule:

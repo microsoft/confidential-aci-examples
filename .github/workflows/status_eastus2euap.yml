@@ -1,4 +1,4 @@
-name: Run All Tests on East US 2 EUAP
+name: Status of East US 2 EUAP
 
 on:
   schedule:

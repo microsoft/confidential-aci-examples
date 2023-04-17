@@ -1,4 +1,4 @@
-name: Run All Tests on North Europe
+name: Status of North Europe
 
 on:
   schedule:

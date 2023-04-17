@@ -24,9 +24,6 @@ on:
         required: true
         type: string
 
-env:
-  WORKFLOW_NAME: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} # unique name for this workflow run
-
 jobs:
   generate-arm-template:
     name: " "
@@ -34,12 +31,12 @@ jobs:
     secrets: inherit
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
-      container-group-name: $WORKFLOW_NAME
+      container-group-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
       security-policy-artifact-name: ${{ inputs.security-policy-artifact-name }}
       security-policy: ${{ inputs.security-policy }}
-      artifact-name: $WORKFLOW_NAME_arm_template
+      artifact-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}_arm_template
 
   deploy-container:
     name: " "
@@ -48,8 +45,8 @@ jobs:
     needs: generate-arm-template
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
-      arm-template: $WORKFLOW_NAME_arm_template
-      deployment-name: $WORKFLOW_NAME-deployment
+      arm-template: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}_arm_template
+      deployment-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}-deployment
 
   client-side-test:
     name: " "
@@ -59,7 +56,7 @@ jobs:
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
       test: ${{ inputs.test }}
-      deployment-name: $WORKFLOW_NAME-deployment
+      deployment-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}-deployment
 
   remove-container:
     name: " "
@@ -69,4 +66,4 @@ jobs:
     if: always()
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
-      deployment-name: $WORKFLOW_NAME-deployment
+      deployment-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}-deployment

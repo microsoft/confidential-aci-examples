@@ -25,45 +25,61 @@ on:
         type: string
 
 jobs:
+  names:
+    runs-on: ubuntu-latest
+    outputs:
+      container-group: ${{ steps.names.outputs.container-group }}
+      arm-template: ${{ steps.names.outputs.arm-template }}
+      deployment: ${{ steps.names.outputs.deployment }}
+    steps:
+      - name: Generate names
+        id: names
+        run: |
+          BASENAME=${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}
+          echo "::set-output name=container-group::$BASENAME-group"
+          echo "::set-output name=arm-template::$BASENAME_arm_template"
+          echo "::set-output name=deployment::$(echo $BASENAME | md5sum)" # Deployment has 64 character limit
+
   generate-arm-template:
     name: " "
     uses: ./.github/workflows/_generate_arm_template.yml
+    needs: names
     secrets: inherit
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
-      container-group-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}
+      container-group-name: ${{ needs.names.outputs.container-group }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
       security-policy-artifact-name: ${{ inputs.security-policy-artifact-name }}
       security-policy: ${{ inputs.security-policy }}
-      artifact-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}_arm_template
+      artifact-name: ${{ needs.names.outputs.arm-template }}
 
   deploy-container:
     name: " "
     uses: ./.github/workflows/_deploy_container.yml
     secrets: inherit
-    needs: generate-arm-template
+    needs: [names, generate-arm-template]
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
-      arm-template: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}_arm_template
-      deployment-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}-deployment
+      arm-template: ${{ needs.names.outputs.arm-template }}
+      deployment-name: ${{ needs.names.outputs.deployment }}
 
   client-side-test:
     name: " "
     uses: ./.github/workflows/_client_side_test.yml
     secrets: inherit
-    needs: deploy-container
+    needs: [names, deploy-container]
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
       test: ${{ inputs.test }}
-      deployment-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}-deployment
+      deployment-name: ${{ needs.names.outputs.deployment }}
 
   remove-container:
     name: " "
     uses: ./.github/workflows/_remove_container.yml
     secrets: inherit
-    needs: client-side-test
+    needs: [names, client-side-test]
     if: always()
     with:
       label: ${{ inputs.location }}/${{ inputs.security-policy }}
-      deployment-name: ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}-deployment
+      deployment-name: ${{ needs.names.outputs.deployment }}

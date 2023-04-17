@@ -3,31 +3,35 @@ name: _Deploy Container
 on:
   workflow_call:
     inputs:
-      label:
-        description: "Label for the workflow"
+      test:
+        description: "Test to run"
         required: true
         type: string
-      arm-template:
-        description: "ARM Template to deploy"
+      location:
+        description: "Location to deploy ACI to"
         required: true
         type: string
-      deployment-name:
-        description: "Name of the deployment"
+      security-policy:
+        description: "Security policy within the artifact to use for ACI"
         required: true
         type: string
 
 jobs:
   deploy-container:
-    name: Deploy Container (${{ inputs.label }})
+    name: Deploy Container (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Generate Matrix Cell Name
+        id: generate-name
+        run: echo "::set-output name=name::$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} | md5sum | sed 's/ //g' | sed 's/-//g')"
+
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ inputs.arm-template }}
+          name: ${{ steps.generate-name.outputs.name }}_arm_template
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -45,4 +49,4 @@ jobs:
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
             --arm-template-path arm_template.json \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --deployment-name ${{ inputs.deployment-name }} \
+            --deployment-name ${{ steps.generate-name.outputs.name }}-deployment \

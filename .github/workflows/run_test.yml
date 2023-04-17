@@ -27,7 +27,8 @@ on:
         type: string
 
 jobs:
-  _0:
+  build-and-push-image:
+    name: ""
     uses: ./.github/workflows/_build_and_push_image.yml
     secrets: inherit
     with:
@@ -35,18 +36,20 @@ jobs:
       dockerfile: tests/${{ inputs.test }}/Dockerfile
       tag: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
 
-  _1:
+  generate-security-policy:
+    name: ""
     uses: ./.github/workflows/_generate_security_policy.yml
-    needs: _0
+    needs: build-and-push-image
     secrets: inherit
     with:
       image: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
       test: ${{ inputs.test }}
       artifact-name: ${{ inputs.test }}_security_policies
 
-  _2:
+  deploy-and-run:
+    name: ""
     uses: ./.github/workflows/_deploy_and_run.yml
-    needs: _1
+    needs: generate-security-policy
     secrets: inherit
     strategy:
       fail-fast: false

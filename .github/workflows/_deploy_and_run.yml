@@ -37,7 +37,8 @@ jobs:
           DASHCASE=$(echo ${{ inputs.test }} | sed 's/_/-/g')
           echo "::set-output name=container-group-name::$(echo $DASHCASE-${{ inputs.location }}-$(shuf -i 1-100000000 -n 1))"
 
-  _1:
+  generate-arm-template:
+    name: ""
     uses: ./.github/workflows/_generate_arm_template.yml
     needs: generate-unique-name
     secrets: inherit
@@ -50,28 +51,31 @@ jobs:
       security-policy: ${{ inputs.security-policy }}
       artifact-name: ${{ needs.generate-unique-name.outputs.name }}_arm_template
 
-  _2:
+  deploy-container:
+    name: ""
     uses: ./.github/workflows/_deploy_container.yml
     secrets: inherit
-    needs: [generate-unique-name, _1]
+    needs: [generate-unique-name, generate-arm-template]
     with:
       label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
       arm-template: ${{ needs.generate-unique-name.outputs.name }}_arm_template
       deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment
 
-  _3:
+  client-side-test:
+    name: ""
     uses: ./.github/workflows/_client_side_test.yml
     secrets: inherit
-    needs: [generate-unique-name, _2]
+    needs: [generate-unique-name, deploy-container]
     with:
       label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
       test: ${{ inputs.test }}
       deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment
 
-  _4:
+  remove-container:
+    name: ""
     uses: ./.github/workflows/_remove_container.yml
     secrets: inherit
-    needs: [generate-unique-name, _3]
+    needs: [generate-unique-name, client-side-test]
     if: always()
     with:
       label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}

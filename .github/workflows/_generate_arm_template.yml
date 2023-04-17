@@ -38,7 +38,7 @@ jobs:
         id: generate-arm-template
         run: |
           python infra/generate_arm_template.py \
-            --container-group-name ${{ steps.generate-name.outputs.name }}-group \
+            --container-group-name group-${{ steps.generate-name.outputs.name }} \
             --location ${{ inputs.location }} \
             --manifest-path tests/${{ inputs.test }}/manifest.json \
             --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \

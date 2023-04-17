@@ -55,8 +55,8 @@ if __name__ == "__main__":
         help="The resource group to deploy the container with",
     )
     parser.add_argument(
-        "--container-name",
-        help="The name of the container to deploy",
+        "--deployment-name",
+        help="The name of the deployment to remove",
         required=True,
     )
     parser.add_argument(
@@ -75,6 +75,6 @@ if __name__ == "__main__":
             args.subscription_id or os.getenv("AZ_SUBSCRIPTION_ID", "")
         ),
         resource_group=args.resource_group or os.getenv("AZ_RESOURCE_GROUP", ""),
-        name=args.container_name,
+        name=args.deployment_name,
         asynchronous=args.asynchronous,
     )

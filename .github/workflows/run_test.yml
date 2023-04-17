@@ -43,7 +43,6 @@ jobs:
       test: ${{ inputs.test }}
 
   generate-arm-templates:
-    name: " "
     uses: ./.github/workflows/_generate_arm_template.yml
     needs: generate-security-policy
     secrets: inherit
@@ -57,10 +56,24 @@ jobs:
       security-policy: ${{ matrix.security-policy }}
 
   deploy-containers:
-    name: " "
     uses: ./.github/workflows/_deploy_container.yml
     needs: [generate-security-policy, generate-arm-templates]
     secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+    with:
+      test: ${{ inputs.test }}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
+
+  remove-containers:
+    uses: ./.github/workflows/_remove_container.yml
+    needs: [generate-security-policy, deploy-containers]
+    secrets: inherit
+    if: always()
     strategy:
       fail-fast: false
       matrix:

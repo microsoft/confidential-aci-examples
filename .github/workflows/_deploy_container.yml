@@ -49,4 +49,4 @@ jobs:
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
             --arm-template-path arm_template.json \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --deployment-name ${{ steps.generate-name.outputs.name }}-deployment \
+            --deployment-name deployment-${{ steps.generate-name.outputs.name }} \

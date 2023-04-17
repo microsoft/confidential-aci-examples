@@ -55,7 +55,7 @@ jobs:
       fail-fast: false
       matrix:
         location: ${{ fromJson(inputs.locations) }}
-        security-policy: ${{ fromJson(needs._1.outputs.security-policies) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
     with:
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}

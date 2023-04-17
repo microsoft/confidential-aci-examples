@@ -69,9 +69,23 @@ jobs:
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}
 
+  client-side-tests:
+    uses: ./.github/workflows/_client_side_test.yml
+    needs: [generate-security-policy, deploy-containers]
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+    with:
+      test: ${{ inputs.test }}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
+
   remove-containers:
     uses: ./.github/workflows/_remove_container.yml
-    needs: [generate-security-policy, deploy-containers]
+    needs: [generate-security-policy, client-side-tests]
     secrets: inherit
     if: always()
     strategy:

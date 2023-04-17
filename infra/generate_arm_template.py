@@ -7,7 +7,7 @@ from typing import Optional
 def generate_arm_template(
     container_group_name: str,
     location: str,
-    image: str,
+    manifest: dict,
     registry_password: Optional[str] = None,
     out: Optional[str] = None,
     security_policy: Optional[str] = None,
@@ -33,7 +33,7 @@ def generate_arm_template(
                         {
                             "name": f"{container_group_name}-0",
                             "properties": {
-                                "image": image,
+                                "image": f'caciexamples.azurecr.io/{manifest["testName"]}:{container["imageTag"]}',
                                 "ports": [
                                     {"protocol": "TCP", "port": "22"},
                                     {"protocol": "TCP", "port": "8000"},
@@ -42,6 +42,7 @@ def generate_arm_template(
                                 "resources": {"requests": {"memoryInGB": 16, "cpu": 4}},
                             },
                         }
+                        for container in container_group_manifest["containers"]
                     ],
                     "initContainers": [],
                     "restartPolicy": "Never",
@@ -66,6 +67,7 @@ def generate_arm_template(
                     ],
                 },
             }
+            for container_group_manifest in manifest["container_groups"]
         ],
     }
 
@@ -89,7 +91,7 @@ if __name__ == "__main__":
         default="eastus2euap",
     )
     parser.add_argument(
-        "--image",
+        "--manifest-path",
         help="The image to deploy the container with",
         required=True,
     )
@@ -106,4 +108,15 @@ if __name__ == "__main__":
         help="Path to save the ARM template to",
     )
 
-    generate_arm_template(**vars(parser.parse_args()))
+    args = parser.parse_args()
+
+    with open(args.manifest_path, "r") as manifest_file:
+        manifest = json.load(manifest_file)
+        generate_arm_template(
+            container_group_name=args.container_group_name,
+            location=args.location,
+            manifest=manifest,
+            registry_password=args.registry_password,
+            out=args.out,
+            security_policy=args.security_policy,
+        )

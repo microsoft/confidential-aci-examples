@@ -7,6 +7,10 @@ on:
         description: "Test to run"
         required: true
         type: string
+      location:
+        description: "Location to run the test"
+        required: false
+        type: string
 
 jobs:
   get-dash-case:
@@ -59,14 +63,35 @@ jobs:
           echo "name=security-policies::[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
           echo "::set-output name=security-policies::[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
 
+  set-locations:
+    name: Set Locations to Test (${{ inputs.test }})
+    runs-on: ubuntu-latest
+    outputs:
+      locations: ${{ steps.set-locations.outputs.locations }}
+    steps:
+      - name: Set Locations to Test
+        id: set-locations
+        run: |
+          if [ "${{ inputs.location }}" == "" ]; then
+            echo "::set-output name=locations::[eastus2euap, westeurope]"
+          else
+            echo "::set-output name=locations::[${{ inputs.location }}]"
+          fi
+
   deploy-and-run-test:
     uses: ./.github/workflows/_deploy_and_run.yml
-    needs: [get-dash-case, find-all-security-policies, generate-security-policy]
+    needs:
+      [
+        get-dash-case,
+        set-locations,
+        find-all-security-policies,
+        generate-security-policy,
+      ]
     secrets: inherit
     strategy:
       fail-fast: false
       matrix:
-        location: [eastus2euap, westeurope]
+        location: ${{ fromJson(needs.set-locations.outputs.locations) }}
         security-policy: ${{ fromJson(needs.find-all-security-policies.outputs.security-policies) }}
     with:
       test: ${{ inputs.test }}

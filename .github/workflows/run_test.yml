@@ -28,7 +28,7 @@ on:
 
 jobs:
   build-and-push-image:
-    name: ""
+    name: " "
     uses: ./.github/workflows/_build_and_push_image.yml
     secrets: inherit
     with:
@@ -37,7 +37,7 @@ jobs:
       tag: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
 
   generate-security-policy:
-    name: ""
+    name: " "
     uses: ./.github/workflows/_generate_security_policy.yml
     needs: build-and-push-image
     secrets: inherit
@@ -47,7 +47,7 @@ jobs:
       artifact-name: ${{ inputs.test }}_security_policies
 
   deploy-and-run:
-    name: ""
+    name: " "
     uses: ./.github/workflows/_deploy_and_run.yml
     needs: generate-security-policy
     secrets: inherit

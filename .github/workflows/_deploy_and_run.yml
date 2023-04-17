@@ -38,7 +38,7 @@ jobs:
           echo "::set-output name=container-group-name::$(echo $DASHCASE-${{ inputs.location }}-$(shuf -i 1-100000000 -n 1))"
 
   generate-arm-template:
-    name: ""
+    name: " "
     uses: ./.github/workflows/_generate_arm_template.yml
     needs: generate-unique-name
     secrets: inherit
@@ -52,7 +52,7 @@ jobs:
       artifact-name: ${{ needs.generate-unique-name.outputs.name }}_arm_template
 
   deploy-container:
-    name: ""
+    name: " "
     uses: ./.github/workflows/_deploy_container.yml
     secrets: inherit
     needs: [generate-unique-name, generate-arm-template]
@@ -62,7 +62,7 @@ jobs:
       deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment
 
   client-side-test:
-    name: ""
+    name: " "
     uses: ./.github/workflows/_client_side_test.yml
     secrets: inherit
     needs: [generate-unique-name, deploy-container]
@@ -72,7 +72,7 @@ jobs:
       deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment
 
   remove-container:
-    name: ""
+    name: " "
     uses: ./.github/workflows/_remove_container.yml
     secrets: inherit
     needs: [generate-unique-name, client-side-test]

@@ -12,8 +12,8 @@ on:
       - main
 
 jobs:
-  run-simple-server:
-    name: Run All Tests
+  simple-server:
+    name: Simple Server
     uses: ./.github/workflows/run_test.yml
     secrets: inherit
     with:

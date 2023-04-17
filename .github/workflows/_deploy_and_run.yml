@@ -37,7 +37,7 @@ jobs:
           DASHCASE=$(echo ${{ inputs.test }} | sed 's/_/-/g')
           echo "::set-output name=container-group-name::$(echo $DASHCASE-${{ inputs.location }}-$(shuf -i 1-100000000 -n 1))"
 
-  generate-arm-template:
+  _1:
     uses: ./.github/workflows/_generate_arm_template.yml
     needs: generate_unique_name
     secrets: inherit
@@ -50,48 +50,28 @@ jobs:
       security-policy: ${{ inputs.security-policy }}
       artifact-name: ${{ needs.generate_unique_name.outputs.name }}_arm_template
 
-  deploy-container:
+  _2:
     uses: ./.github/workflows/_deploy_container.yml
     secrets: inherit
-    needs: [generate_unique_name, generate-arm-template]
+    needs: [generate_unique_name, _1]
     with:
       label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
       arm-template: ${{ needs.generate_unique_name.outputs.name }}_arm_template
       deployment-name: ${{ needs.generate_unique_name.outputs.name }}-deployment
 
-  run-test:
-    name: Run Test (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
-    runs-on: ubuntu-latest
-    needs: [generate_unique_name, deploy-container]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  _3:
+    uses: ./.github/workflows/_client_side_test.yml
+    secrets: inherit
+    needs: [generate_unique_name, _2]
+    with:
+      label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
+      test: ${{ inputs.test }}
+      deployment-name: ${{ needs.generate_unique_name.outputs.name }}-deployment
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.SP_APP_ID }} \
-            --password ${{ secrets.SP_PASSWORD }} \
-            --tenant ${{ secrets.SP_TENANT }}
-
-      - name: Run Tests
-        env:
-          DEPLOYMENT_NAME: ${{ needs.generate_unique_name.outputs.name }}-deployment
-          AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
-          AZ_RESOURCE_GROUP: ${{ secrets.AZ_RESOURCE_GROUP }}
-          CLEANUP_ACI: 0
-        run: |
-          python -m unittest \
-            tests.${{ inputs.test }}.${{ inputs.test }}_test \
-            -v
-
-  remove-container:
+  _4:
     uses: ./.github/workflows/_remove_container.yml
     secrets: inherit
-    needs: [generate_unique_name, run-test]
+    needs: [generate_unique_name, _3]
     if: always()
     with:
       label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}

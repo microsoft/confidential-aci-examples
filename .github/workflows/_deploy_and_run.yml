@@ -25,7 +25,7 @@ on:
         type: string
 
 jobs:
-  generate_unique_name:
+  generate-unique-name:
     name: Generate Unique Name (${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
     outputs:
@@ -39,40 +39,40 @@ jobs:
 
   _1:
     uses: ./.github/workflows/_generate_arm_template.yml
-    needs: generate_unique_name
+    needs: generate-unique-name
     secrets: inherit
     with:
       label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
-      container-group-name: ${{ needs.generate_unique_name.outputs.name }}
+      container-group-name: ${{ needs.generate-unique-name.outputs.name }}
       location: ${{ inputs.location }}
       image: ${{ inputs.image }}
       security-policy-artifact-name: ${{ inputs.security-policy-artifact-name }}
       security-policy: ${{ inputs.security-policy }}
-      artifact-name: ${{ needs.generate_unique_name.outputs.name }}_arm_template
+      artifact-name: ${{ needs.generate-unique-name.outputs.name }}_arm_template
 
   _2:
     uses: ./.github/workflows/_deploy_container.yml
     secrets: inherit
-    needs: [generate_unique_name, _1]
+    needs: [generate-unique-name, _1]
     with:
       label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
-      arm-template: ${{ needs.generate_unique_name.outputs.name }}_arm_template
-      deployment-name: ${{ needs.generate_unique_name.outputs.name }}-deployment
+      arm-template: ${{ needs.generate-unique-name.outputs.name }}_arm_template
+      deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment
 
   _3:
     uses: ./.github/workflows/_client_side_test.yml
     secrets: inherit
-    needs: [generate_unique_name, _2]
+    needs: [generate-unique-name, _2]
     with:
       label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
       test: ${{ inputs.test }}
-      deployment-name: ${{ needs.generate_unique_name.outputs.name }}-deployment
+      deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment
 
   _4:
     uses: ./.github/workflows/_remove_container.yml
     secrets: inherit
-    needs: [generate_unique_name, _3]
+    needs: [generate-unique-name, _3]
     if: always()
     with:
       label: ${{ inputs.test }}/${{ inputs.location }}/${{ inputs.security-policy }}
-      deployment-name: ${{ needs.generate_unique_name.outputs.name }}-deployment
+      deployment-name: ${{ needs.generate-unique-name.outputs.name }}-deployment

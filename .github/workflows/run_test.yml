@@ -32,7 +32,6 @@ jobs:
     uses: ./.github/workflows/_build_and_push_image.yml
     secrets: inherit
     with:
-      label: ${{ inputs.test }}
       dockerfile: tests/${{ inputs.test }}/Dockerfile
       tag: ${{ vars.REGISTRY }}/${{ inputs.test }}:latest
 

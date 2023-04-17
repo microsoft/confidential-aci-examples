@@ -3,10 +3,6 @@ name: _Build and Push Container Image
 on:
   workflow_call:
     inputs:
-      label:
-        description: "Label for the workflow"
-        required: true
-        type: string
       dockerfile:
         description: "Dockerfile to build and push"
         required: true
@@ -18,7 +14,7 @@ on:
 
 jobs:
   build-and-push-image:
-    name: Build and Push Image (${{ inputs.label }})
+    name: Build and Push Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

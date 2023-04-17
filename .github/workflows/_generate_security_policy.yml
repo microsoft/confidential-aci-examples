@@ -21,7 +21,7 @@ on:
 
 jobs:
   generate-security-policy:
-    name: Generate Security Policy (${{ inputs.test }})
+    name: Generate Security Policy
     runs-on: ubuntu-latest
     outputs:
       security-policies: ${{ steps.find-policies.outputs.security-policies }}

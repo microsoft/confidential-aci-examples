@@ -73,7 +73,7 @@ jobs:
 
   client-side-tests:
     name: "Run Client Side Tests"
-    uses: ./.github/workflows/_client_side_test.yml
+    uses: ./.github/workflows/client_side_test.yml
     needs: [generate-security-policy, deploy-containers]
     secrets: inherit
     strategy:

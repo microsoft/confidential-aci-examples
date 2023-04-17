@@ -26,7 +26,7 @@ jobs:
 
       - name: Generate Matrix Cell Name
         id: generate-name
-        run: echo "::set-output name=name::$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }} | md5sum | sed 's/ //g' | sed 's/-//g')"
+        run: echo "::set-output name=name::$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} | md5sum | sed 's/ //g' | sed 's/-//g')"
 
       - name: Install dependencies
         run: pip install -r requirements.txt

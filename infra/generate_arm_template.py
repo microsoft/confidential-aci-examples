@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 from typing import Optional
+from git import Repo
 
 
 def generate_arm_template(
@@ -33,7 +34,7 @@ def generate_arm_template(
                         {
                             "name": f"{container_group_name}-0",
                             "properties": {
-                                "image": f'caciexamples.azurecr.io/{manifest["testName"]}:{container["imageTag"]}',
+                                "image": f'caciexamples.azurecr.io/{manifest["testName"]}/{container["repository"]}:{Repo(search_parent_directories=True).head.object.hexsha}',
                                 "ports": [
                                     {"protocol": "TCP", "port": "22"},
                                     {"protocol": "TCP", "port": "8000"},

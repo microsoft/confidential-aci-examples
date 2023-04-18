@@ -1,8 +1,32 @@
 name: Client Side Test
 
 on:
+  workflow_dispatch:
+    inputs:
+      id:
+        description: "Unique Identifier for this run"
+        required: true
+        type: string
+      test:
+        description: "Test to run"
+        required: true
+        type: choice
+        options:
+          - simple_server
+      location:
+        description: "Location to deploy to"
+        required: true
+        type: string
+      security-policy:
+        description: "Security policy to use for ACI"
+        required: true
+        type: string
   workflow_call:
     inputs:
+      id:
+        description: "Unique Identifier for this run"
+        required: true
+        type: string
       test:
         description: "Test to run"
         required: true
@@ -26,7 +50,7 @@ jobs:
 
       - name: Generate Matrix Cell Name
         id: generate-name
-        run: echo "::set-output name=name::$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} | md5sum | sed 's/ //g' | sed 's/-//g')"
+        run: echo "::set-output name=name::$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')"
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -45,7 +69,6 @@ jobs:
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
             --query "properties.provisioningState" \
             --output tsv) == "Succeeded" ]] && exit 0 || exit 1
-
 
       - name: Run Tests
         env:

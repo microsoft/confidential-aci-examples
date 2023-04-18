@@ -6,7 +6,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  simple-server-northeurope:
+  simple-server-northeurope-0:
+    name: Simple Server on North Europe
+    uses: ./.github/workflows/run_test.yml
+    secrets: inherit
+    with:
+      test: simple_server
+      locations: '["northeurope"]'
+
+  simple-server-northeurope-1:
+    name: Simple Server on North Europe
+    uses: ./.github/workflows/run_test.yml
+    secrets: inherit
+    with:
+      test: simple_server
+      locations: '["northeurope"]'
+
+  simple-server-northeurope-2:
     name: Simple Server on North Europe
     uses: ./.github/workflows/run_test.yml
     secrets: inherit

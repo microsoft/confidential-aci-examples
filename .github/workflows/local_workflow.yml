@@ -29,6 +29,13 @@ jobs:
             --password ${{ secrets.SP_PASSWORD }} \
             --tenant ${{ secrets.SP_TENANT }}
 
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.AZ_REGISTRY_LOGIN }}
+          username: ${{ secrets.AZ_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+
       - name: Run Tests
         env:
           AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}

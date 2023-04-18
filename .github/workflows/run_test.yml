@@ -27,6 +27,20 @@ on:
         type: string
 
 jobs:
+
+  workflow-id:
+    name: "Generate Workflow ID"
+    runs-on: ubuntu-latest
+    outputs:
+      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
+    steps:
+      - name: "Get Workflow ID"
+        id: workflow-id
+        run: |
+          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
+          echo $WORKFLOW_ID
+          echo "::set-output name=workflow-id::$WORKFLOW_ID"
+
   build-and-push-images:
     name: "Build and Push Images"
     uses: ./.github/workflows/build_and_push_images.yml
@@ -45,13 +59,14 @@ jobs:
   generate-arm-templates:
     name: "Generate ARM Templates"
     uses: ./.github/workflows/generate_arm_template.yml
-    needs: generate-security-policy
+    needs: [workflow-id, generate-security-policy]
     secrets: inherit
     strategy:
       matrix:
         location: ${{ fromJson(inputs.locations) }}
         security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
     with:
+      id: ${{ needs.workflow-id.outputs.workflow-id }}
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}
@@ -59,7 +74,7 @@ jobs:
   deploy-containers:
     name: "Deploy Containers"
     uses: ./.github/workflows/deploy_container.yml
-    needs: [generate-security-policy, generate-arm-templates]
+    needs: [workflow-id, generate-security-policy, generate-arm-templates]
     secrets: inherit
     strategy:
       fail-fast: false
@@ -67,6 +82,7 @@ jobs:
         location: ${{ fromJson(inputs.locations) }}
         security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
     with:
+      id: ${{ needs.workflow-id.outputs.workflow-id }}
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}
@@ -74,7 +90,7 @@ jobs:
   client-side-tests:
     name: "Run Client Side Tests"
     uses: ./.github/workflows/client_side_test.yml
-    needs: [generate-security-policy, deploy-containers]
+    needs: [workflow-id, generate-security-policy, deploy-containers]
     secrets: inherit
     strategy:
       fail-fast: false
@@ -82,6 +98,7 @@ jobs:
         location: ${{ fromJson(inputs.locations) }}
         security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
     with:
+      id: ${{ needs.workflow-id.outputs.workflow-id }}
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}
@@ -89,7 +106,7 @@ jobs:
   remove-containers:
     name: "Remove Containers"
     uses: ./.github/workflows/remove_container.yml
-    needs: [generate-security-policy, client-side-tests]
+    needs: [workflow-id, generate-security-policy, client-side-tests]
     secrets: inherit
     if: always()
     strategy:
@@ -98,6 +115,7 @@ jobs:
         location: ${{ fromJson(inputs.locations) }}
         security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
     with:
+      id: ${{ needs.workflow-id.outputs.workflow-id }}
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}

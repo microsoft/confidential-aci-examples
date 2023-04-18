@@ -1,8 +1,32 @@
 name: Remove Container
 
 on:
+  workflow_dispatch:
+    inputs:
+      id:
+        description: "Unique Identifier for this run"
+        required: true
+        type: string
+      test:
+        description: "Test to remove the ACI for"
+        required: true
+        type: choice
+        options:
+          - simple_server
+      location:
+        description: "Location to deploy ACI to"
+        required: true
+        type: string
+      security-policy:
+        description: "Security policy within the artifact to use for ACI"
+        required: true
+        type: string
   workflow_call:
     inputs:
+      id:
+        description: "Unique Identifier for this run"
+        required: true
+        type: string
       test:
         description: "Test to remove the ACI for"
         required: true
@@ -24,10 +48,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Generate Matrix Cell Name
-        id: generate-name
-        run: echo "::set-output name=name::$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ github.run_id }}-${{ github.run_attempt }} | md5sum | sed 's/ //g' | sed 's/-//g')"
-
       - name: Install dependencies
         run: pip install -r requirements.txt
 
@@ -43,4 +63,4 @@ jobs:
           python infra/remove_container.py \
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --deployment-name deployment-${{ steps.generate-name.outputs.name }}
+            --deployment-name deployment-${{ inputs.id }}

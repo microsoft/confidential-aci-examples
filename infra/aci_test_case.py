@@ -1,8 +1,10 @@
+import json
 import os
 import re
 import unittest
 import uuid
 import sys
+from git import Repo
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -43,24 +45,27 @@ class AciTestCase(unittest.TestCase):
 
         # If the container doesn't exist, deploy it, starting by building and
         # pushing the image
+        with open(f"tests/{snake_case_test_name}/manifest.json", "r") as manifest_file:
+            manifest = json.load(manifest_file)
         registry = "caciexamples.azurecr.io"
-        repository = snake_case_test_name
-        tag = "latest"
+        repository = manifest["testName"]
+        tag = Repo(search_parent_directories=True).head.object.hexsha
         client = get_docker_client(
             registry=registry,
             registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),
         )
-        client.images.build(
-            dockerfile="Dockerfile",
-            tag=tag,
-            path=os.path.abspath(f"tests/{snake_case_test_name}"),
-        )
-        client.images.push(f"{registry}/{repository}", tag=tag)
+        for image, dockerfile_path in manifest["images"].items():
+            client.images.build(
+                dockerfile=dockerfile_path,
+                tag=tag,
+                path=os.path.abspath(f"tests/{snake_case_test_name}"),
+            )
+            client.images.push(f"{registry}/{repository}/{image}", tag=tag)
 
         # Deploy the container with the freshly built image
         arm_template = generate_arm_template(
             container_group_name=self.container_name,
-            image=f"{registry}/{repository}:{tag}",
+            manifest=manifest,
             location="eastus2euap",
             out=f"tests/{snake_case_test_name}/arm_template.json",
             registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),

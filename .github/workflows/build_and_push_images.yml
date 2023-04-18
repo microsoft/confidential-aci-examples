@@ -64,4 +64,4 @@ jobs:
           file: tests/${{ inputs.test }}/${{ steps.docker-info.outputs.file }}
           push: true
           tags: |
-            ${{ vars.REGISTRY }}/${{ inputs.test }}/${{ steps.docker-info.outputs.repository }}/${{ github.sha }}
+            ${{ vars.REGISTRY }}/${{ inputs.test }}/${{ steps.docker-info.outputs.repository }}:${{ github.sha }}

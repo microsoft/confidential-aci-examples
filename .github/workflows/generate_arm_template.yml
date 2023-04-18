@@ -52,6 +52,10 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Generate Matrix Cell Name
+        id: generate-name
+        run: echo "::set-output name=name::$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')"
+
       - name: Download Security Policy Artifact
         uses: actions/download-artifact@v2
         with:
@@ -62,7 +66,7 @@ jobs:
         id: generate-arm-template
         run: |
           python infra/generate_arm_template.py \
-            --container-group-name group-${{ inputs.id }} \
+            --container-group-name group-${{ steps.generate-name.outputs.name }} \
             --location ${{ inputs.location }} \
             --manifest-path tests/${{ inputs.test }}/manifest.json \
             --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
@@ -75,5 +79,5 @@ jobs:
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.id }}_arm_template
+          name: ${{ steps.generate-name.outputs.name }}_arm_template
           path: arm_template.json

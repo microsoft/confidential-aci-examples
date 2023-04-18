@@ -38,7 +38,75 @@
 				"python.envFile": "${workspaceFolder}/env",
 				"python.defaultInterpreterPath": "/usr/local/python/current/bin/python",
 				"python.formatting.blackPath": "/usr/local/py-utils/bin/black"
-			}
+			},
+			"json.schemas": [
+				{
+					"fileMatch": [
+						"tests/*/manifest.json"
+					],
+					"schema": {
+						"$schema": "http://json-schema.org/draft-07/schema#",
+						"type": "object",
+						"properties": {
+							"testName": {
+								"type": "string"
+							},
+							"images": {
+								"type": "object",
+								"properties": {
+									"primary": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"primary"
+								],
+								"additionalProperties": false
+							},
+							"containerGroups": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"containers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"repository": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"repository"
+												],
+												"additionalProperties": false
+											}
+										}
+									},
+									"required": [
+										"containers"
+									],
+									"additionalProperties": false
+								}
+							},
+							"securityPolicies": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						},
+						"required": [
+							"testName",
+							"images",
+							"containerGroups",
+							"securityPolicies"
+						],
+						"additionalProperties": false
+					}
+				}
+			]
 		}
 	},
 	"postCreateCommand": "pip install -r requirements.txt && az login --service-principal --username $SP_APP_ID --password $SP_PASSWORD --tenant $SP_TENANT && az acr login --name caciexamples && az extension add --name confcom"

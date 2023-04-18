@@ -30,6 +30,13 @@ While running tests directly will automatically manage the images and containers
 | Deploy Container               | [deploy_container.py](infra/deploy_container.py)           | [launch.json](.vscode/launch.json) | [deploy_container.yml](.github/workflows/deploy_container.yml)                 |
 | Remove Container               | [remove_container.py](infra/remove_container.py)           | [launch.json](.vscode/launch.json) | [remove_container.yml](.github/workflows/remove_container.yml)                 |
 
+## Adding New Tests
+
+- Create a new directory under tests with the name of your new test
+- Add a manifest.json file to the new directory and fill in the required fields
+    - At least one container image is needed, so create a Dockerfile and mention it in the manifest
+    - Manifest files are automatically validated if running in codespaces, otherwise refer to the schema in [.devcontainer.json](.devcontainer/devcontainer.json)
+
 ---
 
 ## Contributing

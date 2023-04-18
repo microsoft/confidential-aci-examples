@@ -5,7 +5,7 @@ import json
 def read_manifest_security_policies(manifest_path: str):
     with open(manifest_path, "r") as manifest_file:
         manifest = json.load(manifest_file)
-    return manifest["security_policies"]
+    return manifest["securityPolicies"]
 
 
 if __name__ == "__main__":

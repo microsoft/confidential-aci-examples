@@ -1,13 +1,13 @@
 {
     "testName": "simple_server",
     "images": {
-        "Dockerfile": "latest"
+        "primary": "Dockerfile"
     },
     "containerGroups": [
         {
             "containers": [
                 {
-                    "imageTag": "latest"
+                    "repository": "primary"
                 }
             ]
         }

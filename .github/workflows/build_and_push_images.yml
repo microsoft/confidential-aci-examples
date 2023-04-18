@@ -22,14 +22,14 @@ jobs:
     name: Get Images to Build
     runs-on: ubuntu-latest
     outputs:
-      image_to_tag: ${{ steps.get-images-to-build.outputs.image_to_tag }}
+      images: ${{ steps.get-images-to-build.outputs.images }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Get Images to Build
         id: get-images-to-build
-        run: echo "::set-output name=image_to_tag::$(python infra/read_manifest_images.py tests/${{ inputs.test }}/manifest.json)"
+        run: echo "::set-output name=images::$(python infra/read_manifest_images.py tests/${{ inputs.test }}/manifest.json)"
 
   build-and-push-image:
     name: Build and Push Images
@@ -37,7 +37,7 @@ jobs:
     needs: get-images-to-build
     strategy:
       matrix:
-        image_to_tag: ${{ fromJson(needs.get-images-to-build.outputs.image_to_tag) }}
+        images: ${{ fromJson(needs.get-images-to-build.outputs.images) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -52,8 +52,8 @@ jobs:
       - name: Get Docker Info
         id: docker-info
         run: |
-          echo "::set-output name=file::$(echo ${{ matrix.image_to_tag }} | cut -d':' -f1 )"
-          echo "::set-output name=tag::$(echo ${{ matrix.image_to_tag }} | cut -d':' -f2 )"
+          echo "::set-output name=repository::$(echo ${{ matrix.images }} | cut -d':' -f1 )"
+          echo "::set-output name=file::$(echo ${{ matrix.images }} | cut -d':' -f2 )"
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
@@ -64,4 +64,4 @@ jobs:
           file: tests/${{ inputs.test }}/${{ steps.docker-info.outputs.file }}
           push: true
           tags: |
-            ${{ vars.REGISTRY }}/${{ inputs.test }}:${{ steps.docker-info.outputs.tag }}
+            ${{ vars.REGISTRY }}/${{ inputs.test }}/${{ steps.docker-info.outputs.repository }}:${{ github.sha }}

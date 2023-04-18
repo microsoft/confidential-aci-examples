@@ -5,7 +5,10 @@ import json
 def read_manifest_images(manifest_path: str):
     with open(manifest_path, "r") as manifest_file:
         manifest = json.load(manifest_file)
-    return [f"{dockerfile}:{tag}" for dockerfile, tag in manifest["images"].items()]
+    return [
+        f"{repository}:{dockerfile}"
+        for repository, dockerfile in manifest["images"].items()
+    ]
 
 
 if __name__ == "__main__":

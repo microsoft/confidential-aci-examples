@@ -42,7 +42,9 @@
             "args": [
                 "build",
                 "-t",
-                "caciexamples.azurecr.io/${input:testName}:latest",
+                "caciexamples.azurecr.io/${input:testName}/${input:image}:latest",
+                "-f",
+                "tests/${input:testName}/Dockerfile.${input:image}",
                 "tests/${input:testName}"
             ]
         },
@@ -56,7 +58,7 @@
             ],
             "args": [
                 "push",
-                "caciexamples.azurecr.io/${input:testName}:latest"
+                "caciexamples.azurecr.io/${input:testName}/${input:image}:latest"
             ]
         },
         {
@@ -81,8 +83,14 @@
             "type": "pickString",
             "description": "Enter the name of the test to build the image for:",
             "options": [
-                "simple_server",
+                "simple_server"
             ]
+        },
+        {
+            "id": "image",
+            "type": "promptString",
+            "description": "Enter the name of the image:",
+            "default": "primary"
         },
         {
             "id": "armTemplatePath",

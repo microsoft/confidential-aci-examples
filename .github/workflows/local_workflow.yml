@@ -36,6 +36,9 @@ jobs:
           username: ${{ secrets.AZ_REGISTRY_USERNAME }}
           password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
+      - name: Set Docker Permissions
+        run: sudo usermod -aG docker $USER
+
       - name: Run Tests
         env:
           AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}

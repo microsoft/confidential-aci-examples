@@ -4,12 +4,12 @@ import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 ENDPOINTS = {
-    "/get_attestation": {
+    "/hello": {
         "method": "GET",
         "response": {
             "status": 200,
             "content_type": "text/plain",
-            "body": f"Getting attestation{os.linesep}",
+            "body": f"Hello world!{os.linesep}",
         },
     }
 }

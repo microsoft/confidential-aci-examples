@@ -52,16 +52,7 @@
 								"type": "string"
 							},
 							"images": {
-								"type": "object",
-								"properties": {
-									"primary": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"primary"
-								],
-								"additionalProperties": false
+								"type": "object"
 							},
 							"containerGroups": {
 								"type": "array",
@@ -75,17 +66,39 @@
 												"properties": {
 													"repository": {
 														"type": "string"
+													},
+													"ports": {
+														"type": "array",
+														"items": {
+															"type": "number"
+														}
+													},
+													"cores": {
+														"type": "number"
+													},
+													"ram": {
+														"type": "number"
 													}
 												},
 												"required": [
-													"repository"
+													"repository",
+													"ports",
+													"cores",
+													"ram"
 												],
 												"additionalProperties": false
+											}
+										},
+										"ports": {
+											"type": "array",
+											"items": {
+												"type": "number"
 											}
 										}
 									},
 									"required": [
-										"containers"
+										"containers",
+										"ports"
 									],
 									"additionalProperties": false
 								}

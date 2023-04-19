@@ -36,22 +36,27 @@ def generate_arm_template(
                             "properties": {
                                 "image": f'caciexamples.azurecr.io/{manifest["testName"]}/{container["repository"]}:{Repo(search_parent_directories=True).head.object.hexsha}',
                                 "ports": [
-                                    {"protocol": "TCP", "port": "22"},
-                                    {"protocol": "TCP", "port": "8000"},
+                                    {"protocol": "TCP", "port": port}
+                                    for port in container["ports"]
                                 ],
                                 "environmentVariables": [],
-                                "resources": {"requests": {"memoryInGB": 16, "cpu": 4}},
+                                "resources": {
+                                    "requests": {
+                                        "memoryInGB": container["ram"],
+                                        "cpu": container["cores"],
+                                    }
+                                },
                             },
                         }
-                        for container in container_group_manifest["containers"]
+                        for container in container_group["containers"]
                     ],
                     "initContainers": [],
                     "restartPolicy": "Never",
                     "osType": "Linux",
                     "ipAddress": {
                         "ports": [
-                            {"protocol": "TCP", "port": "22"},
-                            {"protocol": "TCP", "port": "8000"},
+                            {"protocol": "TCP", "port": port}
+                            for port in container_group["ports"]
                         ],
                         "type": "Public",
                     },
@@ -68,7 +73,7 @@ def generate_arm_template(
                     ],
                 },
             }
-            for container_group_manifest in manifest["containerGroups"]
+            for container_group in manifest["containerGroups"]
         ],
     }
 

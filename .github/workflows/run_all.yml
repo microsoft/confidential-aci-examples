@@ -19,3 +19,10 @@ jobs:
     secrets: inherit
     with:
       test: simple_server
+
+  simple-sidecar:
+    name: Simple Sidecar
+    uses: ./.github/workflows/run_test.yml
+    secrets: inherit
+    with:
+      test: simple_sidecar

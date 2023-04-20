@@ -10,13 +10,13 @@ from infra.aci_test_case import AciTestCase
 
 
 class SimpleServerTest(AciTestCase):
-    def test_get_attestation(self):
+    def test_endpoint(self):
         session = requests.Session()
         session.mount("http://", HTTPAdapter(max_retries=10))
         assert self.container_ip is not None
-        response = session.get(f"http://{self.container_ip}:8000/get_attestation")
+        response = session.get(f"http://{self.container_ip}:8000/hello")
         assert response.status_code == 200
-        assert response.content == b"Getting attestation\n"
+        assert response.content == b"Hello world!\n"
 
 
 if __name__ == "__main__":

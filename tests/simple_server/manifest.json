@@ -7,9 +7,13 @@
         {
             "containers": [
                 {
-                    "repository": "primary"
+                    "repository": "primary",
+                    "ports": [22, 8000],
+                    "cores": 2,
+                    "ram": 8
                 }
-            ]
+            ],
+            "ports": [22, 8000]
         }
     ],
     "securityPolicies": [

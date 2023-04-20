@@ -1,0 +1,27 @@
+{
+    "testName": "simple_server",
+    "images": {
+        "primary": "primary.Dockerfile",
+        "sidecar": "sidecar.Dockerfile"
+    },
+    "containerGroups": [
+        {
+            "containers": [
+                {
+                    "repository": "primary",
+                    "ports": [22, 8000],
+                    "cores": 2,
+                    "ram": 8
+                },
+                {
+                    "repository": "sidecar",
+                    "ports": [8001],
+                    "cores": 2,
+                    "ram": 8
+                }
+            ],
+            "ports": [22, 8000]
+        }
+    ],
+    "securityPolicies": []
+}

@@ -32,7 +32,7 @@ def generate_arm_template(
                     "sku": "Confidential",
                     "containers": [
                         {
-                            "name": f"{container_group_name}-0",
+                            "name": f"{container_group_name}-{idx}",
                             "properties": {
                                 "image": f'caciexamples.azurecr.io/{manifest["testName"]}/{container["repository"]}:{Repo(search_parent_directories=True).head.object.hexsha}',
                                 "ports": [
@@ -48,7 +48,7 @@ def generate_arm_template(
                                 },
                             },
                         }
-                        for container in container_group["containers"]
+                        for idx, container in enumerate(container_group["containers"])
                     ],
                     "initContainers": [],
                     "restartPolicy": "Never",

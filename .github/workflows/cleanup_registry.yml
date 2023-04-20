@@ -1,0 +1,24 @@
+name: Cleanup Registry
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  cleanup_registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.AZ_REGISTRY_LOGIN }}
+          username: ${{ secrets.AZ_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+
+      - name: Cleanup Registry
+        run: |
+          az acr run \
+            --cmd "acr purge --filter '.*:.*' --ago 1d" \
+            --registry caciexamples \
+            /dev/null

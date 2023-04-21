@@ -9,6 +9,14 @@ jobs:
   cleanup_registry:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
+
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:

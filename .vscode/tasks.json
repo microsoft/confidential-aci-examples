@@ -83,7 +83,9 @@
             "type": "pickString",
             "description": "Enter the name of the test to build the image for:",
             "options": [
-                "simple_server"
+                "simple_server",
+                "simple_sidecar",
+                "attestation"
             ]
         },
         {

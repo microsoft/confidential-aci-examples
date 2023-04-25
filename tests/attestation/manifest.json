@@ -1,0 +1,20 @@
+{
+    "testName": "attestation",
+    "images": {
+        "primary": "Dockerfile.primary"
+    },
+    "containerGroups": [
+        {
+            "containers": [
+                {
+                    "repository": "primary",
+                    "ports": [22, 8000],
+                    "cores": 2,
+                    "ram": 8
+                }
+            ],
+            "ports": [22, 8000]
+        }
+    ],
+    "securityPolicies": []
+}

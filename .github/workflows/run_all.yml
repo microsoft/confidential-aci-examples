@@ -26,3 +26,10 @@ jobs:
     secrets: inherit
     with:
       test: simple_sidecar
+
+  attestation:
+    name: Attestation
+    uses: ./.github/workflows/run_test.yml
+    secrets: inherit
+    with:
+      test: attestation

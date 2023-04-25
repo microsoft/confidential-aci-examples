@@ -1,0 +1,5 @@
+FROM python:latest
+WORKDIR /app
+COPY get_attestation.py get_attestation.py
+COPY payload.py payload.py
+CMD ["python", "payload.py"]

@@ -39,7 +39,7 @@ jobs:
         run: |
           WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
           echo $WORKFLOW_ID
-          echo "::set-output name=workflow-id::$WORKFLOW_ID"
+          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
 
   build-and-push-images:
     name: "Build and Push Images"

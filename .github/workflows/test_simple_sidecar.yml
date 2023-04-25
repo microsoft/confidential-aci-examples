@@ -1,0 +1,29 @@
+name: Simple Sidecar
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/**
+      - infra/**
+      - tests/simple_sidecar/**
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/**
+      - infra/**
+      - tests/simple_sidecar/**
+  merge_group:
+    branches:
+      - main
+
+jobs:
+  simple-sidecar:
+    name: Simple Sidecar
+    uses: ./.github/workflows/run_test.yml
+    secrets: inherit
+    with:
+      test: simple_sidecar

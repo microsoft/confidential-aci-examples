@@ -29,7 +29,7 @@ jobs:
 
       - name: Get Images to Build
         id: get-images-to-build
-        run: echo "::set-output name=images::$(python infra/read_manifest_images.py tests/${{ inputs.test }}/manifest.json)"
+        run: echo "images=$(python infra/read_manifest_images.py tests/${{ inputs.test }}/manifest.json)" >> $GITHUB_OUTPUT
 
   build-and-push-image:
     name: Build and Push Images
@@ -52,8 +52,8 @@ jobs:
       - name: Get Docker Info
         id: docker-info
         run: |
-          echo "::set-output name=repository::$(echo ${{ matrix.images }} | cut -d':' -f1 )"
-          echo "::set-output name=file::$(echo ${{ matrix.images }} | cut -d':' -f2 )"
+          echo "repository=$(echo ${{ matrix.images }} | cut -d':' -f1 )" >> $GITHUB_OUTPUT
+          echo "file=$(echo ${{ matrix.images }} | cut -d':' -f2 )" >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2

@@ -77,7 +77,7 @@ jobs:
         id: find-policies
         run: |
           echo "name=security-policies::[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
-          echo "::set-output name=security-policies::[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]"
+          echo "security-policies=[$(find security_policies -name '*.rego' -exec basename {} \; | awk '{printf "\"%s\", ", $0}' | sed 's/, $//')]" >> $GITHUB_OUTPUT
 
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v2

@@ -3,6 +3,7 @@ import unittest
 import sys
 import requests
 import os
+from requests.adapters import HTTPAdapter
 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
@@ -19,7 +20,9 @@ class AttestationTest(AciTestCase):
         assert self.container_ip is not None
 
         input_report_data = "EXAMPLEREPORTDATA"
-        response = requests.get(
+        session = requests.Session()
+        session.mount("http://", HTTPAdapter(max_retries=10))
+        response = session.get(
             f"http://{self.container_ip}:8000/get_attestation?report_data={input_report_data}"
         )
 

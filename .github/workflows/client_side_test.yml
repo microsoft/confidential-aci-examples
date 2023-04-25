@@ -77,7 +77,8 @@ jobs:
           AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           AZ_RESOURCE_GROUP: ${{ secrets.AZ_RESOURCE_GROUP }}
           CLEANUP_ACI: 0
-        run: |
-          python -m unittest \
-            tests.${{ inputs.test }}.${{ inputs.test }}_test \
+        run: \
+          python -m unittest discover \
+            -s tests/${{ inputs.test }} \
+            -p '*.py' \
             -v

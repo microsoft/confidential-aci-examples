@@ -11,7 +11,7 @@ from infra.aci_test_case import AciTestCase
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from tests.attestation.get_attestation import SNP_REPORT_STRUCTURE
+from get_attestation import SNP_REPORT_STRUCTURE
 
 
 class AttestationTest(AciTestCase):

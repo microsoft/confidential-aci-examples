@@ -44,6 +44,7 @@ jobs:
   deploy-container:
     name: Deploy Container (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v3

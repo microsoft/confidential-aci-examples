@@ -20,7 +20,7 @@ jobs:
             - name: Delete Failed Deployments
               run: |
                 NON_RUNNING_CONTAINERS=$(az container list \
-                    --resource-group c-aci-examples \
+                    --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
                     --query "[?provisioningState=='Failed' || provisioningState=='Unhealthy']")
 
                 for container in $(echo $NON_RUNNING_CONTAINERS | jq -r '.[].id'); do

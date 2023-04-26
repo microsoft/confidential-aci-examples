@@ -19,21 +19,12 @@ jobs:
 
             - name: Delete Failed Deployments
               run: |
-                FAILED_DEPLOYMENTS=$(az group deployment list \
+                NON_RUNNING_CONTAINERS=$(az container list \
                     --resource-group c-aci-examples \
-                    --query "[?properties.provisioningState=='Failed']" \
-                    -o json \
-                )
+                    --query "[?provisioningState=='Failed' || provisioningState=='Unhealthy']")
 
-                for resource in $(echo $FAILED_DEPLOYMENTS | jq -r '.[].name'); do
-                    echo "Deleting resource: ${resource}"
-                    az resource delete \
-                        --name ${resource} \
-                        --resource-group c-aci-examples \
-                        --resource-type Microsoft.ContainerInstance/containerGroups
+                for container in $(echo $NON_RUNNING_CONTAINERS | jq -r '.[].id'); do
+                    echo "Deleting container group: ${container}"
+                    az resource delete --ids ${container}
                 done
 
-                for deployment in $(echo $FAILED_DEPLOYMENTS | jq -r '.[].id'); do
-                    echo "Deleting deployment: ${resource}"
-                    az resource delete --ids ${deployment}
-                done

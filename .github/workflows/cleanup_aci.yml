@@ -1,0 +1,39 @@
+name: Cleanup ACI
+
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: '0 0 * * *'
+
+jobs:
+    cleanup:
+        runs-on: ubuntu-latest
+        steps:
+
+            - name: Log into Azure
+              run: |
+                  az login --service-principal \
+                  --username ${{ secrets.SP_APP_ID }} \
+                  --password ${{ secrets.SP_PASSWORD }} \
+                  --tenant ${{ secrets.SP_TENANT }}
+
+            - name: Delete Failed Deployments
+              run: |
+                FAILED_DEPLOYMENTS=$(az group deployment list \
+                    --resource-group c-aci-examples \
+                    --query "[?properties.provisioningState=='Failed']" \
+                    -o json \
+                )
+
+                for resource in $(echo $FAILED_DEPLOYMENTS | jq -r '.[].name'); do
+                    echo "Deleting resource: ${resource}"
+                    az resource delete \
+                        --name ${resource} \
+                        --resource-group c-aci-examples \
+                        --resource-type Microsoft.ContainerInstance/containerGroups
+                done
+
+                for deployment in $(echo $FAILED_DEPLOYMENTS | jq -r '.[].id'); do
+                    echo "Deleting deployment: ${resource}"
+                    az resource delete --ids ${deployment}
+                done

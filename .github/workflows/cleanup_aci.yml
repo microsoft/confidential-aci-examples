@@ -7,6 +7,7 @@ on:
 
 jobs:
     cleanup:
+        name: Cleanup Failed Container Groups
         runs-on: ubuntu-latest
         steps:
 
@@ -17,7 +18,7 @@ jobs:
                   --password ${{ secrets.SP_PASSWORD }} \
                   --tenant ${{ secrets.SP_TENANT }}
 
-            - name: Delete Failed Deployments
+            - name: Delete Failed Container Groups
               run: |
                 NON_RUNNING_CONTAINERS=$(az container list \
                     --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \

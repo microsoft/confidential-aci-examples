@@ -78,6 +78,7 @@ jobs:
 
       - name: Check Container is Running
         run: |
+          sleep 10 # Give the container a chance to stabilise
           CONTAINER_STATE=$(az container show \
               --name group-${{ steps.generate-name.outputs.name }} \
               --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \

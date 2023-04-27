@@ -82,5 +82,5 @@ jobs:
               --name group-${{ steps.generate-name.outputs.name }} \
               --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
             )
-          echo $CONTAINER_STATE
+          echo $CONTAINER_STATE | jq
           [[ $(echo $CONTAINER_STATE | jq -r '.instanceView.state') == "Running" ]] && exit 0 || exit 1

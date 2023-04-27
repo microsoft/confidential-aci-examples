@@ -14,7 +14,9 @@ class SimpleSidecarTest(AciTestCase):
         assert self.container_ip is not None
         session = requests.Session()
         session.mount("http://", HTTPAdapter(max_retries=10))
-        response = session.get(f"http://{self.container_ip}:8000/check_connection")
+        response = session.get(
+            f"http://{self.container_ip}:8000/check_connection", timeout=20
+        )
         assert response.status_code == 200
         assert response.content == b"True"
 

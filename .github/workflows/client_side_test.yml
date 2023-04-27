@@ -63,13 +63,13 @@ jobs:
             --password ${{ secrets.SP_PASSWORD }} \
             --tenant ${{ secrets.SP_TENANT }}
 
-      - name: Check Deployment Succeeded
+      - name: Check Container is Running
         run: |
-          [[ $(az deployment group show \
-            --name deployment-${{ steps.generate-name.outputs.name }} \
-            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --query "properties.provisioningState" \
-            --output tsv) == "Succeeded" ]] && exit 0 || exit 1
+          [[ $(az container show \
+            --name group-${{ steps.generate-name.outputs.name }} \
+            --resource-group c-aci-examples \
+            --query "instanceView.state" \
+          ) == "Running" ]] && exit 0 || exit 1
 
       - name: Run Tests
         env:

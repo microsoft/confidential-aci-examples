@@ -2,10 +2,10 @@ import argparse
 import json
 import os
 from typing import Optional
-from git import Repo
 
 
 def generate_arm_template(
+    id: str,
     container_group_name: str,
     location: str,
     manifest: dict,
@@ -34,7 +34,7 @@ def generate_arm_template(
                         {
                             "name": f"{container_group_name}-{idx}",
                             "properties": {
-                                "image": f'caciexamples.azurecr.io/{manifest["testName"]}/{container["repository"]}:{Repo(search_parent_directories=True).head.object.hexsha}',
+                                "image": f'caciexamples.azurecr.io/{manifest["testName"]}/{container["repository"]}:{id}',
                                 "ports": [
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
@@ -87,6 +87,12 @@ def generate_arm_template(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate ARM template")
     parser.add_argument(
+        "--id",
+        help="The ID to use for the image tag",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
         "--container-group-name",
         help="The name of the container group to deploy",
         required=True,
@@ -119,6 +125,7 @@ if __name__ == "__main__":
     with open(args.manifest_path, "r") as manifest_file:
         manifest = json.load(manifest_file)
         generate_arm_template(
+            id=args.id,
             container_group_name=args.container_group_name,
             location=args.location,
             manifest=manifest,

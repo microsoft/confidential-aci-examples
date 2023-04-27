@@ -3,6 +3,10 @@ name: Generate Security Policy
 on:
   workflow_dispatch:
     inputs:
+      id:
+        description: "Unique Identifier for this run"
+        required: true
+        type: string
       test:
         description: "Test to generate the Security Policy for"
         required: true
@@ -11,6 +15,10 @@ on:
           - simple_server
   workflow_call:
     inputs:
+      id:
+        description: "Unique Identifier for this run"
+        required: true
+        type: string
       test:
         description: "Name of the Test to generate the Security Policy for"
         required: true
@@ -38,6 +46,7 @@ jobs:
         id: generate-arm-template
         run: |
           python infra/generate_arm_template.py \
+            --id ${{ inputs.id }} \
             --container-group-name "not-relevant" \
             --location "not-relevant" \
             --manifest-path tests/${{ inputs.test }}/manifest.json \

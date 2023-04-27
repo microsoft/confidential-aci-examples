@@ -46,7 +46,7 @@ jobs:
         id: generate-arm-template
         run: |
           python infra/generate_arm_template.py \
-            --id ${{ inputs.id }}
+            --id ${{ inputs.id }} \
             --container-group-name "not-relevant" \
             --location "not-relevant" \
             --manifest-path tests/${{ inputs.test }}/manifest.json \

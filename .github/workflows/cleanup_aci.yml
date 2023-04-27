@@ -1,31 +1,61 @@
 name: Cleanup ACI
 
 on:
-    workflow_dispatch:
-    schedule:
-        - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      cleanup_running:
+        description: 'Cleanup Running Groups'
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
-    cleanup:
-        name: Cleanup Failed Container Groups
-        runs-on: ubuntu-latest
-        steps:
+  cleanup-running:
+    name: Cleanup Running CI Jobs
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || inputs.cleanup_running }}
+    steps:
 
-            - name: Log into Azure
-              run: |
-                  az login --service-principal \
-                  --username ${{ secrets.SP_APP_ID }} \
-                  --password ${{ secrets.SP_PASSWORD }} \
-                  --tenant ${{ secrets.SP_TENANT }}
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
 
-            - name: Delete Failed Container Groups
-              run: |
-                NON_RUNNING_CONTAINERS=$(az container list \
-                    --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-                    --query "[?provisioningState=='Failed' || provisioningState=='Unhealthy']")
+      - name: Delete Failed Container Groups
+        run: |
+          RUNNING_CONTAINERS=$(az container list \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --query "[?starts_with(name, 'group-')]")
 
-                for container in $(echo $NON_RUNNING_CONTAINERS | jq -r '.[].id'); do
-                    echo "Deleting container group: ${container}"
-                    az resource delete --ids ${container}
-                done
+          for container in $(echo $RUNNING_CONTAINERS | jq -r '.[].id'); do
+              echo "Deleting container group: ${container}"
+              az resource delete --ids ${container}
+          done
+
+  cleanup-failed:
+    name: Cleanup Failed Container Groups
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
+
+      - name: Delete Failed Container Groups
+        run: |
+          NON_RUNNING_CONTAINERS=$(az container list \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --query "[?provisioningState=='Failed' || provisioningState=='Unhealthy']")
+
+          for container in $(echo $NON_RUNNING_CONTAINERS | jq -r '.[].id'); do
+            echo "Deleting container group: ${container}"
+            az resource delete --ids ${container}
+          done
 

@@ -4,7 +4,6 @@ import re
 import unittest
 import uuid
 import sys
-from git import Repo
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -27,8 +26,9 @@ class AciTestCase(unittest.TestCase):
         snake_case_test_name = re.sub(r"(?<!^)(?=[A-Z])", "_", test_name).lower()
         dash_case_test_name = re.sub(r"(?<!^)(?=[A-Z])", "-", test_name).lower()
 
+        self.instance_id = str(uuid.uuid4())
         self.container_name = os.getenv(
-            "DEPLOYMENT_NAME", f"{dash_case_test_name}-{uuid.uuid4()}"
+            "DEPLOYMENT_NAME", f"{dash_case_test_name}-{self.instance_id}"
         )
 
         # Check if the container already exists
@@ -49,7 +49,7 @@ class AciTestCase(unittest.TestCase):
             manifest = json.load(manifest_file)
         registry = "caciexamples.azurecr.io"
         repository = manifest["testName"]
-        tag = Repo(search_parent_directories=True).head.object.hexsha
+        tag = self.instance_id
         client = get_docker_client(
             registry=registry,
             registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),
@@ -64,6 +64,7 @@ class AciTestCase(unittest.TestCase):
 
         # Deploy the container with the freshly built image
         arm_template = generate_arm_template(
+            id=self.instance_id,
             container_group_name=self.container_name,
             manifest=manifest,
             location="eastus2euap",

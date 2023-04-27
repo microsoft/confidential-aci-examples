@@ -44,9 +44,11 @@ jobs:
   build-and-push-images:
     name: "Build and Push Images"
     uses: ./.github/workflows/build_and_push_images.yml
+    needs: workflow-id
     secrets: inherit
     with:
       test: ${{ inputs.test }}
+      id: ${{ needs.workflow-id.outputs.workflow-id }}
 
   generate-security-policy:
     name: "Generate Security Policy"

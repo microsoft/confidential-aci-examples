@@ -66,6 +66,7 @@ jobs:
         id: generate-arm-template
         run: |
           python infra/generate_arm_template.py \
+            --id ${{ inputs.id }} \
             --container-group-name group-${{ steps.generate-name.outputs.name }} \
             --location ${{ inputs.location }} \
             --manifest-path tests/${{ inputs.test }}/manifest.json \

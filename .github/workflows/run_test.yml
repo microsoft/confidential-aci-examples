@@ -47,15 +47,16 @@ jobs:
     needs: workflow-id
     secrets: inherit
     with:
-      test: ${{ inputs.test }}
       id: ${{ needs.workflow-id.outputs.workflow-id }}
+      test: ${{ inputs.test }}
 
   generate-security-policy:
     name: "Generate Security Policy"
     uses: ./.github/workflows/generate_security_policy.yml
-    needs: build-and-push-images
+    needs: [workflow-id, build-and-push-images]
     secrets: inherit
     with:
+      id: ${{ needs.workflow-id.outputs.workflow-id }}
       test: ${{ inputs.test }}
 
   generate-arm-templates:

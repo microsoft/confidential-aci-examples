@@ -75,3 +75,12 @@ jobs:
             --arm-template-path arm_template.json \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
             --deployment-name deployment-${{ steps.generate-name.outputs.name }} \
+
+      - name: Check Container is Running
+        run: |
+          CONTAINER_STATE=$(az container show \
+              --name group-${{ steps.generate-name.outputs.name }} \
+              --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            )
+          echo $CONTAINER_STATE | jq
+          [[ $(echo $CONTAINER_STATE | jq -r '.instanceView.state') == "Running" ]] && exit 0 || exit 1

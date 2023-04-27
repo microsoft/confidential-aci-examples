@@ -23,7 +23,8 @@ class AttestationTest(AciTestCase):
         session = requests.Session()
         session.mount("http://", HTTPAdapter(max_retries=10))
         response = session.get(
-            f"http://{self.container_ip}:8000/get_attestation?report_data={input_report_data}"
+            f"http://{self.container_ip}:8000/get_attestation?report_data={input_report_data}",
+            timeout=20,
         )
 
         assert response.status_code == 200

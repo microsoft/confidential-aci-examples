@@ -43,6 +43,7 @@ jobs:
     name: Build and Push Images
     runs-on: ubuntu-latest
     needs: get-images-to-build
+    if: ${{ needs.get-images-to-build.outputs.images != '[]' }}
     strategy:
       matrix:
         images: ${{ fromJson(needs.get-images-to-build.outputs.images) }}

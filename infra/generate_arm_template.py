@@ -13,6 +13,9 @@ def generate_arm_template(
     out: Optional[str] = None,
     security_policy: Optional[str] = None,
 ):
+    def resolve_variable(value: str):
+        return os.environ[value.strip("$")] if "$" in value else value
+
     arm_template = {
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
         "contentVersion": "1.0.0.0",
@@ -65,11 +68,17 @@ def generate_arm_template(
                     },
                     "imageRegistryCredentials": [
                         {
-                            "server": "caciexamples.azurecr.io",
-                            "username": "caciexamples",
-                            "password": registry_password
-                            or os.getenv("AZ_REGISTRY_PASSWORD", ""),
+                            "server": server,
+                            "username": resolve_variable(credentials["username"]),
+                            "password": resolve_variable(credentials["password"]),
                         }
+                        for server, credentials in {
+                            "caciexamples.azurecr.io": {
+                                "username": "caciexamples",
+                                "password": "$AZ_REGISTRY_PASSWORD",
+                            },
+                            **manifest["registryCredentials"],
+                        }.items()
                     ],
                 },
             }

@@ -64,7 +64,7 @@
 											"items": {
 												"type": "object",
 												"properties": {
-													"repository": {
+													"image": {
 														"type": "string"
 													},
 													"ports": {
@@ -81,7 +81,7 @@
 													}
 												},
 												"required": [
-													"repository",
+													"image",
 													"ports",
 													"cores",
 													"ram"

@@ -66,12 +66,10 @@ jobs:
         id: generate-arm-template
         run: |
           python infra/generate_arm_template.py \
-            --id ${{ inputs.id }} \
-            --container-group-name group-${{ steps.generate-name.outputs.name }} \
-            --location ${{ inputs.location }} \
+            --id ${{ steps.generate-name.outputs.name }} \
             --manifest-path tests/${{ inputs.test }}/manifest.json \
+            --location ${{ inputs.location }} \
             --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
-            --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
             --out arm_template.json
 
       - name: Print ARM Template

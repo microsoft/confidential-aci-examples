@@ -12,16 +12,16 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--container-group-name",
-                "${input:containerName}",
+                "--id",
+                "test",
+                "--manifest",
+                "tests/${input:testName}/manifest.json",
                 "--location",
                 "${input:containerLocation}",
-                "--manifest",
-                "tests/attestation/manifest.json",
                 "--security-policy",
                 "${input:securityPolicy}",
                 "--out",
-                "${input:outputFile}"
+                "tests/${input:testName}/arm_template.json"
             ]
         },
         {
@@ -75,6 +75,17 @@
         },
     ],
     "inputs": [
+        {
+            "id": "testName",
+            "type": "pickString",
+            "description": "Enter the name of the test:",
+            "options": [
+                "simple_server",
+                "simple_sidecar",
+                "attestation",
+                "secure_key_release",
+            ],
+        },
         {
             "id": "containerName",
             "type": "promptString",

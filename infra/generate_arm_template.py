@@ -6,12 +6,10 @@ from typing import Optional
 
 def generate_arm_template(
     id: str,
-    container_group_name: str,
-    location: str,
     manifest: dict,
-    registry_password: Optional[str] = None,
-    out: Optional[str] = None,
+    location: str,
     security_policy: Optional[str] = None,
+    out: Optional[str] = None,
 ):
     def resolve_variable(value: str):
         return os.environ[value.strip("$")] if "$" in value else value
@@ -25,7 +23,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2022-10-01-preview",
-                "name": container_group_name,
+                "name": f'{manifest["testName"]}-{id}-group',
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -35,9 +33,11 @@ def generate_arm_template(
                     "sku": "Confidential",
                     "containers": [
                         {
-                            "name": f"{container_group_name}-{idx}",
+                            "name": f'{manifest["testName"]}-{id}-container-{idx}',
                             "properties": {
-                                "image": f'caciexamples.azurecr.io/{manifest["testName"]}/{container["repository"]}:{id}',
+                                "image": container["image"]
+                                if container["image"].startswith("http")
+                                else f'caciexamples.azurecr.io/{manifest["testName"]}/{container["image"]}:{id}',
                                 "ports": [
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
@@ -102,8 +102,8 @@ if __name__ == "__main__":
         required=True,
     )
     parser.add_argument(
-        "--container-group-name",
-        help="The name of the container group to deploy",
+        "--manifest-path",
+        help="The image to deploy the container with",
         required=True,
     )
     parser.add_argument(
@@ -112,17 +112,8 @@ if __name__ == "__main__":
         default="eastus2euap",
     )
     parser.add_argument(
-        "--manifest-path",
-        help="The image to deploy the container with",
-        required=True,
-    )
-    parser.add_argument(
         "--security-policy",
         help="The security policy to use for the container",
-    )
-    parser.add_argument(
-        "--registry-password",
-        help="The password to the container registry containing the image",
     )
     parser.add_argument(
         "--out",
@@ -132,13 +123,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.manifest_path, "r") as manifest_file:
-        manifest = json.load(manifest_file)
         generate_arm_template(
             id=args.id,
-            container_group_name=args.container_group_name,
             location=args.location,
-            manifest=manifest,
-            registry_password=args.registry_password,
-            out=args.out,
+            manifest=json.load(manifest_file),
             security_policy=args.security_policy,
+            out=args.out,
         )

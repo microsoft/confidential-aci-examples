@@ -7,7 +7,7 @@
         {
             "containers": [
                 {
-                    "repository": "primary",
+                    "image": "primary",
                     "ports": [22, 8000],
                     "cores": 2,
                     "ram": 8

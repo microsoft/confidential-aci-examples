@@ -14,6 +14,8 @@
             "args": [
                 "--id",
                 "test",
+                "--name",
+                "${input:testName}",
                 "--manifest",
                 "tests/${input:testName}/manifest.json",
                 "--location",

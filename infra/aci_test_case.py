@@ -65,6 +65,7 @@ class AciTestCase(unittest.TestCase):
         # Deploy the container with the freshly built image
         arm_template = generate_arm_template(
             id=self.instance_id,
+            name=self.container_name,
             manifest=manifest,
             location="eastus2euap",
             out=f"tests/{snake_case_test_name}/arm_template.json",

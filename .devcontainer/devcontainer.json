@@ -108,13 +108,34 @@
 								"items": {
 									"type": "string"
 								}
+							},
+							"registryCredentials": {
+								"type": "object",
+								"properties": {
+								  "loginServer": {
+									"type": "string"
+								  },
+								  "username": {
+									"type": "string"
+								  },
+								  "password": {
+									"type": "string"
+								  }
+								},
+								"required": [
+								  "loginServer",
+								  "username",
+								  "password"
+								],
+								"additionalProperties": false
 							}
 						},
 						"required": [
 							"testName",
 							"images",
 							"containerGroups",
-							"securityPolicies"
+							"securityPolicies",
+							"registryCredentials"
 						],
 						"additionalProperties": false
 					}

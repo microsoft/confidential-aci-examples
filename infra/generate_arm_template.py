@@ -36,7 +36,7 @@ def generate_arm_template(
                         {
                             "name": f"container-{name}-{idx}".replace("_", "-"),
                             "properties": {
-                                "image": container["image"]
+                                "image": container["image"].split("://")[1]
                                 if container["image"].startswith("http")
                                 else f'caciexamples.azurecr.io/{manifest["testName"]}/{container["image"]}:{id}',
                                 "ports": [
@@ -73,13 +73,9 @@ def generate_arm_template(
                             "username": resolve_variable(credentials["username"]),
                             "password": resolve_variable(credentials["password"]),
                         }
-                        for server, credentials in {
-                            "caciexamples.azurecr.io": {
-                                "username": "caciexamples",
-                                "password": "$AZ_REGISTRY_PASSWORD",
-                            },
-                            **manifest["registryCredentials"],
-                        }.items()
+                        for server, credentials in manifest[
+                            "registryCredentials"
+                        ].items()
                     ],
                 },
             }

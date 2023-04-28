@@ -19,5 +19,10 @@
     "securityPolicies": [
         "security_policies/allow_all.rego"
     ],
-    "registryCredentials": {}
+    "registryCredentials": {
+        "caciexamples.azurecr.io": {
+            "username": "caciexamples",
+            "password": "$AZ_REGISTRY_PASSWORD"
+        }
+    }
 }

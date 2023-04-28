@@ -24,10 +24,5 @@
         }
     ],
     "securityPolicies": [],
-    "registryCredentials": {
-        "$C_ACI_REGISTRY_LOGIN": {
-            "username": "$C_ACI_REGISTRY_PASSWORD",
-            "password": "$C_ACI_REGISTRY_USERNAME"
-        }
-    }
+    "registryCredentials": {}
 }

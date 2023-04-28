@@ -23,7 +23,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2022-10-01-preview",
-                "name": f'{manifest["testName"]}-{id}-group',
+                "name": f'{manifest["testName"]}-{id}-group'.replace("-", "_"),
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -33,7 +33,9 @@ def generate_arm_template(
                     "sku": "Confidential",
                     "containers": [
                         {
-                            "name": f'{manifest["testName"]}-{id}-container-{idx}',
+                            "name": f'{manifest["testName"]}-{id}-container-{idx}'.replace(
+                                "-", "_"
+                            ),
                             "properties": {
                                 "image": container["image"]
                                 if container["image"].startswith("http")

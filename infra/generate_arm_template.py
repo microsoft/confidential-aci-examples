@@ -6,6 +6,7 @@ from typing import Optional
 
 def generate_arm_template(
     id: str,
+    name: str,
     manifest: dict,
     location: str,
     security_policy: Optional[str] = None,
@@ -23,7 +24,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2022-10-01-preview",
-                "name": f'{manifest["testName"]}-{id}-group'.replace("_", "-"),
+                "name": f"{name}-group".replace("_", "-"),
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -33,9 +34,7 @@ def generate_arm_template(
                     "sku": "Confidential",
                     "containers": [
                         {
-                            "name": f'{manifest["testName"]}-{id}-container-{idx}'.replace(
-                                "_", "-"
-                            ),
+                            "name": f"{name}-container-{idx}".replace("_", "-"),
                             "properties": {
                                 "image": container["image"]
                                 if container["image"].startswith("http")
@@ -104,6 +103,12 @@ if __name__ == "__main__":
         required=True,
     )
     parser.add_argument(
+        "--name",
+        help="The name to use for the resources",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
         "--manifest-path",
         help="The image to deploy the container with",
         required=True,
@@ -127,6 +132,7 @@ if __name__ == "__main__":
     with open(args.manifest_path, "r") as manifest_file:
         generate_arm_template(
             id=args.id,
+            name=args.name,
             location=args.location,
             manifest=json.load(manifest_file),
             security_policy=args.security_policy,

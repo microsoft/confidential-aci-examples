@@ -85,7 +85,8 @@
             "options": [
                 "simple_server",
                 "simple_sidecar",
-                "attestation"
+                "attestation",
+                "remote_image"
             ]
         },
         {

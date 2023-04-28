@@ -85,7 +85,7 @@
                 "simple_server",
                 "simple_sidecar",
                 "attestation",
-                "secure_key_release",
+                "remote_image",
             ],
         },
         {

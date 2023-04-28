@@ -111,23 +111,18 @@
 							},
 							"registryCredentials": {
 								"type": "object",
-								"properties": {
-								  "loginServer": {
-									"type": "string"
+								"additionalProperties": {
+								  "type": "object",
+								  "properties": {
+									"username": {
+									  "type": "string"
+									},
+									"password": {
+									  "type": "string"
+									}
 								  },
-								  "username": {
-									"type": "string"
-								  },
-								  "password": {
-									"type": "string"
-								  }
-								},
-								"required": [
-								  "loginServer",
-								  "username",
-								  "password"
-								],
-								"additionalProperties": false
+								  "required": ["username", "password"]
+								}
 							}
 						},
 						"required": [

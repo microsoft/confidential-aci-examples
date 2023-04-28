@@ -23,7 +23,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2022-10-01-preview",
-                "name": f'{manifest["testName"]}-{id}-group'.replace("-", "_"),
+                "name": f'{manifest["testName"]}-{id}-group'.replace("_", "-"),
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -34,7 +34,7 @@ def generate_arm_template(
                     "containers": [
                         {
                             "name": f'{manifest["testName"]}-{id}-container-{idx}'.replace(
-                                "-", "_"
+                                "_", "-"
                             ),
                             "properties": {
                                 "image": container["image"]

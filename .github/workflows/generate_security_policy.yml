@@ -91,5 +91,5 @@ jobs:
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ inputs.test }}_security_policies
+          name: ${{ inputs.id }}_security_policies
           path: security_policies

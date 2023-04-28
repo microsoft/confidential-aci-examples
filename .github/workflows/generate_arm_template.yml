@@ -59,7 +59,7 @@ jobs:
       - name: Download Security Policy Artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ inputs.test }}_security_policies
+          name: ${{ inputs.id }}_security_policies
           path: security_policies
 
       - name: Generate ARM Template

@@ -21,7 +21,7 @@ class AttestationTest(AciTestCase):
 
         input_report_data = "EXAMPLEREPORTDATA"
         session = requests.Session()
-        session.mount("http://", HTTPAdapter(max_retries=10))
+        session.mount("http://", HTTPAdapter(max_retries=60))
         response = session.get(
             f"http://{self.container_ip}:8000/get_attestation?report_data={input_report_data}",
             timeout=20,

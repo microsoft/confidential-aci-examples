@@ -44,13 +44,14 @@ jobs:
 
       - name: Generate ARM Template
         id: generate-arm-template
+        env:
+          AZ_REGISTRY_PASSWORD: ${{ secrets.AZ_REGISTRY_PASSWORD }}
         run: |
           python infra/generate_arm_template.py \
+            --name "not-relevant" \
             --id ${{ inputs.id }} \
-            --container-group-name "not-relevant" \
-            --location "not-relevant" \
             --manifest-path tests/${{ inputs.test }}/manifest.json \
-            --registry-password ${{ secrets.AZ_REGISTRY_PASSWORD }} \
+            --location "not-relevant" \
             --out arm_template.json
 
       - name: Log in to Azure Container Registry

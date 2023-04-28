@@ -8,13 +8,13 @@
         {
             "containers": [
                 {
-                    "repository": "primary",
+                    "image": "primary",
                     "ports": [8000],
                     "cores": 2,
                     "ram": 8
                 },
                 {
-                    "repository": "sidecar",
+                    "image": "sidecar",
                     "ports": [8001],
                     "cores": 2,
                     "ram": 8
@@ -23,5 +23,11 @@
             "ports": [8000]
         }
     ],
-    "securityPolicies": []
+    "securityPolicies": [],
+    "registryCredentials": {
+        "caciexamples.azurecr.io": {
+            "username": "caciexamples",
+            "password": "$AZ_REGISTRY_PASSWORD"
+        }
+    }
 }

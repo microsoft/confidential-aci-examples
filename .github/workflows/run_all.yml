@@ -24,3 +24,10 @@ jobs:
     secrets: inherit
     with:
       test: attestation
+
+  remote-image:
+    name: Remote Image
+    uses: ./.github/workflows/run_test.yml
+    secrets: inherit
+    with:
+      test: remote_image

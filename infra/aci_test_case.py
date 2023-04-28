@@ -65,11 +65,10 @@ class AciTestCase(unittest.TestCase):
         # Deploy the container with the freshly built image
         arm_template = generate_arm_template(
             id=self.instance_id,
-            container_group_name=self.container_name,
+            name=self.instance_id,
             manifest=manifest,
             location="eastus2euap",
             out=f"tests/{snake_case_test_name}/arm_template.json",
-            registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),
         )
 
         security_policy = generate_security_policy(arm_template)

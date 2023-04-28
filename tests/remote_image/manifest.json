@@ -1,0 +1,19 @@
+{
+    "testName": "remote_image",
+    "images": {},
+    "containerGroups": [
+        {
+            "containers": [
+                {
+                    "image": "http://mcr.microsoft.com/azuredocs/aci-helloworld:latest",
+                    "ports": [22, 8000],
+                    "cores": 2,
+                    "ram": 8
+                }
+            ],
+            "ports": [22, 8000]
+        }
+    ],
+    "securityPolicies": [],
+    "registryCredentials": {}
+}

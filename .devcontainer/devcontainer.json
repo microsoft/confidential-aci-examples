@@ -64,7 +64,7 @@
 											"items": {
 												"type": "object",
 												"properties": {
-													"repository": {
+													"image": {
 														"type": "string"
 													},
 													"ports": {
@@ -81,7 +81,7 @@
 													}
 												},
 												"required": [
-													"repository",
+													"image",
 													"ports",
 													"cores",
 													"ram"
@@ -108,13 +108,29 @@
 								"items": {
 									"type": "string"
 								}
+							},
+							"registryCredentials": {
+								"type": "object",
+								"additionalProperties": {
+								  "type": "object",
+								  "properties": {
+									"username": {
+									  "type": "string"
+									},
+									"password": {
+									  "type": "string"
+									}
+								  },
+								  "required": ["username", "password"]
+								}
 							}
 						},
 						"required": [
 							"testName",
 							"images",
 							"containerGroups",
-							"securityPolicies"
+							"securityPolicies",
+							"registryCredentials"
 						],
 						"additionalProperties": false
 					}

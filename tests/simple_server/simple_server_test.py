@@ -12,7 +12,7 @@ from infra.aci_test_case import AciTestCase
 class SimpleServerTest(AciTestCase):
     def test_endpoint(self):
         session = requests.Session()
-        session.mount("http://", HTTPAdapter(max_retries=10))
+        session.mount("http://", HTTPAdapter(max_retries=60))
         assert self.container_ip is not None
         response = session.get(f"http://{self.container_ip}:8000/hello", timeout=10)
         assert response.status_code == 200

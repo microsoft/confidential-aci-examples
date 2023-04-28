@@ -9,9 +9,18 @@ def generate_security_policy(
     arm_template: Dict[str, Any],
 ) -> bytes:
     subprocess.run(
-        "az login --service-principal --username $SP_APP_ID --password $SP_PASSWORD --tenant $SP_TENANT && az acr login --name caciexamples",
+        "az login --service-principal --username $SP_APP_ID --password $SP_PASSWORD --tenant $SP_TENANT",
         shell=True,
     )
+
+    for registry_info in arm_template["resources"][0]["properties"][
+        "imageRegistryCredentials"
+    ]:
+        registry, username, password = registry_info.values()
+        subprocess.run(
+            f"docker login {registry} --username {username} --password {password}",
+            shell=True,
+        )
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         arm_template_path = os.path.join(tmp_dir, "arm_template.json")

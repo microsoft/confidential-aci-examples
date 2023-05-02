@@ -70,7 +70,7 @@ jobs:
           DOCKERFILE_CONTEXT: tests/${{ inputs.test }}
         with:
           context: tests
-          file: tests/${{ inputs.test }}/${{ steps.docker-info.outputs.file }}
+          file: tests/${{ steps.docker-info.outputs.file }}
           push: true
           tags: |
             ${{ vars.REGISTRY }}/${{ inputs.test }}/${{ steps.docker-info.outputs.repository }}:${{ inputs.id }}

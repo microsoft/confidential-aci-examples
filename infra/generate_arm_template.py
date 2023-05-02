@@ -23,7 +23,7 @@ def generate_arm_template(
         "resources": [
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
-                "apiVersion": "2022-05-01",
+                "apiVersion": "2023-05-01",
                 "name": f"group-{name}".replace("_", "-"),
                 "location": location,
                 "tags": {

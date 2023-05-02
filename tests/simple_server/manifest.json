@@ -1,7 +1,7 @@
 {
     "testName": "simple_server",
     "images": {
-        "primary": "Dockerfile"
+        "primary": "simple_server/Dockerfile"
     },
     "containerGroups": [
         {
@@ -17,7 +17,7 @@
         }
     ],
     "securityPolicies": [
-        "security_policies/allow_all.rego"
+        "simple_server/security_policies/allow_all.rego"
     ],
     "registryCredentials": {
         "caciexamples.azurecr.io": {

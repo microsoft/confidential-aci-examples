@@ -45,7 +45,7 @@
                 "caciexamples.azurecr.io/${input:testName}/${input:image}:latest",
                 "-f",
                 "tests/${input:testName}/Dockerfile.${input:image}",
-                "tests/${input:testName}"
+                "tests"
             ]
         },
         {

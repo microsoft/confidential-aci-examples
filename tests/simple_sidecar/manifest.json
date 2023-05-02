@@ -1,8 +1,8 @@
 {
     "testName": "simple_sidecar",
     "images": {
-        "primary": "primary.Dockerfile",
-        "sidecar": "sidecar.Dockerfile"
+        "primary": "simple_sidecar/primary.Dockerfile",
+        "sidecar": "simple_sidecar/sidecar.Dockerfile"
     },
     "containerGroups": [
         {

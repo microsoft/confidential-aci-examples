@@ -69,7 +69,7 @@ jobs:
           mkdir -p security_policies
           POLICIES=($(python infra/read_manifest_security_policies.py tests/${{ inputs.test }}/manifest.json | tr -d '[],'"'"))
           for POLICY in "${POLICIES[@]}"; do
-            cp tests/${{ inputs.test }}/$POLICY security_policies/
+            cp tests/$POLICY security_policies/
           done
 
       - name: Generate Security Policy

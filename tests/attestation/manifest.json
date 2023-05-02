@@ -1,7 +1,7 @@
 {
     "testName": "attestation",
     "images": {
-        "primary": "Dockerfile.primary"
+        "primary": "attestation/Dockerfile.primary"
     },
     "containerGroups": [
         {

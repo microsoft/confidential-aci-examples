@@ -58,7 +58,7 @@ class AciTestCase(unittest.TestCase):
             client.images.build(
                 dockerfile=dockerfile_path,
                 tag=f"{registry}/{repository}/{image}:{tag}",
-                path=os.path.abspath(f"tests/{snake_case_test_name}"),
+                path=os.path.abspath("tests"),
             )
             client.images.push(f"{registry}/{repository}/{image}", tag=tag)
 

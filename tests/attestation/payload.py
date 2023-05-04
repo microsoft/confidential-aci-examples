@@ -23,6 +23,17 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
             self.wfile.write(get_attestation_report(report_data.encode("utf-8")))
+        elif self.path.startswith("/get_certificate_chain"):
+            self.send_response(200)
+            self.send_header("Content-type", "application/octet-stream")
+            self.end_headers()
+
+            security_context_dir = next(
+                d for d in os.listdir("/") if d.startswith("security-context")
+            )
+            with open(f"/{security_context_dir}/host-amd-cert-base64", "rb") as f:
+                self.wfile.write(f.read())
+
         else:
             self.send_response(404)
             self.end_headers()

@@ -54,6 +54,14 @@ GUEST_ERROR = 0
 SNP_GUEST_MSG_IOCTL_PATH = "/dev/sev"
 SNP_GUEST_MSG_IOCTL_CODE = 3223868161
 
+SIGNATURE_STRUCTURE = "".join(
+    [
+        "72s",  # R Component
+        "72s",  # S Component
+        "368x",  # -----
+    ]
+)
+
 # SNP Report (Table 21)
 SNP_REPORT_STRUCTURE = "".join(
     [

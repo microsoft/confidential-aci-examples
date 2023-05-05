@@ -28,10 +28,9 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             self.send_header("Content-type", "application/octet-stream")
             self.end_headers()
 
-            security_context_dir = next(
-                d for d in os.listdir("/") if d.startswith("security-context")
-            )
-            with open(f"/{security_context_dir}/host-amd-cert-base64", "rb") as f:
+            with open(
+                f"/{os.environ['UVM_SECURITY_CONTEXT_DIR']}/host-amd-cert-base64", "rb"
+            ) as f:
                 self.wfile.write(f.read())
 
         else:

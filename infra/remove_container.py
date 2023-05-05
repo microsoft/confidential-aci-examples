@@ -14,13 +14,13 @@ def remove_container(
     resource_client: ResourceManagementClient,
     container_client: ContainerInstanceManagementClient,
     resource_group: str,
-    name: str,
+    deployment_name: str,
     asynchronous: bool = False,
 ):
     try:
         deployment = resource_client.deployments.get(
             resource_group,
-            name,
+            deployment_name,
         )
     except Exception:
         print("Deployment not found")
@@ -39,7 +39,9 @@ def remove_container(
             if not asynchronous:
                 delete_op.wait()
 
-    delete_op = resource_client.deployments.begin_delete(resource_group, name)
+    delete_op = resource_client.deployments.begin_delete(
+        resource_group, deployment_name
+    )
     if not asynchronous:
         delete_op.wait()
 
@@ -75,6 +77,6 @@ if __name__ == "__main__":
             args.subscription_id or os.getenv("AZ_SUBSCRIPTION_ID", "")
         ),
         resource_group=args.resource_group or os.getenv("AZ_RESOURCE_GROUP", ""),
-        name=args.deployment_name,
+        deployment_name=args.deployment_name,
         asynchronous=args.asynchronous,
     )

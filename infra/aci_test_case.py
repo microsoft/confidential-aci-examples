@@ -24,15 +24,14 @@ from infra.resource_client import get_resource_client
 
 class AciTestCase(unittest.TestCase):
     def setUp(self):
-        test_name = self.__class__.__name__.replace("Test", "")
-        snake_case_test_name = re.sub(r"(?<!^)(?=[A-Z])", "_", test_name).lower()
-        dash_case_test_name = re.sub(r"(?<!^)(?=[A-Z])", "-", test_name).lower()
-        with open(f"tests/{snake_case_test_name}/manifest.json", "r") as manifest_file:
+        test_name = self.__class__.__module__.split(".")[0]
+        self.instance_id = str(uuid.uuid4())
+
+        with open(f"tests/{test_name}/manifest.json", "r") as manifest_file:
             manifest = json.load(manifest_file)
 
-        self.instance_id = str(uuid.uuid4())
-        self.container_name = os.getenv(
-            "DEPLOYMENT_NAME", f"{dash_case_test_name}-{self.instance_id}"
+        self.deployment_name = os.getenv(
+            "DEPLOYMENT_NAME", f"deployment-{self.instance_id}"
         )
 
         # Check if the container already exists
@@ -40,7 +39,7 @@ class AciTestCase(unittest.TestCase):
             resource_client=get_resource_client(os.getenv("AZ_SUBSCRIPTION_ID")),
             container_client=get_container_client(os.getenv("AZ_SUBSCRIPTION_ID")),
             resource_group=os.getenv("AZ_RESOURCE_GROUP", ""),
-            name=self.container_name,
+            deployment_name=self.deployment_name,
         )
 
         self.container_ip = get_container_ip_func()
@@ -55,15 +54,18 @@ class AciTestCase(unittest.TestCase):
         # Deploy the container with the freshly built image
         arm_template = generate_arm_template(
             id=self.instance_id,
-            name=self.instance_id,
             manifest=manifest,
             location="eastus2euap",
-            out=f"tests/{snake_case_test_name}/arm_template.json",
+            out=f"tests/{test_name}/arm_template.json",
         )
 
-        security_policy = generate_security_policy(arm_template)
-        with open(f"tests/{snake_case_test_name}/_generated.rego", "w") as f:
-            f.write(security_policy.decode("utf-8"))
+        if os.getenv("SECURITY_POLICY") is None:
+            security_policy = generate_security_policy(arm_template)
+            with open(f"tests/_generated.rego", "w") as f:
+                f.write(security_policy.decode("utf-8"))
+        else:
+            with open(f"tests/{os.getenv('SECURITY_POLICY')}", "rb") as f:
+                security_policy = f.read()
 
         deploy_container(
             resource_client=get_resource_client(os.getenv("AZ_SUBSCRIPTION_ID")),
@@ -72,7 +74,7 @@ class AciTestCase(unittest.TestCase):
                 security_policy=security_policy,
             ),
             resource_group=os.getenv("AZ_RESOURCE_GROUP", ""),
-            deployment_name=self.container_name,
+            deployment_name=self.deployment_name,
         )
 
         self.container_ip = get_container_ip_func()
@@ -83,6 +85,6 @@ class AciTestCase(unittest.TestCase):
                 resource_client=get_resource_client(os.getenv("AZ_SUBSCRIPTION_ID")),
                 container_client=get_container_client(os.getenv("AZ_SUBSCRIPTION_ID")),
                 resource_group=os.getenv("AZ_RESOURCE_GROUP", ""),
-                name=self.container_name,
+                deployment_name=self.deployment_name,
                 asynchronous=True,
             )

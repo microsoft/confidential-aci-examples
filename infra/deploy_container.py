@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import sys
+import uuid
 from azure.mgmt.resource import ResourceManagementClient
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -15,6 +16,9 @@ def deploy_container(
     resource_group: str,
     deployment_name: str,
 ):
+    print(f"Deploying {deployment_name} with resources:")
+    for resource in arm_template["resources"]:
+        print(f"    {resource['type'].split('/')[-1]} - {resource['name']}")
     resource_client.deployments.begin_create_or_update(
         resource_group,
         deployment_name,
@@ -46,7 +50,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--deployment-name",
         help="The name of the container deployment",
-        required=True,
     )
 
     args = parser.parse_args()
@@ -58,5 +61,5 @@ if __name__ == "__main__":
             ),
             arm_template=json.load(f),
             resource_group=args.resource_group or os.getenv("AZ_RESOURCE_GROUP", ""),
-            deployment_name=args.deployment_name,
+            deployment_name=args.deployment_name or f"deployment-{uuid.uuid4()}",
         )

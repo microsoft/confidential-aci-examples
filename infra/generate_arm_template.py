@@ -6,7 +6,6 @@ from typing import Optional
 
 def generate_arm_template(
     id: str,
-    name: str,
     manifest: dict,
     location: str,
     security_policy: Optional[str] = None,
@@ -15,6 +14,7 @@ def generate_arm_template(
     def resolve_variable(value: str):
         return os.environ[value.strip("$")] if "$" in value else value
 
+    print(f"Generating ARM template for {manifest['testName']}")
     arm_template = {
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
         "contentVersion": "1.0.0.0",
@@ -24,7 +24,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2023-05-01",
-                "name": f"group-{name}".replace("_", "-"),
+                "name": f"group-{id}".replace("_", "-"),
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -34,7 +34,7 @@ def generate_arm_template(
                     "sku": "Confidential",
                     "containers": [
                         {
-                            "name": f"container-{name}-{idx}".replace("_", "-"),
+                            "name": f"container-{id}-{idx}".replace("_", "-"),
                             "properties": {
                                 "image": container["image"].split("://")[1]
                                 if container["image"].startswith("http")
@@ -82,8 +82,10 @@ def generate_arm_template(
             for container_group in manifest["containerGroups"]
         ],
     }
+    print("Done")
 
     if out:
+        print(f"Saving ARM template to {out}")
         with open(out, "w") as f:
             f.write(json.dumps(arm_template, indent=2))
 
@@ -95,12 +97,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--id",
         help="The ID to use for the image tag",
-        type=str,
-        required=True,
-    )
-    parser.add_argument(
-        "--name",
-        help="The name to use for the resources",
         type=str,
         required=True,
     )
@@ -128,7 +124,6 @@ if __name__ == "__main__":
     with open(args.manifest_path, "r") as manifest_file:
         generate_arm_template(
             id=args.id,
-            name=args.name,
             location=args.location,
             manifest=json.load(manifest_file),
             security_policy=args.security_policy,

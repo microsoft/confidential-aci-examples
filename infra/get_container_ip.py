@@ -7,12 +7,12 @@ def get_container_ip(
     resource_client: ResourceManagementClient,
     container_client: ContainerInstanceManagementClient,
     resource_group: str,
-    name: str,
+    deployment_name: str,
 ) -> Optional[str]:
     try:
         deployment = resource_client.deployments.get(
             resource_group,
-            name,
+            deployment_name,
         )
         assert deployment.properties.output_resources
     except Exception:

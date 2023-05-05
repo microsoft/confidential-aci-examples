@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import sys
+import uuid
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -37,7 +38,6 @@ if __name__ == "__main__":
         "--id",
         help="The ID to use for image tags",
         type=str,
-        required=True,
     )
     parser.add_argument(
         "--manifest-path",
@@ -47,4 +47,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.manifest_path, "r") as manifest_file:
-        build_and_push_images(args.id, json.load(manifest_file))
+        build_and_push_images(
+            id=args.id or str(uuid.uuid4()),
+            manifest=json.load(manifest_file),
+        )

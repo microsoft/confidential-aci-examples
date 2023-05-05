@@ -5,6 +5,8 @@ import unittest
 import uuid
 import sys
 
+from infra.build_and_push_images import build_and_push_images
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from infra.add_security_policy_to_arm_template import (
@@ -25,6 +27,8 @@ class AciTestCase(unittest.TestCase):
         test_name = self.__class__.__name__.replace("Test", "")
         snake_case_test_name = re.sub(r"(?<!^)(?=[A-Z])", "_", test_name).lower()
         dash_case_test_name = re.sub(r"(?<!^)(?=[A-Z])", "-", test_name).lower()
+        with open(f"tests/{snake_case_test_name}/manifest.json", "r") as manifest_file:
+            manifest = json.load(manifest_file)
 
         self.instance_id = str(uuid.uuid4())
         self.container_name = os.getenv(
@@ -43,24 +47,10 @@ class AciTestCase(unittest.TestCase):
         if self.container_ip:
             return
 
-        # If the container doesn't exist, deploy it, starting by building and
-        # pushing the image
-        with open(f"tests/{snake_case_test_name}/manifest.json", "r") as manifest_file:
-            manifest = json.load(manifest_file)
-        registry = "caciexamples.azurecr.io"
-        repository = manifest["testName"]
-        tag = self.instance_id
-        client = get_docker_client(
-            registry=registry,
-            registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),
+        build_and_push_images(
+            id=self.instance_id,
+            manifest=manifest,
         )
-        for image, dockerfile_path in manifest["images"].items():
-            client.images.build(
-                dockerfile=dockerfile_path,
-                tag=f"{registry}/{repository}/{image}:{tag}",
-                path=os.path.abspath("tests"),
-            )
-            client.images.push(f"{registry}/{repository}/{image}", tag=tag)
 
         # Deploy the container with the freshly built image
         arm_template = generate_arm_template(

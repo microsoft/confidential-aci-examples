@@ -5,6 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Build and Push Images",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/build_and_push_images.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--id",
+                "test",
+                "--manifest-path",
+                "tests/${input:testName}/manifest.json",
+            ]
+        },
+        {
             "name": "Generate ARM Template",
             "type": "python",
             "request": "launch",

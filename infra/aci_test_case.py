@@ -25,13 +25,14 @@ from infra.resource_client import get_resource_client
 class AciTestCase(unittest.TestCase):
     def setUp(self):
         test_name = self.__class__.__module__.split(".")[0]
-        self.instance_id = str(uuid.uuid4())
+        image_tag = str(uuid.uuid4())
+        name = str(uuid.uuid4())
 
         with open(f"tests/{test_name}/manifest.json", "r") as manifest_file:
             manifest = json.load(manifest_file)
 
         self.deployment_name = os.getenv(
-            "DEPLOYMENT_NAME", f"deployment-{self.instance_id}"
+            "DEPLOYMENT_NAME", f"deployment-{name}"
         )
 
         # Check if the container already exists
@@ -47,13 +48,14 @@ class AciTestCase(unittest.TestCase):
             return
 
         build_and_push_images(
-            id=self.instance_id,
+            image_tag=image_tag,
             manifest=manifest,
         )
 
         # Deploy the container with the freshly built image
         arm_template = generate_arm_template(
-            id=self.instance_id,
+            name=name,
+            image_tag=image_tag,
             manifest=manifest,
             location="eastus2euap",
             out=f"tests/{test_name}/arm_template.json",

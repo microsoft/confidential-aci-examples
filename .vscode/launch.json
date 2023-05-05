@@ -24,7 +24,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--id",
+                "--image-tag",
                 "${input:imageTag}",
                 "--manifest",
                 "tests/${input:testName}/manifest.json",

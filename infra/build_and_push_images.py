@@ -12,7 +12,7 @@ from infra.docker_client import get_docker_client
 REGISTRY = "caciexamples.azurecr.io"
 
 
-def build_and_push_images(id: str, manifest: dict):
+def build_and_push_images(image_tag: str, manifest: dict):
     client = get_docker_client(
         registry=REGISTRY,
         registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),
@@ -21,22 +21,22 @@ def build_and_push_images(id: str, manifest: dict):
         repository = f"{manifest['testName']}/{image_name}"
         image_url = f"{REGISTRY}/{repository}"
 
-        print(f"Building {repository}:{id}")
+        print(f"Building {repository}:{image_tag}")
         client.images.build(
             dockerfile=dockerfile_path,
-            tag=f"{image_url}:{id}",
+            tag=f"{image_url}:{image_tag}",
             path=os.path.abspath("tests"),
         )
 
-        print(f"Pushing {repository}:{id}")
-        client.images.push(f"{image_url}", tag=id)
+        print(f"Pushing {repository}:{image_tag}")
+        client.images.push(f"{image_url}", tag=image_tag)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Build and Push Images")
     parser.add_argument(
-        "--id",
-        help="The ID to use for image tags",
+        "--image-tag",
+        help="The tag to use for the iamges",
         type=str,
     )
     parser.add_argument(
@@ -48,6 +48,6 @@ if __name__ == "__main__":
 
     with open(args.manifest_path, "r") as manifest_file:
         build_and_push_images(
-            id=args.id or str(uuid.uuid4()),
+            image_tag=args.image_tag or str(uuid.uuid4()),
             manifest=json.load(manifest_file),
         )

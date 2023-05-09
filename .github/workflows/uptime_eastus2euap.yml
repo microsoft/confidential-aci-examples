@@ -10,38 +10,67 @@ jobs:
   check-current-containers:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Current Containers
+      - name: Log into Azure
         run: |
-          echo "Checking current containers"
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
+
+      - name: Check Container Groups Liveness
+        run: |
+          CONTAINERS=$(az container list \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --query "[?starts_with(name, 'uptime-')]")
+
+          if [ -z "$CONTAINERS" ]; then
+            echo "No containers found"
+            exit 0
+          fi
+
+          BAD_STATES=("Killed" "Stopped" "Failed")
+
+          for container in $(echo $CONTAINERS | jq -r '.[].name'); do
+            creationTime="${container#uptime-}"
+            containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
+            if [ $containerAge -lte ${{ env.UPTIME_HRS }} ]; then
+              containerJson=$(az container show --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container)
+              for BAD_STATE in "${BAD_STATES[@]}"; do
+                if [ echo $containerJson | jq -r '.containers[].instanceView.events[].name' | grep $BAD_STATE ]; then
+                  echo "Container group: ${container} has been killed within 48 hours:"
+                  echo $containterJson | jq
+                  echo "Cleaning up failing container group"
+                  az resource delete --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container --resource-type Microsoft.ContainerInstance/containerGroups
+                  exit 1
+                fi
+              done
+            fi
+          done
 
   remove-old-container:
     runs-on: ubuntu-latest
     steps:
-      - name: Remove Old Containers
+      - name: Log into Azure
         run: |
-          echo "Removing old containers"
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
 
-      # - name: Log into Azure
-      #   run: |
-      #     az login --service-principal \
-      #       --username ${{ secrets.SP_APP_ID }} \
-      #       --password ${{ secrets.SP_PASSWORD }} \
-      #       --tenant ${{ secrets.SP_TENANT }}
+      - name: Delete Old Container Groups
+        run: |
+          CONTAINERS=$(az container list \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --query "[?starts_with(name, 'uptime-')]")
 
-      # - name: Delete Old Container Groups
-      #   run: |
-      #     CONTAINERS=$(az container list \
-      #       --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-      #       --query "[?starts_with(name, 'uptime-')]")
-
-      #     for container in $(echo $CONTAINERS | jq -r '.[].name'); do
-      #         creationTime="${container#uptime-}"
-      #         containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
-      #         if [ $containerAge -gt $UPTIME_HRS ]; then
-      #             echo "Deleting container group: ${container}"
-      #             az resource delete --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name ${container} --resource-type Microsoft.ContainerInstance/containerGroups
-      #         fi
-      #     done
+          for container in $(echo $CONTAINERS | jq -r '.[].name'); do
+              creationTime="${container#uptime-}"
+              containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
+              if [ $containerAge -gt ${{ env.UPTIME_HRS }} ]; then
+                  echo "Deleting container group: ${container}"
+                  az resource delete --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container --resource-type Microsoft.ContainerInstance/containerGroups
+              fi
+          done
 
   prep-deployment:
     runs-on: ubuntu-latest

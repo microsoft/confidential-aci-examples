@@ -1,0 +1,31 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  check-current-containers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Current Containers
+        run: |
+          echo "Checking current containers"
+
+  remove-old-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove Old Containers
+        run: |
+          echo "Removing old containers"
+
+  prep-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare for Deployment
+        run: |
+          echo "Preparing for deployment"
+
+  deploy-new-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy New Container
+        run: |
+          echo "Deploying new container"

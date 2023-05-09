@@ -64,13 +64,14 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Generate ARM Template
-        run: python infra/generate_arm_template.py \
-          --name uptime-${{ needs.get-datetime.outputs.datetime }} \
-          --image-tag latest \
-          --manifest-path tests/simple_server/manifest.json \
-          --location eastus2euap \
-          --security-policy $(cat tests/simple_server/security_policies/allow_all.rego | base64) \
-          --out arm_template.json
+        run: |
+          python infra/generate_arm_template.py \
+            --name uptime-${{ needs.get-datetime.outputs.datetime }} \
+            --image-tag latest \
+            --manifest-path tests/simple_server/manifest.json \
+            --location eastus2euap \
+            --security-policy $(cat tests/simple_server/security_policies/allow_all.rego | base64) \
+            --out arm_template.json
 
       - name: Generate Matrix Cell Name
         id: generate-name

@@ -9,7 +9,6 @@ jobs:
   cleanup_registry:
     runs-on: ubuntu-latest
     steps:
-
       - name: Log into Azure
         run: |
           az login --service-principal \
@@ -26,7 +25,9 @@ jobs:
 
       - name: Cleanup Registry
         run: |
+          # The filter looks for at least one digit as a proxy for auto
+          # generated tags
           az acr run \
-            --cmd "acr purge --filter '.*:(?!latest).*' --ago 1d" \
+            --cmd "acr purge --filter '.*:.*\d+.*' --ago 1d" \
             --registry caciexamples \
             /dev/null

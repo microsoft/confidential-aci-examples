@@ -37,7 +37,7 @@ jobs:
               echo "Checking container group: $container"
               containerJson=$(az container show --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container)
               for BAD_STATE in "${BAD_STATES[@]}"; do
-                if [ echo $containerJson | jq -r '.containers[].instanceView.events[].name' | grep $BAD_STATE ]; then
+                if echo $containerJson | jq -r '.containers[].instanceView.events[].name' | grep $BAD_STATE; then
                   echo "Container group: ${container} has been killed within 48 hours:"
                   echo $containterJson | jq
                   echo "Cleaning up failing container group"

@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Get Datetime
         id: get-datetime
-        run: echo "datetime=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_OUTPUT
+        run: echo "datetime=$(date -u +"%Y-%m-%dT%H-%M-%SZ")" >> $GITHUB_OUTPUT
 
   check-current-containers:
     runs-on: ubuntu-latest

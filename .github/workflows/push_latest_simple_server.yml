@@ -1,0 +1,18 @@
+name: Push Latest Simple Server Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - tests/simple_server/**
+  workflow_dispatch:
+
+jobs:
+  push-latest-simple-server:
+    name: "Push Latest Simple Server Image"
+    uses: ./.github/workflows/build_and_push_images.yml
+    secrets: inherit
+    with:
+      id: latest
+      test: simple_server

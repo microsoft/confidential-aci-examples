@@ -20,22 +20,23 @@ If running in VS Code, open the testing view where all available tests are both 
 
 ## Managing Test Infrastructure
 
-While running tests directly will automatically manage the images and containers needed, it is also possible to use the infrastructure to manually manage these resources. Each management operation has a 1:1 mapping between running locally and in CI.
+While running tests directly will automatically manage the images and containers needed, it is also possible to use the infrastructure to manually manage these resources. Each management operation can be run via VS Code's [launch configurations](.vscode/launch.json)
 
-| Task                           | Implementation                                             | Run Locally                        | Run in CI                                                                         |
-| ------------------------------ | ---------------------------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------- |
-| Build and Push Container Image | Docker CLI                                                 | [tasks.json](.vscode/tasks.json)   | [build_and_push_images.yml](.github/workflows/build_and_push_images.yml)        |
-| Generate Security Policy       | Azure CLI                                                  | [tasks.json](.vscode/tasks.json)   | [generate_security_policy.yml](.github/workflows/generate_security_policy.yml) |
-| Generate ARM Template          | [generate_arm_template.py](infra/generate_arm_template.py) | [launch.json](.vscode/launch.json) | [generate_arm_template.yml](.github/workflows/generate_arm_template.yml)       |
-| Deploy Container               | [deploy_container.py](infra/deploy_container.py)           | [launch.json](.vscode/launch.json) | [deploy_container.yml](.github/workflows/deploy_container.yml)                 |
-| Remove Container               | [remove_container.py](infra/remove_container.py)           | [launch.json](.vscode/launch.json) | [remove_container.yml](.github/workflows/remove_container.yml)                 |
+| Task                           | Implementation                                                   | Run in CI                                                                      |
+| ------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Build and Push Container Image | [build_and_push_images.py](infra/build_and_push_images.py)       | [build_and_push_images.yml](.github/workflows/build_and_push_images.yml)       |
+| Generate Security Policy       | [generate_security_policy.py](infra/generate_security_policy.py) | [generate_security_policy.yml](.github/workflows/generate_security_policy.yml) |
+| Generate ARM Template          | [generate_arm_template.py](infra/generate_arm_template.py)       | [generate_arm_template.yml](.github/workflows/generate_arm_template.yml)       |
+| Deploy Container               | [deploy_container.py](infra/deploy_container.py)                 | [deploy_container.yml](.github/workflows/deploy_container.yml)                 |
+| Remove Container               | [remove_container.py](infra/remove_container.py)                 | [remove_container.yml](.github/workflows/remove_container.yml)                 |
 
 ## Adding New Tests
 
 - Create a new directory under tests with the name of your new test
 - Add a manifest.json file to the new directory and fill in the required fields
-    - At least one container image is needed, so create a Dockerfile and mention it in the manifest
-    - Manifest files are automatically validated if running in codespaces, otherwise refer to the schema in [.devcontainer.json](.devcontainer/devcontainer.json)
+  - At least one container image is needed, so create a Dockerfile and mention it in the manifest
+  - Manifest files are automatically validated if running in codespaces, otherwise refer to the schema in [.devcontainer.json](.devcontainer/devcontainer.json)
+- Add python code which uses the unittest module to declare tests, inherit [AciTestCase](infra/aci_test_case.py) to deploy containers during the setup of tests.
 
 ---
 

@@ -77,7 +77,7 @@ jobs:
 
       - name: Generate Matrix Cell Name
         id: generate-name
-        run: echo "name=$(echo simple_server-eastus2euap-allow_all.rego-uptime-${{ needs.get-datetime.outputs.datetime }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+        run: echo "name=$(echo simple_server-eastus2euap-allow_all.rego-${{ needs.get-datetime.outputs.datetime }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v3

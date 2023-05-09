@@ -2,11 +2,12 @@ import argparse
 import json
 import os
 from typing import Optional
+import uuid
 
 
 def generate_arm_template(
-    id: str,
     name: str,
+    image_tag: str,
     manifest: dict,
     location: str,
     security_policy: Optional[str] = None,
@@ -15,6 +16,7 @@ def generate_arm_template(
     def resolve_variable(value: str):
         return os.environ[value.strip("$")] if "$" in value else value
 
+    print(f"Generating ARM template for {name}")
     arm_template = {
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
         "contentVersion": "1.0.0.0",
@@ -38,7 +40,7 @@ def generate_arm_template(
                             "properties": {
                                 "image": container["image"].split("://")[1]
                                 if container["image"].startswith("http")
-                                else f'caciexamples.azurecr.io/{manifest["testName"]}/{container["image"]}:{id}',
+                                else f'caciexamples.azurecr.io/{manifest["testName"]}/{container["image"]}:{image_tag}',
                                 "ports": [
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
@@ -82,8 +84,10 @@ def generate_arm_template(
             for container_group in manifest["containerGroups"]
         ],
     }
+    print("Done")
 
     if out:
+        print(f"Saving ARM template to {out}")
         with open(out, "w") as f:
             f.write(json.dumps(arm_template, indent=2))
 
@@ -93,20 +97,19 @@ def generate_arm_template(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate ARM template")
     parser.add_argument(
-        "--id",
-        help="The ID to use for the image tag",
-        type=str,
-        required=True,
-    )
-    parser.add_argument(
         "--name",
         help="The name to use for the resources",
+        type=str,
+    )
+    parser.add_argument(
+        "--image-tag",
+        help="The image tags to use",
         type=str,
         required=True,
     )
     parser.add_argument(
         "--manifest-path",
-        help="The image to deploy the container with",
+        help="The manifest to generate an ARM template for",
         required=True,
     )
     parser.add_argument(
@@ -126,11 +129,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.manifest_path, "r") as manifest_file:
+        manifest = json.load(manifest_file)
         generate_arm_template(
-            id=args.id,
-            name=args.name,
+            name=args.name or f"{uuid.uuid4()}",
+            image_tag=args.image_tag,
             location=args.location,
-            manifest=json.load(manifest_file),
+            manifest=manifest,
             security_policy=args.security_policy,
             out=args.out,
         )

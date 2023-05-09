@@ -49,7 +49,7 @@ jobs:
         run: |
           python infra/generate_arm_template.py \
             --name "not-relevant" \
-            --id ${{ inputs.id }} \
+            --image-tag ${{ inputs.id }} \
             --manifest-path tests/${{ inputs.test }}/manifest.json \
             --location "not-relevant" \
             --out arm_template.json

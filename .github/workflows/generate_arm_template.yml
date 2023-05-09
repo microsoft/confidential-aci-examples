@@ -68,7 +68,7 @@ jobs:
           AZ_REGISTRY_PASSWORD: ${{ secrets.AZ_REGISTRY_PASSWORD }}
         run: |
           python infra/generate_arm_template.py \
-            --id ${{ inputs.id }} \
+            --image-tag ${{ inputs.id }} \
             --name ${{ steps.generate-name.outputs.name }} \
             --manifest-path tests/${{ inputs.test }}/manifest.json \
             --location ${{ inputs.location }} \

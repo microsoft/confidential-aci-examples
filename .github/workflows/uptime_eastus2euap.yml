@@ -70,7 +70,7 @@ jobs:
             --image-tag latest \
             --manifest-path tests/simple_server/manifest.json \
             --location eastus2euap \
-            --security-policy $(cat tests/simple_server/security_policies/allow_all.rego | base64) \
+            --security-policy "$(cat tests/simple_server/security_policies/allow_all.rego | base64)" \
             --out arm_template.json
 
       - name: Generate Matrix Cell Name

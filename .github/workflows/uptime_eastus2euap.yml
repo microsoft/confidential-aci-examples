@@ -55,8 +55,13 @@ jobs:
 
   prep-deployment:
     runs-on: ubuntu-latest
-    needs: get-datetime
+    outputs:
+      datetime: ${{ steps.get-datetime.outputs.datetime }}
     steps:
+      - name: Get Datetime
+        id: get-datetime
+        run: echo "datetime=$(date -u +"%Y-%m-%d-%H-%M-%S")" >> $GITHUB_OUTPUT
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -68,7 +73,7 @@ jobs:
           AZ_REGISTRY_PASSWORD: ${{ secrets.AZ_REGISTRY_PASSWORD }}
         run: |
           python infra/generate_arm_template.py \
-            --name uptime-${{ needs.get-datetime.outputs.datetime }} \
+            --name uptime-${{ steps.get-datetime.outputs.datetime }} \
             --image-tag latest \
             --manifest-path tests/simple_server/manifest.json \
             --location eastus2euap \
@@ -77,7 +82,7 @@ jobs:
 
       - name: Generate Matrix Cell Name
         id: generate-name
-        run: echo "name=$(echo simple_server-eastus2euap-allow_all.rego-${{ needs.get-datetime.outputs.datetime }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+        run: echo "name=$(echo simple_server-eastus2euap-allow_all.rego-${{ steps.get-datetime.outputs.datetime }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v3
@@ -87,10 +92,10 @@ jobs:
 
   deploy-new-container:
     uses: ./.github/workflows/deploy_container.yml
-    needs: [check-current-containers, get-datetime, prep-deployment]
+    needs: prep-deployment
     secrets: inherit
     with:
-      id: ${{ needs.get-datetime.outputs.datetime }}
+      id: ${{ needs.prep-deployment.outputs.datetime }}
       test: simple_server
       location: eastus2euap
       security-policy: allow_all.rego

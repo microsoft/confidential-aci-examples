@@ -27,6 +27,6 @@ jobs:
       - name: Cleanup Registry
         run: |
           az acr run \
-            --cmd "acr purge --filter '.*:.*' --ago 1d" \
+            --cmd "acr purge --filter '.*:(?!latest).*' --ago 1d" \
             --registry caciexamples \
             /dev/null

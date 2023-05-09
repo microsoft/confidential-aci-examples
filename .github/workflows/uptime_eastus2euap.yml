@@ -1,3 +1,5 @@
+name: Uptime of Containers on East US 2 EUAP
+
 on:
   workflow_dispatch:
 
@@ -5,6 +7,15 @@ env:
   UPTIME_HRS: 48
 
 jobs:
+  get-datetime:
+    runs-on: ubuntu-latest
+    outputs:
+      datetime: ${{ steps.get-datetime.outputs.datetime }}
+    steps:
+      - name: Get Datetime
+        id: get-datetime
+        run: echo "datetime=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_OUTPUT
+
   check-current-containers:
     runs-on: ubuntu-latest
     steps:
@@ -44,6 +55,7 @@ jobs:
 
   prep-deployment:
     runs-on: ubuntu-latest
+    needs: get-datetime
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -53,7 +65,7 @@ jobs:
 
       - name: Generate ARM Template
         run: python generate_arm_template.py \
-          --name uptime-${{ github.event.created_at }} \
+          --name uptime-${{ needs.get-datetime.outputs.datetime }} \
           --image-tag latest \
           --manifest-path tests/simple_server/manifest.json \
           --location eastus2euap \
@@ -62,7 +74,7 @@ jobs:
 
       - name: Generate Matrix Cell Name
         id: generate-name
-        run: echo "name=$(echo simple_server-eastus2euap-allow_all.rego-uptime-${{ github.event.created_at }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+        run: echo "name=$(echo simple_server-eastus2euap-allow_all.rego-uptime-${{ needs.get-datetime.outputs.datetime }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v3
@@ -72,10 +84,10 @@ jobs:
 
   deploy-new-container:
     uses: ./.github/workflows/deploy_container.yml
-    needs: [check-current-containers, prep-deployment]
+    needs: [check-current-containers, get-datetime, prep-deployment]
     secrets: inherit
     with:
-      id: ${{ github.event.created_at }}
+      id: ${{ needs.get-datetime.outputs.datetime }}
       test: simple_server
       location: eastus2euap
       security-policy: allow_all.rego

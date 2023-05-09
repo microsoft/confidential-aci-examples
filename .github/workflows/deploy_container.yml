@@ -79,7 +79,7 @@ jobs:
         run: |
           sleep 10 # Give the container a chance to stabilise
           CONTAINER_STATE=$(az container show \
-              --name group-${{ steps.generate-name.outputs.name }} \
+              --name $(cat arm_template.json | jq -r '.resources[0].name') \
               --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
             )
           echo $CONTAINER_STATE | jq

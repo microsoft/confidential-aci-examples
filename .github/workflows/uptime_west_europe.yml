@@ -1,4 +1,4 @@
-name: Uptime of Containers on East US 2 EUAP
+name: Uptime of Containers on West Europe
 
 on:
   workflow_dispatch:
@@ -6,8 +6,8 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  uptime-eastus2euap:
+  uptime-westeurope:
     uses: ./.github/workflows/uptime.yml
     secrets: inherit
     with:
-      location: eastus2euap
+      location: westeurope

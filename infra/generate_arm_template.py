@@ -26,7 +26,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2023-05-01",
-                "name": f"group-{name}".replace("_", "-"),
+                "name": name.replace("_", "-"),
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -36,7 +36,7 @@ def generate_arm_template(
                     "sku": "Confidential",
                     "containers": [
                         {
-                            "name": f"container-{name}-{idx}".replace("_", "-"),
+                            "name": f"{name}-{idx}".replace("_", "-"),
                             "properties": {
                                 "image": container["image"].split("://")[1]
                                 if container["image"].startswith("http")

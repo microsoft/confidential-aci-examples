@@ -1,0 +1,131 @@
+name: Uptime of Containers on ACI
+
+on:
+  workflow_call:
+    inputs:
+      location:
+        description: "Location to deploy ACIs to"
+        required: true
+        type: string
+
+env:
+  UPTIME_HRS: 48
+
+jobs:
+  check-current-containers:
+    name: Check Containers Uptime
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
+
+      - name: Check Container Groups Liveness
+        run: |
+          CONTAINERS=$(az container list \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --query "[?starts_with(name, 'uptime-')]")
+
+          if [ -z "$CONTAINERS" ]; then
+            echo "No containers found"
+            exit 0
+          fi
+
+          BAD_STATES=("Killed" "Stopped" "Failed")
+
+          for container in $(echo $CONTAINERS | jq -r '.[].name'); do
+            creationTime="${container#uptime-}"
+            containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
+            if [ $containerAge -lt ${{ env.UPTIME_HRS }} ]; then
+              echo "Checking container group: $container"
+              containerJson=$(az container show --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container)
+              echo $containterJson | jq
+              for BAD_STATE in "${BAD_STATES[@]}"; do
+                if echo $containerJson | jq -r '.containers[].instanceView.events[].name' | grep $BAD_STATE; then
+                  echo "Container group: ${container} has been killed within 48 hours:"
+                  echo "Cleaning up failing container group"
+                  az resource delete --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container --resource-type Microsoft.ContainerInstance/containerGroups
+                  exit 1
+                fi
+              done
+            fi
+          done
+
+  remove-old-container:
+    name: Remove Older Containers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.SP_APP_ID }} \
+            --password ${{ secrets.SP_PASSWORD }} \
+            --tenant ${{ secrets.SP_TENANT }}
+
+      - name: Delete Old Container Groups
+        run: |
+          CONTAINERS=$(az container list \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --query "[?starts_with(name, 'uptime-')]")
+
+          for container in $(echo $CONTAINERS | jq -r '.[].name'); do
+              creationTime="${container#uptime-}"
+              containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
+              if [ $containerAge -gt ${{ env.UPTIME_HRS }} ]; then
+                  echo "Deleting container group: ${container}"
+                  az resource delete --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container --resource-type Microsoft.ContainerInstance/containerGroups
+              fi
+          done
+
+  prep-deployment:
+    name: Prepare Deployment
+    runs-on: ubuntu-latest
+    needs: check-current-containers
+    outputs:
+      datetime: ${{ steps.get-datetime.outputs.datetime }}
+    steps:
+      - name: Get Datetime
+        id: get-datetime
+        run: echo "datetime=$(date -u +"%s")" >> $GITHUB_OUTPUT
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate ARM Template
+        env:
+          AZ_REGISTRY_PASSWORD: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+        run: |
+          python infra/generate_arm_template.py \
+            --name uptime-${{ steps.get-datetime.outputs.datetime }} \
+            --image-tag latest \
+            --manifest-path tests/simple_server/manifest.json \
+            --location ${{ inputs.location }} \
+            --security-policy "$(cat tests/simple_server/security_policies/allow_all.rego | base64)" \
+            --out arm_template.json
+
+      - name: Generate Matrix Cell Name
+        id: generate-name
+        run: echo "name=$(echo simple_server-${{ inputs.location }}-allow_all.rego-${{ steps.get-datetime.outputs.datetime }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+
+      - name: Upload ARM Template Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.generate-name.outputs.name }}_arm_template
+          path: arm_template.json
+
+  deploy-new-container:
+    name: Deploy New Container
+    uses: ./.github/workflows/deploy_container.yml
+    needs: prep-deployment
+    secrets: inherit
+    with:
+      id: ${{ needs.prep-deployment.outputs.datetime }}
+      test: simple_server
+      location: ${{ inputs.location }}
+      security-policy: allow_all.rego

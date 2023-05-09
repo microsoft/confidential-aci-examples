@@ -1,0 +1,18 @@
+name: Push Latest Attestation Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - tests/attestation/**
+  workflow_dispatch:
+
+jobs:
+  push-latest-attestation:
+    name: "Push Latest Attestation Image"
+    uses: ./.github/workflows/build_and_push_images.yml
+    secrets: inherit
+    with:
+      id: latest
+      test: attestation

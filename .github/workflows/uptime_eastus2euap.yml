@@ -33,7 +33,7 @@ jobs:
           for container in $(echo $CONTAINERS | jq -r '.[].name'); do
             creationTime="${container#uptime-}"
             containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
-            if [ $containerAge -lte ${{ env.UPTIME_HRS }} ]; then
+            if [ $containerAge -lt ${{ env.UPTIME_HRS }} ]; then
               containerJson=$(az container show --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container)
               for BAD_STATE in "${BAD_STATES[@]}"; do
                 if [ echo $containerJson | jq -r '.containers[].instanceView.events[].name' | grep $BAD_STATE ]; then

@@ -40,7 +40,7 @@ def generate_security_policy(
             json.dump(arm_template, f, indent=2)
 
         subprocess.run(
-            f"az confcom acipolicygen -a {arm_template_path} --outraw --save-to-file {security_policy_path}",
+            f"az confcom acipolicygen -a {arm_template_path} --outraw > {security_policy_path}",
             shell=True,
             check=True,
         )

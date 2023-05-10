@@ -19,11 +19,11 @@ You can use Github Codespaces to create a fully ready to use development environ
 
 ## Running Tests
 
-If running in VS Code, open the testing view where all available tests are both runnable and debuggable. If not, run unittest as usual.
+If running in VS Code, open the testing view where all available examples are both runnable and debuggable. If not, run unittest as usual.
 
 ## Managing Test Infrastructure
 
-While running tests directly will automatically manage the images and containers needed, it is also possible to use the infrastructure to manually manage these resources. Each management operation can be run via VS Code's [launch configurations](.vscode/launch.json)
+While running examples directly will automatically manage the images and containers needed, it is also possible to use the infrastructure to manually manage these resources. Each management operation can be run via VS Code's [launch configurations](.vscode/launch.json)
 
 | Task                           | Implementation                                                   | Run in CI                                                                      |
 | ------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------------------------ |
@@ -35,7 +35,7 @@ While running tests directly will automatically manage the images and containers
 
 ## Adding New Tests
 
-- Create a new directory under tests with the name of your new test
+- Create a new directory under examples with the name of your new test
 - Add a manifest.json file to the new directory and fill in the required fields
   - At least one container image is needed, so create a Dockerfile and mention it in the manifest
   - Manifest files are automatically validated if running in codespaces, otherwise refer to the schema in [.devcontainer.json](.devcontainer/devcontainer.json)

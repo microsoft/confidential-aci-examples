@@ -28,7 +28,7 @@ class AciTestCase(unittest.TestCase):
         image_tag = str(uuid.uuid4())
         name = str(uuid.uuid4())
 
-        with open(f"tests/{test_name}/manifest.json", "r") as manifest_file:
+        with open(f"examples/{test_name}/manifest.json", "r") as manifest_file:
             manifest = json.load(manifest_file)
 
         self.deployment_name = os.getenv("DEPLOYMENT_NAME", f"deployment-{name}")
@@ -56,15 +56,15 @@ class AciTestCase(unittest.TestCase):
             image_tag=image_tag,
             manifest=manifest,
             location="eastus2euap",
-            out=f"tests/{test_name}/arm_template.json",
+            out=f"examples/{test_name}/arm_template.json",
         )
 
         if os.getenv("SECURITY_POLICY") is None:
             security_policy = generate_security_policy(arm_template)
-            with open(f"tests/{test_name}/_generated.rego", "w") as f:
+            with open(f"examples/{test_name}/_generated.rego", "w") as f:
                 f.write(security_policy.decode("utf-8"))
         else:
-            with open(f"tests/{os.getenv('SECURITY_POLICY')}", "rb") as f:
+            with open(f"examples/{os.getenv('SECURITY_POLICY')}", "rb") as f:
                 security_policy = f.read()
 
         deploy_container(

@@ -13,7 +13,7 @@
             "justMyCode": true,
             "args": [
                 "--manifest-path",
-                "tests/${input:testName}/manifest.json",
+                "examples/${input:testName}/manifest.json",
             ]
         },
         {
@@ -27,11 +27,11 @@
                 "--image-tag",
                 "${input:imageTag}",
                 "--manifest",
-                "tests/${input:testName}/manifest.json",
+                "examples/${input:testName}/manifest.json",
                 "--location",
                 "${input:containerLocation}",
                 "--out",
-                "tests/${input:testName}/arm_template.json"
+                "examples/${input:testName}/arm_template.json"
             ]
         },
         {
@@ -43,9 +43,9 @@
             "justMyCode": true,
             "args": [
                 "--arm-template-path",
-                "tests/${input:testName}/arm_template.json",
+                "examples/${input:testName}/arm_template.json",
                 "--out",
-                "tests/${input:testName}/_generated.rego",
+                "examples/${input:testName}/_generated.rego",
             ]
         },
         {
@@ -57,7 +57,7 @@
             "justMyCode": true,
             "args": [
                 "--arm-template-path",
-                "tests/${input:testName}/arm_template.json",
+                "examples/${input:testName}/arm_template.json",
                 "--security-policy-path",
                 "${input:securityPolicyPath}",
             ]
@@ -71,7 +71,7 @@
             "justMyCode": true,
             "args": [
                 "--arm-template-path",
-                "tests/${input:testName}/arm_template.json",
+                "examples/${input:testName}/arm_template.json",
             ]
         },
         {
@@ -115,7 +115,7 @@
             "id": "securityPolicyPath",
             "type": "promptString",
             "description": "Enter the path to Security Policy file:",
-            "default": "tests/"
+            "default": "examples/"
         },
         {
             "id": "deploymentName",

@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - tests/simple_server/**
+      - examples/simple_server/**
   workflow_dispatch:
 
 jobs:

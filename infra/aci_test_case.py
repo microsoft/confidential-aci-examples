@@ -31,9 +31,7 @@ class AciTestCase(unittest.TestCase):
         with open(f"tests/{test_name}/manifest.json", "r") as manifest_file:
             manifest = json.load(manifest_file)
 
-        self.deployment_name = os.getenv(
-            "DEPLOYMENT_NAME", f"deployment-{name}"
-        )
+        self.deployment_name = os.getenv("DEPLOYMENT_NAME", f"deployment-{name}")
 
         # Check if the container already exists
         get_container_ip_func = lambda: get_container_ip(
@@ -54,7 +52,7 @@ class AciTestCase(unittest.TestCase):
 
         # Deploy the container with the freshly built image
         arm_template = generate_arm_template(
-            name=name,
+            name=f"group-{name}",
             image_tag=image_tag,
             manifest=manifest,
             location="eastus2euap",

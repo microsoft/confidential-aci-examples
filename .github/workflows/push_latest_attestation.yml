@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - tests/attestation/**
+      - examples/attestation/**
   workflow_dispatch:
 
 jobs:

@@ -104,9 +104,9 @@ jobs:
           python infra/generate_arm_template.py \
             --name uptime-${{ steps.get-datetime.outputs.datetime }} \
             --image-tag latest \
-            --manifest-path tests/simple_server/manifest.json \
+            --manifest-path examples/simple_server/manifest.json \
             --location ${{ inputs.location }} \
-            --security-policy "$(cat tests/simple_server/security_policies/allow_all.rego | base64)" \
+            --security-policy "$(cat examples/simple_server/security_policies/allow_all.rego | base64)" \
             --out arm_template.json
 
       - name: Generate Matrix Cell Name

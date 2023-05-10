@@ -25,7 +25,7 @@ def build_and_push_images(image_tag: str, manifest: dict):
         client.images.build(
             dockerfile=dockerfile_path,
             tag=f"{image_url}:{image_tag}",
-            path=os.path.abspath("tests"),
+            path=os.path.abspath("examples"),
         )
 
         print(f"Pushing {repository}:{image_tag}")

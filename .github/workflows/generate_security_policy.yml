@@ -50,7 +50,7 @@ jobs:
           python infra/generate_arm_template.py \
             --name "not-relevant" \
             --image-tag ${{ inputs.id }} \
-            --manifest-path tests/${{ inputs.test }}/manifest.json \
+            --manifest-path examples/${{ inputs.test }}/manifest.json \
             --location "not-relevant" \
             --out arm_template.json
 
@@ -67,9 +67,9 @@ jobs:
       - name: Make Security Policies Directory
         run: |
           mkdir -p security_policies
-          POLICIES=($(python infra/read_manifest_security_policies.py tests/${{ inputs.test }}/manifest.json | tr -d '[],'"'"))
+          POLICIES=($(python infra/read_manifest_security_policies.py examples/${{ inputs.test }}/manifest.json | tr -d '[],'"'"))
           for POLICY in "${POLICIES[@]}"; do
-            cp tests/$POLICY security_policies/
+            cp examples/$POLICY security_policies/
           done
 
       - name: Generate Security Policy

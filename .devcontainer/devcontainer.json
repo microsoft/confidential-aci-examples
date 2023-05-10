@@ -29,7 +29,7 @@
 				"python.testing.unittestArgs": [
 					"-v",
 					"-s",
-					"./tests",
+					"./examples",
 					"-p",
 					"*.py"
 				],
@@ -42,7 +42,7 @@
 			"json.schemas": [
 				{
 					"fileMatch": [
-						"tests/*/manifest.json"
+						"examples/*/manifest.json"
 					],
 					"schema": {
 						"$schema": "http://json-schema.org/draft-07/schema#",

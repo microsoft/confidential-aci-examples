@@ -8,14 +8,14 @@ on:
     paths:
       - .github/workflows/**
       - infra/**
-      - tests/remote_image/**
+      - examples/remote_image/**
   pull_request:
     branches:
       - main
     paths:
       - .github/workflows/**
       - infra/**
-      - tests/remote_image/**
+      - examples/remote_image/**
   merge_group:
     branches:
       - main

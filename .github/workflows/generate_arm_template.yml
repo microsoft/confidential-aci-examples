@@ -69,7 +69,7 @@ jobs:
           python infra/generate_arm_template.py \
             --image-tag ${{ inputs.id }} \
             --name group-${{ steps.generate-name.outputs.name }} \
-            --manifest-path tests/${{ inputs.test }}/manifest.json \
+            --manifest-path examples/${{ inputs.test }}/manifest.json \
             --location ${{ inputs.location }} \
             --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
             --out arm_template.json

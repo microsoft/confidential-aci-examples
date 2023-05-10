@@ -8,14 +8,14 @@ on:
     paths:
       - .github/workflows/**
       - infra/**
-      - tests/attestation/**
+      - examples/attestation/**
   pull_request:
     branches:
       - main
     paths:
       - .github/workflows/**
       - infra/**
-      - tests/attestation/**
+      - examples/attestation/**
   merge_group:
     branches:
       - main

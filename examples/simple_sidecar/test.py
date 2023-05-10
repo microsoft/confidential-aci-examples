@@ -6,10 +6,10 @@ from requests.adapters import HTTPAdapter
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from infra.aci_test_case import AciTestCase
+from infra.test_case import TestCase
 
 
-class SimpleSidecarTest(AciTestCase):
+class SimpleSidecarTest(TestCase):
     def test_sidecar_connection(self):
         assert self.container_ip is not None
         session = requests.Session()

@@ -6,10 +6,10 @@ from requests.adapters import HTTPAdapter
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from infra.aci_test_case import AciTestCase
+from infra.test_case import TestCase
 
 
-class SimpleServerTest(AciTestCase):
+class SimpleServerTest(TestCase):
     def test_endpoint(self):
         session = requests.Session()
         session.mount("http://", HTTPAdapter(max_retries=60))

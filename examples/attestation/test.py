@@ -8,7 +8,7 @@ from requests.adapters import HTTPAdapter
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from infra.aci_test_case import AciTestCase
+from infra.test_case import TestCase
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -16,7 +16,7 @@ from get_attestation import SNP_REPORT_STRUCTURE
 from validate_attestation import validate_attestation
 
 
-class AttestationTest(AciTestCase):
+class AttestationTest(TestCase):
     def test_attestation_report(self):
         assert self.container_ip is not None
 

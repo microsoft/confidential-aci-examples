@@ -39,13 +39,13 @@ jobs:
 
           BAD_STATES=("Killed" "Stopped" "Failed")
 
-          currentContainerCount=0
+          # currentContainerCount=0
 
           for container in $(echo $CONTAINERS | jq -r '.[].name'); do
             creationTime="${container#uptime-}"
             containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
             if [ $containerAge -lt ${{ env.UPTIME_HRS }} ]; then
-              ((currentContainerCount++))
+              # ((currentContainerCount++))
               echo "Checking container group: $container"
               containerJson=$(az container show --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container)
               echo $containerJson | jq
@@ -60,11 +60,13 @@ jobs:
             fi
           done
 
-          if [ $currentContainerCount -lt 3 ]; then
-            echo "deployment-needed=1" >> $GITHUB_OUTPUT
-          else
-            echo "deployment-needed=0" >> $GITHUB_OUTPUT
-          fi
+          echo "deployment-needed=0" >> $GITHUB_OUTPUT
+
+          # if [ $currentContainerCount -lt 3 ]; then
+          #   echo "deployment-needed=1" >> $GITHUB_OUTPUT
+          # else
+          #   echo "deployment-needed=0" >> $GITHUB_OUTPUT
+          # fi
 
   remove-old-container:
     name: Remove Older Containers
@@ -98,7 +100,6 @@ jobs:
     needs: check-current-containers
     outputs:
       datetime: ${{ steps.get-datetime.outputs.datetime }}
-      deployment-needed: ${{ needs.check-current-containers.outputs.deployment-needed }}
     if: ${{ needs.check-current-containers.outputs.deployment-needed }}
     steps:
       - name: Get Datetime
@@ -136,9 +137,9 @@ jobs:
   deploy-new-container:
     name: Deploy New Container
     uses: ./.github/workflows/deploy_container.yml
-    needs: prep-deployment
+    needs: [check-current-containers, prep-deployment]
     secrets: inherit
-    if: ${{ needs.prep-deployment.outputs.deployment-needed }}
+    if: ${{ needs.check-current-containers.outputs.deployment-needed }}
     with:
       id: ${{ needs.prep-deployment.outputs.datetime }}
       test: simple_server

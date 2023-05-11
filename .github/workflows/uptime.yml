@@ -39,13 +39,13 @@ jobs:
 
           BAD_STATES=("Killed" "Stopped" "Failed")
 
-          # currentContainerCount=0
+          currentContainerCount=0
 
           for container in $(echo $CONTAINERS | jq -r '.[].name'); do
             creationTime="${container#uptime-}"
             containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
             if [ $containerAge -lt ${{ env.UPTIME_HRS }} ]; then
-              # ((currentContainerCount++))
+              ((currentContainerCount++))
               echo "Checking container group: $container"
               containerJson=$(az container show --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container)
               echo $containerJson | jq

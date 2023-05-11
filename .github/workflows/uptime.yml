@@ -15,6 +15,8 @@ jobs:
   check-current-containers:
     name: Check Containers Uptime
     runs-on: ubuntu-latest
+    outputs:
+      deployment_needed: ${{ steps.check-container-liveness.outputs.deployment_needed }}
     steps:
       - name: Log into Azure
         run: |
@@ -24,10 +26,11 @@ jobs:
             --tenant ${{ secrets.SP_TENANT }}
 
       - name: Check Container Groups Liveness
+        id: check-container-liveness
         run: |
-          CONTAINERS=$(az container list \
-            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --query "[?starts_with(name, 'uptime-')]")
+          CONTAINERS=$(az container list
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }}
+            --query "[?starts_with(name, 'uptime-') && location=='${{ inputs.location }}']")
 
           if [ -z "$CONTAINERS" ]; then
             echo "No containers found"
@@ -36,10 +39,13 @@ jobs:
 
           BAD_STATES=("Killed" "Stopped" "Failed")
 
+          currentContainerCount=0
+
           for container in $(echo $CONTAINERS | jq -r '.[].name'); do
             creationTime="${container#uptime-}"
             containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
             if [ $containerAge -lt ${{ env.UPTIME_HRS }} ]; then
+              ((currentContainerCount++)))
               echo "Checking container group: $container"
               containerJson=$(az container show --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} --name $container)
               echo $containerJson | jq
@@ -53,6 +59,8 @@ jobs:
               done
             fi
           done
+
+          echo "deployment_needed=$(($currentContainerCount < 3 ? "true" : "false"))" >> $GITHUB_OUTPUT
 
   remove-old-container:
     name: Remove Older Containers
@@ -69,7 +77,7 @@ jobs:
         run: |
           CONTAINERS=$(az container list \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            --query "[?starts_with(name, 'uptime-')]")
+            --query "[?starts_with(name, 'uptime-') && location=='${{ inputs.location }}']")
 
           for container in $(echo $CONTAINERS | jq -r '.[].name'); do
               creationTime="${container#uptime-}"
@@ -86,6 +94,8 @@ jobs:
     needs: check-current-containers
     outputs:
       datetime: ${{ steps.get-datetime.outputs.datetime }}
+      deployment_needed: ${{ needs.check-current-containers.outputs.deployment_needed }}
+    if: ${{ needs.check-current-containers.outputs.deployment_needed }}
     steps:
       - name: Get Datetime
         id: get-datetime
@@ -124,6 +134,7 @@ jobs:
     uses: ./.github/workflows/deploy_container.yml
     needs: prep-deployment
     secrets: inherit
+    if: ${{ needs.prep-deployment.outputs.deployment_needed }}
     with:
       id: ${{ needs.prep-deployment.outputs.datetime }}
       test: simple_server

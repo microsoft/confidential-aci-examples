@@ -94,6 +94,7 @@ jobs:
     needs: check-current-containers
     outputs:
       datetime: ${{ steps.get-datetime.outputs.datetime }}
+      deployment-needed: ${{ needs.check-current-containers.outputs.deployment-needed }}
     if: ${{ needs.check-current-containers.outputs.deployment-needed == 1 }}
     steps:
       - name: Get Datetime
@@ -131,9 +132,9 @@ jobs:
   deploy-new-container:
     name: Deploy New Container
     uses: ./.github/workflows/deploy_container.yml
-    needs: [check-current-containers, prep-deployment]
+    needs: prep-deployment
     secrets: inherit
-    if: ${{ needs.check-current-containers.outputs.deployment-needed == 1 }}
+    if: ${{ needs.prep-deployment.outputs.deployment-needed == 1 }}
     with:
       id: ${{ needs.prep-deployment.outputs.datetime }}
       test: simple_server

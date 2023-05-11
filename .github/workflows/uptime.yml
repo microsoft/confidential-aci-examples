@@ -28,8 +28,8 @@ jobs:
       - name: Check Container Groups Liveness
         id: check-container-liveness
         run: |
-          CONTAINERS=$(az container list
-            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }}
+          CONTAINERS=$(az container list \
+            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
             --query "[?starts_with(name, 'uptime-') && location=='${{ inputs.location }}']")
 
           if [ -z "$CONTAINERS" ]; then

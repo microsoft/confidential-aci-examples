@@ -100,7 +100,7 @@ jobs:
     needs: check-current-containers
     outputs:
       datetime: ${{ steps.get-datetime.outputs.datetime }}
-    if: ${{ needs.check-current-containers.outputs.deployment-needed }}
+    if: ${{ needs.check-current-containers.outputs.deployment-needed }} == 1
     steps:
       - name: Get Datetime
         id: get-datetime
@@ -139,7 +139,7 @@ jobs:
     uses: ./.github/workflows/deploy_container.yml
     needs: [check-current-containers, prep-deployment]
     secrets: inherit
-    if: ${{ needs.check-current-containers.outputs.deployment-needed }}
+    if: ${{ needs.check-current-containers.outputs.deployment-needed }} == 1
     with:
       id: ${{ needs.prep-deployment.outputs.datetime }}
       test: simple_server

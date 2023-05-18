@@ -3,5 +3,5 @@ __pycache__
 !.vscode/launch.json
 !.vscode/tasks.json
 env
-**/arm_template.json
+**/*arm_template.json
 **/_*.rego

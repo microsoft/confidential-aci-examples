@@ -17,10 +17,10 @@
             ]
         },
         {
-            "name": "Generate ARM Template",
+            "name": "Generate Container ARM Template",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/generate_arm_template.py",
+            "program": "${workspaceFolder}/infra/container/generate_arm_template.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
@@ -31,7 +31,21 @@
                 "--location",
                 "${input:containerLocation}",
                 "--out",
-                "examples/${input:testName}/arm_template.json"
+                "examples/${input:testName}/${input:armTemplateName}"
+            ]
+        },
+        {
+            "name": "Generate VM ARM Template",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/vm/generate_arm_template.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--location",
+                "${input:containerLocation}",
+                "--out",
+                "examples/${input:testName}/${input:armTemplateName}"
             ]
         },
         {
@@ -43,7 +57,7 @@
             "justMyCode": true,
             "args": [
                 "--arm-template-path",
-                "examples/${input:testName}/arm_template.json",
+                "examples/${input:testName}/${input:armTemplateName}",
                 "--out",
                 "examples/${input:testName}/_generated.rego",
             ]
@@ -57,33 +71,35 @@
             "justMyCode": true,
             "args": [
                 "--arm-template-path",
-                "examples/${input:testName}/arm_template.json",
+                "examples/${input:testName}/${input:armTemplateName}",
                 "--security-policy-path",
                 "${input:securityPolicyPath}",
             ]
         },
         {
-            "name": "Deploy Container",
+            "name": "Deploy ARM Template",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/deploy_container.py",
+            "program": "${workspaceFolder}/infra/deploy_arm_template.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
                 "--arm-template-path",
-                "examples/${input:testName}/arm_template.json",
+                "examples/${input:testName}/${input:armTemplateName}",
             ]
         },
         {
-            "name": "Remove Container",
+            "name": "Delete Deployment",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/remove_container.py",
+            "program": "${workspaceFolder}/infra/delete_deployment.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
                 "--deployment-name",
                 "${input:deploymentName}",
+                "--arm-template-path",
+                "examples/${input:testName}/${input:armTemplateName}",
                 "--asynchronous",
             ]
         },
@@ -104,12 +120,18 @@
             "id": "containerLocation",
             "type": "promptString",
             "description": "Enter the location of the container:",
-            "default": "eastus2euap",
+            "default": "westeurope",
         },
         {
             "id": "imageTag",
             "type": "promptString",
             "description": "Enter the tag of the images:",
+        },
+        {
+            "id": "armTemplateName",
+            "type": "promptString",
+            "default": "arm_template.json",
+            "description": "Enter the name of the ARM template:",
         },
         {
             "id": "securityPolicyPath",

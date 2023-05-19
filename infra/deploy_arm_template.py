@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from infra.resource_client import get_resource_client
 
 
-def deploy_container(
+def deploy_arm_template(
     resource_client: ResourceManagementClient,
     arm_template: dict,
     resource_group: str,
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.arm_template_path) as f:
-        deploy_container(
+        deploy_arm_template(
             resource_client=get_resource_client(
                 args.subscription_id or os.getenv("AZ_SUBSCRIPTION_ID")
             ),

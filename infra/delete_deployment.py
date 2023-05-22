@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from typing import Optional
 from azure.mgmt.resource import ResourceManagementClient
 
@@ -30,18 +31,28 @@ def delete_deployment(
         deployment.properties is not None
         and deployment.properties.output_resources is not None
     ):
+        resources_to_delete = []
         for resource in deployment.properties.output_resources:
             arm_template_resource = next(
                 res
                 for res in arm_template["resources"]
                 if res["name"] == resource.id.split("/")[-1]
             )
-            delete_op = resource_client.resources.begin_delete_by_id(
-                resource.id,
-                arm_template_resource["apiVersion"],
+            resources_to_delete.append(
+                (resource.id, arm_template_resource["apiVersion"])
             )
-            if not asynchronous:
-                delete_op.wait()
+        start_time = time.time()
+        timeout = 60  # seconds
+        while resources_to_delete and time.time() - start_time < timeout:
+            resource_to_delete = resources_to_delete.pop(0)
+            try:
+                delete_op = resource_client.resources.begin_delete_by_id(
+                    *resource_to_delete
+                )
+                if not asynchronous:
+                    delete_op.wait()
+            except Exception as e:
+                resources_to_delete.append(resource_to_delete)
 
     delete_op = resource_client.deployments.begin_delete(
         resource_group, deployment_name

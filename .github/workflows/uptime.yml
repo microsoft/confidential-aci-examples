@@ -111,7 +111,7 @@ jobs:
         env:
           AZ_REGISTRY_PASSWORD: ${{ secrets.AZ_REGISTRY_PASSWORD }}
         run: |
-          python infra/generate_arm_template.py \
+          python infra/container/generate_arm_template.py \
             --name uptime-${{ steps.get-datetime.outputs.datetime }} \
             --image-tag latest \
             --manifest-path examples/simple_server/manifest.json \
@@ -131,7 +131,7 @@ jobs:
 
   deploy-new-container:
     name: Deploy New Container
-    uses: ./.github/workflows/deploy_container.yml
+    uses: ./.github/workflows/deploy_arm_template.yml
     needs: prep-deployment
     secrets: inherit
     if: ${{ needs.prep-deployment.outputs.deployment-needed == 1 }}

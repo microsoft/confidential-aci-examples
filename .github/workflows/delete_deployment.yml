@@ -1,4 +1,4 @@
-name: Deploy Container
+name: Remove Container
 
 on:
   workflow_dispatch:
@@ -8,17 +8,17 @@ on:
         required: true
         type: string
       test:
-        description: "Test to deploy ACI for"
+        description: "Test to remove the ACI for"
         required: true
         type: choice
         options:
           - simple_server
       location:
-        description: "Location to deploy to"
+        description: "Location to deploy ACI to"
         required: true
         type: string
       security-policy:
-        description: "Security policy to use for ACI"
+        description: "Security policy within the artifact to use for ACI"
         required: true
         type: string
   workflow_call:
@@ -28,21 +28,21 @@ on:
         required: true
         type: string
       test:
-        description: "Test to deploy ACI for"
+        description: "Test to remove the ACI for"
         required: true
         type: string
       location:
-        description: "Location to deploy to"
+        description: "Location to deploy ACI to"
         required: true
         type: string
       security-policy:
-        description: "Security policy to use for ACI"
+        description: "Security policy within the artifact to use for ACI"
         required: true
         type: string
 
 jobs:
-  deploy-container:
-    name: Deploy Container (${{ inputs.location }}/${{ inputs.security-policy }})
+  remove-container:
+    name: Remove Container (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,11 +51,6 @@ jobs:
       - name: Generate Matrix Cell Name
         id: generate-name
         run: echo "name=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
-
-      - name: Download ARM Template Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ steps.generate-name.outputs.name }}_arm_template
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -67,20 +62,15 @@ jobs:
             --password ${{ secrets.SP_PASSWORD }} \
             --tenant ${{ secrets.SP_TENANT }}
 
-      - name: Deploy Container on ACI
+      - name: Download ARM Template Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.generate-name.outputs.name }}_arm_template
+
+      - name: Remove Container on ACI
         run: |
-          python infra/deploy_container.py \
+          python infra/delete_deployment.py \
             --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
-            --arm-template-path arm_template.json \
             --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
             --deployment-name deployment-${{ steps.generate-name.outputs.name }} \
-
-      - name: Check Container is Running
-        run: |
-          sleep 10 # Give the container a chance to stabilise
-          CONTAINER_STATE=$(az container show \
-              --name $(cat arm_template.json | jq -r '.resources[0].name') \
-              --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
-            )
-          echo $CONTAINER_STATE | jq
-          [[ $(echo $CONTAINER_STATE | jq -r '.instanceView.state') == "Running" ]] && exit 0 || exit 1
+            --arm-template-path arm_template.json

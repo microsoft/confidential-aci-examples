@@ -27,7 +27,6 @@ on:
         type: string
 
 jobs:
-
   workflow-id:
     name: "Generate Workflow ID"
     runs-on: ubuntu-latest
@@ -76,7 +75,7 @@ jobs:
 
   deploy-containers:
     name: "Deploy Containers"
-    uses: ./.github/workflows/deploy_container.yml
+    uses: ./.github/workflows/deploy_arm_template.yml
     needs: [workflow-id, generate-security-policy, generate-arm-templates]
     secrets: inherit
     strategy:
@@ -108,7 +107,7 @@ jobs:
 
   remove-containers:
     name: "Remove Containers"
-    uses: ./.github/workflows/remove_container.yml
+    uses: ./.github/workflows/delete_deployment.yml
     needs: [workflow-id, generate-security-policy, client-side-tests]
     secrets: inherit
     if: always()

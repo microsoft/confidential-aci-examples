@@ -52,9 +52,10 @@ The difference between (Trusted Computing Base) TCB and `tcbm` is TODO.
 
 ## reference-info-base64
 
-The COSE_Sign1  envelope has a JSON object as payload. It contains the SVN of Confidential ACI as x-ms-sevsnpvm-guestsvn and hex encoded launch time measurement of UVM as x-ms-sevsnpvm-launchmeasurement.
+The COSE_Sign1 envelope has a JSON object as payload. It contains the SVN of Confidential ACI as x-ms-sevsnpvm-guestsvn and hex encoded launch time measurement of UVM as x-ms-sevsnpvm-launchmeasurement.
 
-The latest SNV can be found at TODO.
+The production SVN starts from 100.
+The latest SVN can be found at TODO.
 
 The measurement the same as MEASUREMENT of attestation report in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification).
 
@@ -68,7 +69,7 @@ The following is an example payload:
 }
 ```
 
-The COSE_Sign1 envelop can be unpacked using [COSE_Sign1 go](https://pkg.go.dev/github.com/Microsoft/COSE_Sign1 go) package in Go.
+The COSE_Sign1 envelop can be unpacked using [cosesign1go](https://pkg.go.dev/github.com/Microsoft/cosesign1go) package in Go.
 
 It can be checked if it is properly signed by Microsoft by validating [did:x509](https://github.com/microsoft/did-x509/blob/main/specification.md) string.
 [didx509go](https://pkg.go.dev/github.com/Microsoft/didx509go) package can be used in Go for the validation.
@@ -81,7 +82,7 @@ It can be checked if it is properly signed by Microsoft by validating [did:x509]
 
     // Resolve returns a did doc that we don't need
     // we only care if there was an error or not
-    _, err = didx509resolver.Resolve(unpacked.ChainPem, unpacked.Issuer, true)
+    _, err = didx509resolver.Resolve(unpacked.ChainPem, unpacked.Issuer /*did:x509 string*/, true)
     if err != nil {
         log.Fatalf("Failed to resolve did:x509 string: %s", err.Error())
     }

@@ -12,3 +12,10 @@ CONTAINER_REGISTRY_PASSWORD=$CONTAINER_REGISTRY_PASSWORD
 AZURE_SERVICE_PRINCIPAL_APP_ID=$AZURE_SERVICE_PRINCIPAL_APP_ID
 AZURE_SERVICE_PRINCIPAL_TENANT=$AZURE_SERVICE_PRINCIPAL_TENANT
 AZURE_SERVICE_PRINCIPAL_PASSWORD=$AZURE_SERVICE_PRINCIPAL_PASSWORD
+#
+# Settable environment variables which control local workflows -----------------
+#
+# BACKEND=ACI # Type of backend to use for tests
+# CLEANUP_ACI=1 # Removes deployments after test is done
+# DEPLOYMENT_NAME=your-deployment-name # Skips deployment and uses existing with the given name
+# SECURITY_POLICY=path/to/policy.rego # Uses the given policy file instead of generating one (relative to examples/)

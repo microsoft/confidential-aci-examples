@@ -95,9 +95,9 @@ if __name__ == "__main__":
 
     delete_deployment(
         resource_client=get_resource_client(
-            args.subscription_id or os.getenv("AZ_SUBSCRIPTION_ID", "")
+            args.subscription_id or os.getenv("AZURE_SUBSCRIPTION_ID", "")
         ),
-        resource_group=args.resource_group or os.getenv("AZ_RESOURCE_GROUP", ""),
+        resource_group=args.resource_group or os.getenv("AZURE_RESOURCE_GROUP", ""),
         deployment_name=args.deployment_name,
         arm_template=arm_template,
         asynchronous=args.asynchronous,

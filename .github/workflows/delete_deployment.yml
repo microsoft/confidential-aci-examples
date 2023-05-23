@@ -58,9 +58,9 @@ jobs:
       - name: Log into Azure
         run: |
           az login --service-principal \
-            --username ${{ secrets.SP_APP_ID }} \
-            --password ${{ secrets.SP_PASSWORD }} \
-            --tenant ${{ secrets.SP_TENANT }}
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v3
@@ -70,7 +70,7 @@ jobs:
       - name: Remove Container on ACI
         run: |
           python infra/delete_deployment.py \
-            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }} \
-            --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+            --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --deployment-name deployment-${{ steps.generate-name.outputs.name }} \
             --arm-template-path arm_template.json

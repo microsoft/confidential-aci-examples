@@ -59,15 +59,15 @@ jobs:
       - name: Log into Azure
         run: |
           az login --service-principal \
-            --username ${{ secrets.SP_APP_ID }} \
-            --password ${{ secrets.SP_PASSWORD }} \
-            --tenant ${{ secrets.SP_TENANT }}
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Check Container is Running
         run: |
           CONTAINER_STATE=$(az container show \
               --name group-${{ steps.generate-name.outputs.name }} \
-              --resource-group ${{ secrets.AZ_RESOURCE_GROUP }} \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             )
           echo $CONTAINER_STATE | jq
           [[ $(echo $CONTAINER_STATE | jq -r '.instanceView.state') == "Running" ]] && exit 0 || exit 1
@@ -75,8 +75,8 @@ jobs:
       - name: Run Tests
         env:
           DEPLOYMENT_NAME: deployment-${{ steps.generate-name.outputs.name }}
-          AZ_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
-          AZ_RESOURCE_GROUP: ${{ secrets.AZ_RESOURCE_GROUP }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
           CLEANUP_ACI: 0
         run: |
           python -m unittest discover \

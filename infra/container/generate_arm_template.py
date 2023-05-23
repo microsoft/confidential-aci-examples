@@ -40,7 +40,7 @@ def generate_arm_template(
                             "properties": {
                                 "image": container["image"].split("://")[1]
                                 if container["image"].startswith("http")
-                                else f'caciexamples.azurecr.io/{manifest["testName"]}/{container["image"]}:{image_tag}',
+                                else f'{os.getenv("CONTAINER_REGISTRY_URL")}/{manifest["testName"]}/{container["image"]}:{image_tag}',
                                 "ports": [
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
@@ -71,7 +71,7 @@ def generate_arm_template(
                     },
                     "imageRegistryCredentials": [
                         {
-                            "server": server,
+                            "server": resolve_variable(server),
                             "username": resolve_variable(credentials["username"]),
                             "password": resolve_variable(credentials["password"]),
                         }

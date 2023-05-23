@@ -9,17 +9,17 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from infra.docker_client import get_docker_client
 
 
-REGISTRY = "caciexamples.azurecr.io"
 
 
 def build_and_push_images(image_tag: str, manifest: dict):
+    registry = os.getenv("CONTAINER_REGISTRY_URL")
     client = get_docker_client(
-        registry=REGISTRY,
-        registry_password=os.getenv("AZ_REGISTRY_PASSWORD", ""),
+        registry=registry,
+        registry_password=os.getenv("CONTAINER_REGISTRY_PASSWORD", ""),
     )
     for image_name, dockerfile_path in manifest["images"].items():
         repository = f"{manifest['testName']}/{image_name}"
-        image_url = f"{REGISTRY}/{repository}"
+        image_url = f"{registry}/{repository}"
 
         print(f"Building {repository}:{image_tag}")
         client.images.build(

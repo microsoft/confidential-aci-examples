@@ -27,9 +27,9 @@ def setUpAci(cls):
 
     # Check if the container already exists
     get_container_ip_func = lambda: get_container_ip(
-        resource_client=get_resource_client(os.getenv("AZ_SUBSCRIPTION_ID")),
-        container_client=get_container_client(os.getenv("AZ_SUBSCRIPTION_ID")),
-        resource_group=os.getenv("AZ_RESOURCE_GROUP", ""),
+        resource_client=get_resource_client(os.getenv("AZURE_SUBSCRIPTION_ID")),
+        container_client=get_container_client(os.getenv("AZURE_SUBSCRIPTION_ID")),
+        resource_group=os.getenv("AZURE_RESOURCE_GROUP", ""),
         deployment_name=cls.deployment_name,
     )
 
@@ -60,12 +60,12 @@ def setUpAci(cls):
             security_policy = f.read()
 
     deploy_arm_template(
-        resource_client=get_resource_client(os.getenv("AZ_SUBSCRIPTION_ID")),
+        resource_client=get_resource_client(os.getenv("AZURE_SUBSCRIPTION_ID")),
         arm_template=add_security_policy_to_arm_template(
             arm_template=arm_template,
             security_policy=security_policy,
         ),
-        resource_group=os.getenv("AZ_RESOURCE_GROUP", ""),
+        resource_group=os.getenv("AZURE_RESOURCE_GROUP", ""),
         deployment_name=cls.deployment_name,
     )
 
@@ -77,8 +77,8 @@ def tearDownAci(cls):
         test_name = cls.__class__.__module__.split(".")[0]
         with open(f"examples/{test_name}/arm_template.json", "r") as f:
             delete_deployment(
-                resource_client=get_resource_client(os.getenv("AZ_SUBSCRIPTION_ID")),
-                resource_group=os.getenv("AZ_RESOURCE_GROUP", ""),
+                resource_client=get_resource_client(os.getenv("AZURE_SUBSCRIPTION_ID")),
+                resource_group=os.getenv("AZURE_RESOURCE_GROUP", ""),
                 deployment_name=cls.deployment_name,
                 arm_template=json.load(f),
                 asynchronous=True,

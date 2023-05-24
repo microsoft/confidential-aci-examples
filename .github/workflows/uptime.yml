@@ -109,7 +109,7 @@ jobs:
 
       - name: Generate ARM Template
         env:
-          CONTAINER_REGISTRY_PASSWORD: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
           python infra/container/generate_arm_template.py \
             --name uptime-${{ steps.get-datetime.outputs.datetime }} \

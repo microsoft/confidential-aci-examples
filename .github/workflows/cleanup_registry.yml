@@ -19,9 +19,9 @@ jobs:
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.CONTAINER_REGISTRY_URL }}
-          username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+          login-server: ${{ secrets.AZURE_REGISTRY_URL }}
+          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
 
       - name: Cleanup Registry
         run: |
@@ -29,5 +29,5 @@ jobs:
           # generated tags
           az acr run \
             --cmd "acr purge --filter '.*:.*\d+.*' --ago 1d" \
-            --registry $CONTAINER_REGISTRY_URL \
+            --registry $AZURE_REGISTRY_URL \
             /dev/null

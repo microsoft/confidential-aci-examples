@@ -57,7 +57,7 @@ The COSE_Sign1 envelope has a JSON object as payload. It contains the SVN of Con
 The production SVN starts from 100.
 The latest SVN can be found at TODO.
 
-The measurement the same as MEASUREMENT of attestation report in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification).
+The measurement ia the same as MEASUREMENT of attestation report in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification).
 
 There might be more fields in the JSON in future.
 

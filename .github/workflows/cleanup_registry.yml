@@ -12,16 +12,16 @@ jobs:
       - name: Log into Azure
         run: |
           az login --service-principal \
-            --username ${{ secrets.SP_APP_ID }} \
-            --password ${{ secrets.SP_PASSWORD }} \
-            --tenant ${{ secrets.SP_TENANT }}
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.AZ_REGISTRY_LOGIN }}
-          username: ${{ secrets.AZ_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+          login-server: ${{ secrets.AZURE_REGISTRY_URL }}
+          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
 
       - name: Cleanup Registry
         run: |
@@ -29,5 +29,5 @@ jobs:
           # generated tags
           az acr run \
             --cmd "acr purge --filter '.*:.*\d+.*' --ago 1d" \
-            --registry caciexamples \
+            --registry $AZURE_REGISTRY_URL \
             /dev/null

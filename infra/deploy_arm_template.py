@@ -57,9 +57,9 @@ if __name__ == "__main__":
     with open(args.arm_template_path) as f:
         deploy_arm_template(
             resource_client=get_resource_client(
-                args.subscription_id or os.getenv("AZ_SUBSCRIPTION_ID")
+                args.subscription_id or os.environ["AZURE_SUBSCRIPTION_ID"]
             ),
             arm_template=json.load(f),
-            resource_group=args.resource_group or os.getenv("AZ_RESOURCE_GROUP", ""),
+            resource_group=args.resource_group or os.environ["AZURE_RESOURCE_GROUP"],
             deployment_name=args.deployment_name or f"deployment-{uuid.uuid4()}",
         )

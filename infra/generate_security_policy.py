@@ -18,7 +18,7 @@ def generate_security_policy(
 ) -> bytes:
     print("Logging into Azure CLI")
     subprocess.run(
-        "az login --service-principal --username $SP_APP_ID --password $SP_PASSWORD --tenant $SP_TENANT",
+        "az login --service-principal --username $AZURE_SERVICE_PRINCIPAL_APP_ID --password $AZURE_SERVICE_PRINCIPAL_PASSWORD --tenant $AZURE_SERVICE_PRINCIPAL_TENANT",
         shell=True,
     )
 

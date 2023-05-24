@@ -1,6 +1,3 @@
-# Setup credentials
-source ./env
-
 # Install python dependencies
 pip install -r requirements.txt
 

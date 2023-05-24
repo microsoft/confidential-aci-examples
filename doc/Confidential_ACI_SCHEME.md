@@ -19,7 +19,7 @@ These artefacts are provided as base64 encoded files in each container’s files
 
 ## host-amd-cert-base64
 
-These are the AMD platform certificates, as per Trusted Hardware Identity Management Document - https://learn.microsoft.com/en-us/azure/security/fundamentals/trusted-hardware-identity-management#definitions, encoded to base64. As a Go data structure:
+These are the AMD platform certificates, as per Trusted Hardware Identity Management Document - https://learn.microsoft.com/en-us/azure/security/fundamentals/trusted-hardware-identity-management#definitions, inlined in a JSON document encoded to base64. As a Go data structure:
 
 ```go
 // format of the JSON provided to the UVM by hcsshim. Comes from the THIM endpoint

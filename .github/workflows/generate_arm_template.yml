@@ -64,7 +64,7 @@ jobs:
       - name: Generate ARM Template
         id: generate-arm-template
         env:
-          AZ_REGISTRY_PASSWORD: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
           python infra/container/generate_arm_template.py \
             --image-tag ${{ inputs.id }} \

@@ -40,7 +40,7 @@ def generate_arm_template(
                             "properties": {
                                 "image": container["image"].split("://")[1]
                                 if container["image"].startswith("http")
-                                else f'{os.environ["AZ_REGISTRY_LOGIN"]}/{manifest["testName"]}/{container["image"]}:{image_tag}',
+                                else f'{os.environ["AZURE_REGISTRY_URL"]}/{manifest["testName"]}/{container["image"]}:{image_tag}',
                                 "ports": [
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]

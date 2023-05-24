@@ -14,4 +14,4 @@ az login --service-principal \
     --tenant $AZURE_SERVICE_PRINCIPAL_TENANT
 
 # Login into Container Registry
-az acr login --name $AZURE_REGISTRY_URL
+az acr login --name $AZ_REGISTRY_LOGIN

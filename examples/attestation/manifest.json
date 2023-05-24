@@ -18,9 +18,9 @@
     ],
     "securityPolicies": [],
     "registryCredentials": {
-        "$AZURE_REGISTRY_URL": {
-            "username": "$AZURE_REGISTRY_USERNAME",
-            "password": "$AZURE_REGISTRY_PASSWORD"
+        "$AZ_REGISTRY_LOGIN": {
+            "username": "$AZ_REGISTRY_USERNAME",
+            "password": "$AZ_REGISTRY_PASSWORD"
         }
     }
 }

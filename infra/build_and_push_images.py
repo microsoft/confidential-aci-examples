@@ -10,10 +10,10 @@ from infra.docker_client import get_docker_client
 
 
 def build_and_push_images(image_tag: str, manifest: dict):
-    registry = os.environ["AZURE_REGISTRY_URL"]
+    registry = os.environ["AZ_REGISTRY_LOGIN"]
     client = get_docker_client(
         registry=registry,
-        registry_password=os.environ["AZURE_REGISTRY_PASSWORD"],
+        registry_password=os.environ["AZ_REGISTRY_PASSWORD"],
     )
     for image_name, dockerfile_path in manifest["images"].items():
         repository = f"{manifest['testName']}/{image_name}"

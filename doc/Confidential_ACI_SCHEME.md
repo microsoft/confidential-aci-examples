@@ -19,22 +19,37 @@ These artefacts are provided as base64 encoded files in each container’s files
 
 ## host-amd-cert-base64
 
-These are the AMD platform certificates, as per Trusted Hardware Identity Management Document - https://learn.microsoft.com/en-us/azure/security/fundamentals/trusted-hardware-identity-management#definitions, inlined in a JSON document encoded to base64. As a Go data structure:
+These are the AMD platform certificates, as per Trusted Hardware Identity Management Document - https://learn.microsoft.com/en-us/azure/security/fundamentals/trusted-hardware-identity-management#definitions, inlined in a JSON document encoded to base64. As JSON Schema:
 
-```go
-// format of the JSON provided to the UVM by hcsshim. Comes from the THIM endpoint
-// and is a base64 encoded JSON string
-type THIMCerts struct {
-    VcekCert         string `json:"vcekCert"`
-    Tcbm             string `json:"tcbm"`
-    CertificateChain string `json:"certificateChain"`
-    CacheControl     string `json:"cacheControl"`
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "vcekCert": {
+      "type": "string"
+    },
+    "tcbm": {
+      "type": "string"
+    },
+    "certificateChain": {
+      "type": "string"
+    },
+    "cacheControl": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "vcekCert",
+    "tcbm",
+    "certificateChain",
+    "cacheControl"
+  ]
 }
 ```
 
-Example code using the struct can be found here:
-
-https://github.com/microsoft/confidential-sidecar-containers/blob/main/pkg/common/info.go
+`tcbm` is CURRENT_TCB in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification).
+`cacheControl` is an implementation detail.
 
 The following is an example of decoded JSON object:
 
@@ -47,17 +62,39 @@ The following is an example of decoded JSON object:
 }
 ```
 
-`tcbm` is CURRENT_TCB in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification).
-`cacheControl` is an implementation detail.
+Example code that handle the JSON object can be found here:
+
+https://github.com/microsoft/confidential-sidecar-containers/blob/main/pkg/common/info.go
 
 ## reference-info-base64
 
-The COSE_Sign1 envelope has a JSON object as payload. It contains the SVN of Confidential ACI as x-ms-sevsnpvm-guestsvn and hex encoded launch time measurement of UVM as x-ms-sevsnpvm-launchmeasurement.
+The COSE_Sign1 envelope has a JSON object as payload. The following is the JSON Schema:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "x-ms-sevsnpvm-guestsvn": {
+      "type": "string"
+    },
+    "x-ms-sevsnpvm-launchmeasurement": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "x-ms-sevsnpvm-guestsvn",
+    "x-ms-sevsnpvm-launchmeasurement"
+  ]
+}
+```
+
+It contains the SVN of Confidential ACI as x-ms-sevsnpvm-guestsvn and hex encoded launch time measurement of UVM as x-ms-sevsnpvm-launchmeasurement.
 
 The production SVN starts from 100.
 The latest SVN can be found at TODO.
 
-The measurement ia the same as MEASUREMENT of attestation report in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification).
+The measurement is the same as MEASUREMENT of attestation report in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification).
 
 There might be more fields in the JSON in future.
 

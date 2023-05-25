@@ -29,5 +29,5 @@ jobs:
           # generated tags
           az acr run \
             --cmd "acr purge --filter '.*:.*\d+.*' --ago 1d" \
-            --registry $AZURE_REGISTRY_URL \
+            --registry ${{ secrets.AZURE_REGISTRY_URL }} \
             /dev/null

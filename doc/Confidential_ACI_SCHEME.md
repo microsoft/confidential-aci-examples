@@ -80,7 +80,8 @@ The COSE_Sign1 envelope has a JSON object as payload. The following is the JSON 
       "type": "string"
     },
     "x-ms-sevsnpvm-launchmeasurement": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^[0-9a-f]+$"
     }
   },
   "required": [

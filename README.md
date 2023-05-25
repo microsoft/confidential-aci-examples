@@ -15,7 +15,9 @@ You can use Github Codespaces to create a fully ready to use development environ
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=616412316&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope)
 
-> To checkout and setup manually, please refer to the [Dockerfile](.devcontainer/Dockerfile) and [.devcontainer](.devcontainer/devcontainer.json) to follow the setup process.
+> **CREDENTIALS:** If you do not have write permissions on this project or you checkout manually i.e. without using Codespaces, you will need to provide your own credentials by modifying the [Environment file](env) and re-running [setup.sh](setup.sh)
+
+> **MANUAL SETUP:** To checkout and setup manually, please refer to the [Dockerfile](.devcontainer/Dockerfile) and [.devcontainer](.devcontainer/devcontainer.json) to follow the setup process.
 
 ## Running Tests
 

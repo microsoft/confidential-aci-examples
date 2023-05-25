@@ -18,9 +18,9 @@
     ],
     "securityPolicies": [],
     "registryCredentials": {
-        "caciexamples.azurecr.io": {
-            "username": "caciexamples",
-            "password": "$AZ_REGISTRY_PASSWORD"
+        "$AZURE_REGISTRY_URL": {
+            "username": "$AZURE_REGISTRY_USERNAME",
+            "password": "$AZURE_REGISTRY_PASSWORD"
         }
     }
 }

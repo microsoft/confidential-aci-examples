@@ -138,5 +138,5 @@
 			]
 		}
 	},
-	"postCreateCommand": "pip install -r requirements.txt && az login --service-principal --username $SP_APP_ID --password $SP_PASSWORD --tenant $SP_TENANT && az acr login --name caciexamples && az extension add --name confcom"
+	"postCreateCommand": "./setup.sh"
 }

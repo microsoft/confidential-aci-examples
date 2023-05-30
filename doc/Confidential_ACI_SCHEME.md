@@ -63,7 +63,7 @@ The following is an example of decoded JSON object:
 }
 ```
 
-Example code that handle the JSON object can be found here:
+Example code that handles the JSON object can be found here:
 
 https://github.com/microsoft/confidential-sidecar-containers/blob/main/pkg/common/info.go
 

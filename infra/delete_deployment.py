@@ -8,7 +8,7 @@ from azure.mgmt.resource import ResourceManagementClient
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from infra.resource_client import get_resource_client
+from infra.clients import get_resource_client
 
 
 def delete_deployment(

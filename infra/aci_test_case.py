@@ -6,13 +6,12 @@ from infra.build_and_push_images import build_and_push_images
 from infra.add_security_policy_to_arm_template import (
     add_security_policy_to_arm_template,
 )
-from infra.container_client import get_container_client
+from infra.clients import get_container_client, get_resource_client
 from infra.deploy_arm_template import deploy_arm_template
 from infra.container.generate_arm_template import generate_arm_template
 from infra.generate_security_policy import generate_security_policy
-from infra.get_container_ip import get_container_ip
+from infra.container.get_ip import get_container_ip
 from infra.delete_deployment import delete_deployment
-from infra.resource_client import get_resource_client
 
 
 def setUpAci(cls):

@@ -11,11 +11,16 @@ def generate_arm_template(
     out: Optional[str] = None,
 ):
     password = str(uuid.uuid4())
+    with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as ssh_key_file:
+        ssh_key = ssh_key_file.read().rstrip("\n")
+
     print(f"Generating ARM template for {name} and password '{password}'")
     arm_template = {
         "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
         "contentVersion": "1.0.0.0",
         "variables": {
+            "uniqueId": name,
+            "vmPassword": password,
             "nsgId": f"[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', '{name}-nsg')]",
             "vnetId": f"[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks', '{name}-vnet')]",
             "ipId": f"[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', '{name}-ip')]",
@@ -199,6 +204,20 @@ def generate_arm_template(
                         "notificationLocale": "en",
                         "timeInMinutes": "30",
                         "emailRecipient": "dominicayre@microsoft.com",
+                    },
+                },
+            },
+            {
+                "name": f"{name}-vm/RunPowerShellScript",
+                "type": "Microsoft.Compute/virtualMachines/runCommands",
+                "apiVersion": "2022-03-01",
+                "location": location,
+                "dependsOn": [
+                    f"[concat('Microsoft.Compute/virtualMachines/', '{name}-vm')]"
+                ],
+                "properties": {
+                    "source": {
+                        "script": f'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0; Start-Service sshd; {ssh_key} | Add-Content "C:\\ProgramData\\ssh\\administrators_authorized_keys";icacls.exe "C:\\ProgramData\\ssh\\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"',
                     },
                 },
             },

@@ -33,14 +33,17 @@ def delete_deployment(
     ):
         resources_to_delete = []
         for resource in deployment.properties.output_resources:
-            arm_template_resource = next(
-                res
-                for res in arm_template["resources"]
-                if res["name"] == resource.id.split("/")[-1]
-            )
-            resources_to_delete.append(
-                (resource.id, arm_template_resource["apiVersion"])
-            )
+            try:
+                arm_template_resource = next(
+                    res
+                    for res in arm_template["resources"]
+                    if res["name"] == resource.id.split("/")[-1]
+                )
+                resources_to_delete.append(
+                    (resource.id, arm_template_resource["apiVersion"])
+                )
+            except Exception:
+                ...
         start_time = time.time()
         timeout = 60  # seconds
         while resources_to_delete and time.time() - start_time < timeout:

@@ -89,6 +89,18 @@
             ]
         },
         {
+            "name": "Deploy Container Platform",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/vm/deploy_containerplat.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--arm-template-path",
+                "examples/${input:testName}/${input:armTemplateName}",
+            ]
+        },
+        {
             "name": "Delete Deployment",
             "type": "python",
             "request": "launch",

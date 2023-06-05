@@ -101,6 +101,18 @@
             ]
         },
         {
+            "name": "Run Container Platform",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/vm/run_containerplat.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--arm-template-path",
+                "examples/${input:testName}/${input:armTemplateName}",
+            ]
+        },
+        {
             "name": "Delete Deployment",
             "type": "python",
             "request": "launch",
@@ -132,7 +144,7 @@
             "id": "containerLocation",
             "type": "promptString",
             "description": "Enter the location of the container:",
-            "default": "westeurope",
+            "default": "eastus",
         },
         {
             "id": "imageTag",

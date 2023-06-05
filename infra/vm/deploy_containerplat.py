@@ -3,39 +3,68 @@ import json
 import os
 import sys
 import tempfile
-import pexpect
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from infra.clients import get_network_client
 from infra.vm.get_containerplat import get_containerplat
 from infra.vm.get_ip import get_vm_ip
+from infra.vm.operations import copy_to_vm, run_on_vm
 
 
 def deploy_containerplat(
     ip_address: str,
     container_plat_path: str,
     user_password: str,
+    image: str,
 ) -> None:
-    # Attempt to send containerplat to VM
-    command = f"scp -o StrictHostKeyChecking=no -r {os.path.abspath(container_plat_path)} test-user@{ip_address}:/container_plat_build"
-    print(command)
-    process = pexpect.spawn(command)
-
-    # Expect password prompt
-    process.expect(f"test-user@{ip_address}'s password: ")
-    process.sendline(user_password)
-
-    # Print the output
-    process.expect(pexpect.EOF)
-    print(process.before.decode("utf-8"))
-
-    # Deploy containerplat
-    process = pexpect.spawn(
-        "ssh test-user@{ip_address} 'C:\\container_plat_build\\deploy.exe''"
+    copy_to_vm(
+        ip_address,
+        user_password,
+        os.path.abspath(container_plat_path),
+        "/container_plat_build",
     )
-    process.expect(f"test-user@{ip_address}'s password: ")
-    process.sendline(user_password)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        with open(os.path.join(temp_dir, "lcow-pull-config.json"), "w") as f:
+            json.dump({"labels": {"sandbox-platform": "linux/amd64"}}, f)
+        with open(os.path.join(temp_dir, "pod.json"), "w") as f:
+            json.dump(
+                {
+                    "metadata": {
+                        "name": "sandbox",
+                        "namespace": "default",
+                        "attempt": 1,
+                    },
+                    "linux": {"security_context": {"privileged": "true"}},
+                    "annotations": {
+                        "io.microsoft.virtualmachine.lcow.no_security_hardware": "true",
+                        "io.microsoft.virtualmachine.computetopology.processor.count": "2",
+                        "io.microsoft.virtualmachine.computetopology.memory.sizeinmb": "16384",
+                        "io.microsoft.virtualmachine.lcow.preferredrootfstype": "initrd",
+                    },
+                },
+                f,
+            )
+        with open(os.path.join(temp_dir, "lcow-container.json"), "w") as f:
+            json.dump(
+                {
+                    "metadata": {"name": "examples"},
+                    "image": {"image": image},
+                    "linux": {"security_context": {"privileged": "true"}},
+                },
+                f,
+            )
+
+        copy_to_vm(ip_address, user_password, temp_dir, "/lcow_configs")
+
+    # Deploy Containerplat
+    run_on_vm(
+        ip_address,
+        user_password,
+        "C:\container_plat_build\deploy.exe",
+        timeout=600,
+    )
 
 
 if __name__ == "__main__":
@@ -57,4 +86,5 @@ if __name__ == "__main__":
                 ),
                 container_plat_path=temp_dir,
                 user_password=arm_template["variables"]["vmPassword"],
+                image="docker.io/library/alpine:latest",
             )

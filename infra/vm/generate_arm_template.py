@@ -217,7 +217,7 @@ def generate_arm_template(
                 ],
                 "properties": {
                     "source": {
-                        "script": f'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0; Start-Service sshd; {ssh_key} | Add-Content "C:\\ProgramData\\ssh\\administrators_authorized_keys";icacls.exe "C:\\ProgramData\\ssh\\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"',
+                        "script": f'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0; Start-Service sshd; {ssh_key} | Add-Content "C:\\ProgramData\\ssh\\administrators_authorized_keys";icacls.exe "C:\\ProgramData\\ssh\\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"; Enable-WindowsOptionalFeature -Online -All -FeatureName Microsoft-Hyper-V, Containers',
                     },
                 },
             },

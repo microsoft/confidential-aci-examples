@@ -29,11 +29,11 @@ def run_containerplat(
         "C:\ContainerPlat\crictl.exe runp --runtime runhcs-lcow C:\lcow_configs\pod.json",
     ).strip("\r\n")
 
-    # Start the container
+    # Run the container
     run_on_vm(
         ip_address,
         user_password,
-        f"C:\ContainerPlat\crictl.exe create --no-pull {pod_id} C:\lcow_configs\lcow-container.json C:\lcow_configs\pod.json",
+        f"C:\ContainerPlat\crictl.exe run --no-pull {pod_id} C:\lcow_configs\lcow-container.json C:\lcow_configs\pod.json",
     )
 
 

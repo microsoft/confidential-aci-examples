@@ -169,7 +169,7 @@ def generate_arm_template(
                         ]
                     },
                     "osProfile": {
-                        "computerName": f"test-machine",
+                        "computerName": "test-machine",
                         "adminUsername": "test-user",
                         "adminPassword": password,
                         "windowsConfiguration": {
@@ -199,12 +199,6 @@ def generate_arm_template(
                     "dailyRecurrence": {"time": "19:00"},
                     "timeZoneId": "UTC",
                     "targetResourceId": f"[resourceId('Microsoft.Compute/virtualMachines', '{name}-vm')]",
-                    "notificationSettings": {
-                        "status": "Enabled",
-                        "notificationLocale": "en",
-                        "timeInMinutes": "30",
-                        "emailRecipient": "dominicayre@microsoft.com",
-                    },
                 },
             },
             {

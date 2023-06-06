@@ -12,6 +12,33 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
+  cleanup-vms:
+    name: Cleanup VMs
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || inputs.cleanup_running }}
+    steps:
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+
+      - name: Delete VMs and Associated Resources
+        run: |
+          RESOURCES=$(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Compute/virtualMachines'].id" --output tsv)
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Compute/disks'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/networkInterfaces'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/publicIPAddresses'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.DevTestLab/schedules'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/virtualNetworks'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/networkSecurityGroups'].id" --output tsv)"
+
+          if [ -n $RESOURCES ]; then
+            echo -e "Deleting: \n$(echo $RESOURCES | tr ' ' '\n')"
+            az resource delete --verbose --ids $RESOURCES
+          fi
+
   cleanup-running:
     name: Cleanup Running CI Jobs
     runs-on: ubuntu-latest

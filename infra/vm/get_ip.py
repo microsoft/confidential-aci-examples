@@ -21,6 +21,7 @@ def get_vm_ip(
     if ip_address is None:
         raise Exception(f"IP address {ip_name} not found")
 
+    print(f"{ip_address=}")
     return ip_address
 
 

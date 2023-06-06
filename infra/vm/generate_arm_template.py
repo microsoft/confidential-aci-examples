@@ -149,7 +149,7 @@ def generate_arm_template(
                     f"[concat('Microsoft.Network/networkInterfaces/', '{name}-ni')]"
                 ],
                 "properties": {
-                    "hardwareProfile": {"vmSize": "Standard_DC2ds_v3"},
+                    "hardwareProfile": {"vmSize": "Standard_DC4ads_cc_v5"},
                     "storageProfile": {
                         "osDisk": {
                             "createOption": "fromImage",

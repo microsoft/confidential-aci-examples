@@ -36,11 +36,10 @@ def deploy_containerplat(
                         "namespace": "default",
                         "attempt": 1,
                     },
-                    "linux": {"security_context": {"privileged": "true"}},
                     "annotations": {
-                        "io.microsoft.virtualmachine.lcow.no_security_hardware": "true",
-                        "io.microsoft.virtualmachine.computetopology.processor.count": "2",
+                        "io.microsoft.virtualmachine.computetopology.processor.count": "4",
                         "io.microsoft.virtualmachine.computetopology.memory.sizeinmb": "16384",
+                        "io.microsoft.virtualmachine.lcow.preferredrootfstype": "initrd",
                         "io.microsoft.virtualmachine.lcow.preferredrootfstype": "initrd",
                     },
                 },
@@ -51,7 +50,7 @@ def deploy_containerplat(
                 {
                     "metadata": {"name": "examples"},
                     "image": {"image": image},
-                    "linux": {"security_context": {"privileged": "true"}},
+                    "linux": {},
                 },
                 f,
             )

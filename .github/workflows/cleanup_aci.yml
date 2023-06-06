@@ -26,13 +26,13 @@ jobs:
 
       - name: Delete VMs and Associated Resources
         run: |
-          RESOURCES=$(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Compute/virtualMachines'].id" --output tsv)
-          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Compute/disks'].id" --output tsv)"
-          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/networkInterfaces'].id" --output tsv)"
-          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/publicIPAddresses'].id" --output tsv)"
-          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.DevTestLab/schedules'].id" --output tsv)"
-          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/virtualNetworks'].id" --output tsv)"
-          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/networkSecurityGroups'].id" --output tsv)"
+          RESOURCES=$(az resource list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?type=='Microsoft.Compute/virtualMachines'].id" --output tsv)
+          RESOURCES="$RESOURCES $(az resource list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?type=='Microsoft.Compute/disks'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?type=='Microsoft.Network/networkInterfaces'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?type=='Microsoft.Network/publicIPAddresses'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?type=='Microsoft.DevTestLab/schedules'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?type=='Microsoft.Network/virtualNetworks'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?type=='Microsoft.Network/networkSecurityGroups'].id" --output tsv)"
 
           if [ -n $RESOURCES ]; then
             echo -e "Deleting: \n$(echo $RESOURCES | tr ' ' '\n')"

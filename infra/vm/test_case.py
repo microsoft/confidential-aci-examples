@@ -86,10 +86,13 @@ def setUpVm(cls):
 
 def tearDownVm(cls):
     with open(f"examples/{cls.test_name}/arm_template.json", "r") as f:
-        delete_deployment(
-            resource_client=get_resource_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
-            resource_group=os.environ["AZURE_RESOURCE_GROUP"],
-            deployment_name=cls.deployment_name,
-            arm_template=json.load(f),
-            asynchronous=True,
-        )
+        for idx, _ in enumerate(cls.manifest["containerGroups"]):
+            delete_deployment(
+                resource_client=get_resource_client(
+                    os.environ["AZURE_SUBSCRIPTION_ID"]
+                ),
+                resource_group=os.environ["AZURE_RESOURCE_GROUP"],
+                deployment_name=f"{cls.deployment_name}-{idx}",
+                arm_template=json.load(f),
+                asynchronous=True,
+            )

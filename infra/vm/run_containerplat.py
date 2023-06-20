@@ -1,12 +1,9 @@
 import argparse
 import json
 import os
-import subprocess
 import sys
 from base64 import b64encode
-import tempfile
-
-import requests
+from typing import Iterable
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
@@ -18,6 +15,7 @@ from infra.vm.operations import copy_to_vm, run_on_vm
 def run_containerplat(
     ip_address: str,
     user_password: str,
+    ports: Iterable[int],
     image: str,
 ) -> str:
     # Pull the container image
@@ -62,49 +60,12 @@ def run_containerplat(
 
     container_ip_address = json.loads(endpoints_json)["IPAddress"]
 
-    with tempfile.TemporaryDirectory() as temp_dir:
-        start_server_path = os.path.join(temp_dir, "start_server.ps1")
-        with open(start_server_path, "w") as f:
-            ports = "\n".join(
-                [f"$listener.Prefixes.Add('http://*:{port}/')" for port in [8000, 8001]]
-            )
-            f.write(
-                f"""
-$listener = New-Object System.Net.HttpListener
-{ports}
-$listener.Start()
-
-while ($listener.IsListening)
-{{
-    $context = $listener.GetContext()
-    $requestUrl = $context.Request.Url
-    $endpoint = $requestUrl.Segments[-1]
-    $port = $requestUrl.Port
-    $response = $context.Response
-
-    echo "Received request for $($requestUrl.AbsoluteUri)"
-
-    $passthroughCall = "http://{container_ip_address}:$port/$endpoint"
-    $buffer = Invoke-WebRequest -Uri $passthroughCall -UseBasicParsing | Select-Object -ExpandProperty Content
-    $bufferBytes = [System.Text.Encoding]::UTF8.GetBytes($buffer)
-    $response.ContentLength64 = $bufferBytes.Length
-    $response.OutputStream.Write($bufferBytes, 0, $bufferBytes.Length)
-    $response.Close()
-}}
-            """
-            )
-        copy_to_vm(
-            ip_address,
-            user_password,
-            start_server_path,
-            "/start_server.ps1",
-        )
-        run_on_vm(
-            ip_address,
-            user_password,
-            f"powershell -File C:\start_server.ps1",
-            timeout=0,
-        )
+    run_on_vm(
+        ip_address,
+        user_password,
+        f'powershell -Command "C:\passthrough_server.ps1 -ipAddress {container_ip_address}"',
+        timeout=0,
+    )
 
     return ip_address
 
@@ -128,6 +89,7 @@ if __name__ == "__main__":
             run_containerplat(
                 ip_address=vm_ip,
                 user_password=arm_template["variables"]["vmPassword"],
+                ports=arm_template["variables"]["containerPorts"],
                 image=f"{os.getenv('AZURE_REGISTRY_URL')}/simple_server/primary:latest",
             )
         )

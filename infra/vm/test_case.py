@@ -78,6 +78,7 @@ def setUpVm(cls):
                     ip_address=vm_ip,
                     user_password=vm_user_password,
                     image=image,
+                    ports=arm_template["variables"]["containerPorts"],
                 )
 
                 if cls.container_ip is None:

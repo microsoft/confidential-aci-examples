@@ -65,6 +65,15 @@ def deploy_containerplat(
 
         copy_to_vm(ip_address, user_password, temp_dir, "/lcow_configs")
 
+    copy_to_vm(
+        ip_address,
+        user_password,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "passthrough_server.ps1"
+        ),
+        "/passthrough_server.ps1",
+    )
+
     # Deploy Containerplat
     run_on_vm(
         ip_address,

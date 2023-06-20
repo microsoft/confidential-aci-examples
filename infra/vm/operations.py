@@ -24,7 +24,7 @@ def run_on_vm(
 ):
     print(f"Running: {command}")
     process = pexpect.spawn(
-        f"ssh -o StrictHostKeyChecking=no test-user@{ip_address} '{repr(command)}'"
+        f"ssh -o StrictHostKeyChecking=no test-user@{ip_address} {repr(command)}"
     )
     process.expect(f"test-user@{ip_address}'s password: ")
     process.sendline(user_password)

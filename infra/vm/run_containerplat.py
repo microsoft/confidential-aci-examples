@@ -106,11 +106,6 @@ while ($listener.IsListening)
             timeout=0,
         )
 
-    subprocess.run(
-        f"curl {ip_address}:8000/hello",
-        shell=True,
-    )
-
     return ip_address
 
 

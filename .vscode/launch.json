@@ -146,7 +146,7 @@
             "id": "containerLocation",
             "type": "promptString",
             "description": "Enter the location of the container:",
-            "default": "eastus",
+            "default": "westeurope",
         },
         {
             "id": "imageTag",

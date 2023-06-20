@@ -3,18 +3,25 @@ import json
 import os
 from typing import Optional
 import uuid
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+from infra.read_manifest_ports import read_manifest_ports
 
 
 def generate_arm_template(
     name: str,
+    password: str,
+    manifest: dict,
     location: str,
     out: Optional[str] = None,
 ):
-    password = str(uuid.uuid4())
     with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as ssh_key_file:
         ssh_key = ssh_key_file.read().rstrip("\n")
 
     print(f"Generating ARM template for {name} and password '{password}'")
+    ports = read_manifest_ports(manifest)
     arm_template = {
         "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
         "contentVersion": "1.0.0.0",
@@ -24,7 +31,8 @@ def generate_arm_template(
             "nsgId": f"[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', '{name}-nsg')]",
             "vnetId": f"[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks', '{name}-vnet')]",
             "ipId": f"[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', '{name}-ip')]",
-            "subnetRef": "[concat(variables('vnetId'), '/subnets/', 'default')]",
+            "subnetRef": f"[concat(variables('vnetId'), '/subnets/', '{name}-subnet')]",
+            "containerPorts": list(ports),
         },
         "resources": [
             {
@@ -113,6 +121,19 @@ def generate_arm_template(
                                 "destinationPortRange": "80",
                             },
                         },
+                        {
+                            "name": "Payload-HTTP",
+                            "properties": {
+                                "priority": 370,
+                                "protocol": "TCP",
+                                "access": "Allow",
+                                "direction": "Inbound",
+                                "sourceAddressPrefix": "*",
+                                "sourcePortRange": "*",
+                                "destinationAddressPrefix": "*",
+                                "destinationPortRanges": "[variables('containerPorts')]",
+                            },
+                        },
                     ]
                 },
             },
@@ -125,7 +146,7 @@ def generate_arm_template(
                     "addressSpace": {"addressPrefixes": ["10.0.0.0/16"]},
                     "subnets": [
                         {
-                            "name": "default",
+                            "name": f"{name}-subnet",
                             "properties": {"addressPrefix": "10.0.0.0/24"},
                         }
                     ],
@@ -211,7 +232,15 @@ def generate_arm_template(
                 ],
                 "properties": {
                     "source": {
-                        "script": f'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0; Start-Service sshd; {ssh_key} | Add-Content "C:\\ProgramData\\ssh\\administrators_authorized_keys";icacls.exe "C:\\ProgramData\\ssh\\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"; Enable-WindowsOptionalFeature -Online -All -FeatureName Microsoft-Hyper-V, Containers',
+                        "script": "; ".join(
+                            [
+                                "Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0",
+                                "Start-Service sshd",
+                                f'{ssh_key} | Add-Content "C:\\ProgramData\\ssh\\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"',
+                                "Enable-WindowsOptionalFeature -Online -All -FeatureName Microsoft-Hyper-V, Containers",
+                                f'New-NetFirewallRule -DisplayName "Allow Payload Ports" -Direction Inbound -LocalPort {",".join([str(p) for p in ports])} -Protocol TCP -Action Allow',
+                            ]
+                        )
                     },
                 },
             },
@@ -240,14 +269,24 @@ if __name__ == "__main__":
         default="eastus2euap",
     )
     parser.add_argument(
+        "--manifest-path",
+        help="The manifest to generate an ARM template for",
+        required=True,
+    )
+    parser.add_argument(
         "--out",
         help="Path to save the ARM template to",
     )
 
     args = parser.parse_args()
 
+    with open(args.manifest_path, "r") as manifest_file:
+        manifest = json.load(manifest_file)
+
     generate_arm_template(
-        name=args.name or f"{uuid.uuid4()}",
+        name=args.name or str(uuid.uuid4()),
+        password=str(uuid.uuid4()),
+        manifest=manifest,
         location=args.location,
         out=args.out,
     )

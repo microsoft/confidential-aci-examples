@@ -3,6 +3,8 @@ import json
 import os
 import sys
 import tempfile
+from base64 import b64encode
+from typing import Iterable
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
@@ -17,6 +19,8 @@ def deploy_containerplat(
     container_plat_path: str,
     user_password: str,
     image: str,
+    security_policy: str,
+    ports: Iterable[int] = [],
 ) -> None:
     copy_to_vm(
         ip_address,
@@ -36,11 +40,13 @@ def deploy_containerplat(
                         "namespace": "default",
                         "attempt": 1,
                     },
+                    "linux": {"security_context": {"privileged": True}},
                     "annotations": {
                         "io.microsoft.virtualmachine.computetopology.processor.count": "4",
                         "io.microsoft.virtualmachine.computetopology.memory.sizeinmb": "16384",
                         "io.microsoft.virtualmachine.lcow.preferredrootfstype": "initrd",
-                        "io.microsoft.virtualmachine.lcow.preferredrootfstype": "initrd",
+                        "io.microsoft.virtualmachine.lcow.snpenabled": "true",
+                        "io.microsoft.virtualmachine.lcow.snppolicy": security_policy,
                     },
                 },
                 f,
@@ -51,6 +57,8 @@ def deploy_containerplat(
                     "metadata": {"name": "examples"},
                     "image": {"image": image},
                     "linux": {},
+                    "linux": {"security_context": {"privileged": True}},
+                    "forwardPorts": ports,
                 },
                 f,
             )
@@ -61,7 +69,7 @@ def deploy_containerplat(
     run_on_vm(
         ip_address,
         user_password,
-        "C:\container_plat_build\deploy.exe",
+        "C:\\container_plat_build\\deploy.exe",
         timeout=600,
     )
 
@@ -72,18 +80,26 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.arm_template_path) as f:
-        arm_template = json.load(f)
-        with tempfile.TemporaryDirectory() as temp_dir:
-            get_containerplat(temp_dir)
-            deploy_containerplat(
-                ip_address=get_vm_ip(
-                    network_client=get_network_client(
-                        os.environ["AZURE_SUBSCRIPTION_ID"]
-                    ),
-                    resource_group=os.environ["AZURE_RESOURCE_GROUP"],
-                    ip_name=f'{arm_template["variables"]["uniqueId"]}-ip',
-                ),
-                container_plat_path=temp_dir,
-                user_password=arm_template["variables"]["vmPassword"],
-                image="docker.io/library/alpine:latest",
+        with open(
+            "examples/simple_server/security_policies/allow_all.rego"
+        ) as policy_file:  # TODO: Use real security policy
+            arm_template = json.load(f)
+            security_policy = policy_file.read()
+
+            vm_ip = get_vm_ip(
+                network_client=get_network_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
+                resource_group=os.environ["AZURE_RESOURCE_GROUP"],
+                ip_name=f'{arm_template["variables"]["uniqueId"]}-ip',
             )
+            assert vm_ip
+
+            with tempfile.TemporaryDirectory() as temp_dir:
+                get_containerplat(temp_dir)
+                deploy_containerplat(
+                    ip_address=vm_ip,
+                    container_plat_path=temp_dir,
+                    user_password=arm_template["variables"]["vmPassword"],
+                    image=f"{os.getenv('AZURE_REGISTRY_URL')}/simple_server/primary:latest",
+                    security_policy=b64encode(security_policy.encode("utf-8")).decode(),
+                    ports=arm_template["variables"]["containerPorts"],
+                )

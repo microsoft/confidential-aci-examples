@@ -28,7 +28,8 @@ def run_on_vm(
     )
     process.expect(f"test-user@{ip_address}'s password: ")
     process.sendline(user_password)
-    process.expect(pexpect.EOF, timeout=timeout)
+    if timeout > 0:
+        process.expect(pexpect.EOF, timeout=timeout)
     output = process.before.decode("utf-8")
     print(output)
     return output

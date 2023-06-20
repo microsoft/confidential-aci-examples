@@ -44,6 +44,8 @@
             "args": [
                 "--location",
                 "${input:containerLocation}",
+                "--manifest-path",
+                "examples/${input:testName}/manifest.json",
                 "--out",
                 "examples/${input:testName}/${input:armTemplateName}"
             ]

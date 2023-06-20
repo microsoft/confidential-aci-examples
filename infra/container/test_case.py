@@ -1,6 +1,5 @@
 import json
 import os
-import uuid
 
 from infra.build_and_push_images import build_and_push_images
 from infra.add_security_policy_to_arm_template import (
@@ -15,16 +14,7 @@ from infra.delete_deployment import delete_deployment
 
 
 def setUpAci(cls):
-    test_name = cls.__class__.__module__.split(".")[0]
-    image_tag = str(uuid.uuid4())
-    name = str(uuid.uuid4())
-
-    with open(f"examples/{test_name}/manifest.json", "r") as manifest_file:
-        manifest = json.load(manifest_file)
-
-    cls.deployment_name = os.getenv("DEPLOYMENT_NAME", f"deployment-{name}")
-
-    # Check if the container already exists
+    # Check if the deployment already exists
     get_container_ip_func = lambda: get_container_ip(
         resource_client=get_resource_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
         container_client=get_container_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
@@ -37,22 +27,22 @@ def setUpAci(cls):
         return
 
     build_and_push_images(
-        image_tag=image_tag,
-        manifest=manifest,
+        image_tag=cls.image_tag,
+        manifest=cls.manifest,
     )
 
     # Deploy the container with the freshly built image
     arm_template = generate_arm_template(
-        name=f"group-{name}",
-        image_tag=image_tag,
-        manifest=manifest,
+        name=f"group-{cls.name}",
+        image_tag=cls.image_tag,
+        manifest=cls.manifest,
         location="eastus2euap",
-        out=f"examples/{test_name}/arm_template.json",
+        out=f"examples/{cls.test_name}/arm_template.json",
     )
 
     if os.getenv("SECURITY_POLICY") is None:
         security_policy = generate_security_policy(arm_template)
-        with open(f"examples/{test_name}/_generated.rego", "w") as f:
+        with open(f"examples/{cls.test_name}/_generated.rego", "w") as f:
             f.write(security_policy.decode("utf-8"))
     else:
         with open(f"examples/{os.getenv('SECURITY_POLICY')}", "rb") as f:
@@ -73,8 +63,7 @@ def setUpAci(cls):
 
 def tearDownAci(cls):
     if os.getenv("CLEANUP_ACI") not in ["0", "false", "False"]:
-        test_name = cls.__class__.__module__.split(".")[0]
-        with open(f"examples/{test_name}/arm_template.json", "r") as f:
+        with open(f"examples/{cls.test_name}/arm_template.json", "r") as f:
             delete_deployment(
                 resource_client=get_resource_client(
                     os.environ["AZURE_SUBSCRIPTION_ID"]

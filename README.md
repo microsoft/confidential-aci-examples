@@ -23,6 +23,15 @@ You can use Github Codespaces to create a fully ready to use development environ
 
 If running in VS Code, open the testing view where all available examples are both runnable and debuggable. If not, run unittest as usual.
 
+### **[EXPERIMENTAL] Running examples against Container Platform**
+
+You can currently run the following examples against Container Platform.
+
+- Simple Server
+- Remote Image
+
+To do so, log into Azure with an account which has access to both the Azure DevOps repository for ContainerPlatform, and the Atlas Image on which it runs.
+
 ## Managing Test Infrastructure
 
 While running examples directly will automatically manage the images and containers needed, it is also possible to use the infrastructure to manually manage these resources. Each management operation can be run via VS Code's [launch configurations](.vscode/launch.json)
@@ -41,7 +50,7 @@ While running examples directly will automatically manage the images and contain
 - Add a manifest.json file to the new directory and fill in the required fields
   - At least one container image is needed, so create a Dockerfile and mention it in the manifest
   - Manifest files are automatically validated if running in codespaces, otherwise refer to the schema in [.devcontainer.json](.devcontainer/devcontainer.json)
-- Add python code which uses the unittest module to declare tests, inherit [AciTestCase](infra/aci_test_case.py) to deploy containers during the setup of tests.
+- Add python code which uses the unittest module to declare tests, inherit [TestCase](infra/test_case.py) to deploy containers during the setup of tests.
 
 ---
 

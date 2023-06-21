@@ -138,7 +138,7 @@ https://github.com/Azure/azure-cli-extensions/blob/5362377ed1a674285dee0c3e4b517
 
 # Relying party logic
 
-It is essential that a container must not be given access to sensitive data before it is established that it is genuine. The container itself cannot do that as an attacker in charge of the host can easily load a modified container. There is a need for another entoty to check that the  container is genuine and running in a secure environment that respects the correct rules.
+It is essential that a container must not be given access to sensitive data before it is established that it is genuine. The container itself cannot do that as an attacker in charge of the host can easily load a modified container. There is a need for another entity to check that the  container is genuine and running in a secure environment that respects the correct rules.
 
 Container steps:
 

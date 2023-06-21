@@ -100,8 +100,7 @@ It contains the SVN of Confidential ACI as x-ms-sevsnpvm-guestsvn and hex encode
 
 The production SVN starts from 100.
 
-The measurement is the same as 
-There might be more fields in the JSON in future.
+There may be more fields in the JSON in future.
 
 The following is an example payload:
 ```json
@@ -114,10 +113,10 @@ The following is an example payload:
 The field `x-ms-sevsnpvm-launchmeasurement` must match the launch measurement provided by the field MEASUREMENT of attestation report in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification). C code to obtain such a report can be found at https://github.com/microsoft/confidential-sidecar-containers/tree/main/tools/get-snp-report. Note that there are currently two versions - get-snp-report5.c for Linux Kernel version 5.15.* and get-snp-report6.c for kernels from 6.1 onwards.
 
 
-To validate the COSE_Sign1 envelop you need to unpack it to get `iss` and `feed` and check they are as expected.
-`issuer` is a [did:x509](https://github.com/microsoft/did-x509/blob/main/specification.md) string and it can be used to check if it is properly signed by Microsoft.
-Confidential ACI Utility VMs are signed with a certificate chain which matches the DID:x509 `did:x509:0:sha256:I__iuL25oXEVFdTP_aBLx_eT1RPHbCQ_ECBQfYZpt9s::eku:1.3.6.1.4.1.311.76.59.1.2`
-They have a feed string `ContainerPlat-AMD-UVM`
+To validate the COSE_Sign1 envelop you need to unpack it and check the `iss` and `feed` protected headers are as expected.
+`iss` is a [did:x509](https://github.com/microsoft/did-x509/blob/main/specification.md) string and it can be used to check if it is properly signed by Microsoft.
+Confidential ACI Utility VMs are signed with a certificate chain which matches the DID:x509 `did:x509:0:sha256:I__iuL25oXEVFdTP_aBLx_eT1RPHbCQ_ECBQfYZpt9s::eku:1.3.6.1.4.1.311.76.59.1.2`.
+`feed` is a string `ContainerPlat-AMD-UVM`. These are stable identifiers, fixed for the lifetime of the root certificate which is more than 10 years.
 The DID:x509 string contains a hash of the root certificate and the eku (extended key usage) of the leaf certificate. COSE_Sign1 validation libraries (such as https://github.com/microsoft/cosesign1go, https://github.com/microsoft/cosesign1go/tree/main/cmd/sign1util#check) can be used to confirm that the document was signed by the expected issuing authority. In this case that is the team within Microsoft responsible for producing the UVM image (see https://github.com/microsoft/hcsshim).
 
 These are examples that validate COSE_Sign1 envelope:
@@ -138,7 +137,7 @@ https://github.com/Azure/azure-cli-extensions/blob/5362377ed1a674285dee0c3e4b517
 
 # Relying party logic
 
-It is essential that a container must not be given access to sensitive data before it is established that it is genuine. The container itself cannot do that as an attacker in charge of the host can easily load a modified container. There is a need for another entity to check that the  container is genuine and running in a secure environment that respects the correct rules.
+It is essential that a container must not be given access to sensitive data before it is established that it is genuine. The container itself cannot do that as an attacker in charge of the host can easily load a modified container. There is a need for another entity to check that the container is genuine and running in a secure environment that respects the correct rules.
 
 Container steps:
 

@@ -111,7 +111,7 @@ The following is an example payload:
 }
 ```
 
-The field `x-ms-sevsnpvm-launchmeasurement` must match the launch measurement provided by the field MEASUREMENT of attestation report in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification). C code to obtain such a report can be found at https://github.com/microsoft/confidential-sidecar-containers/tree/main/tools/get-snp-report. Note that there are currently two vesions - get-snp-report5.c for Linux Kernel version 5.15.* and get-snp-report6.c for kernels from 6.1 onwards.
+The field `x-ms-sevsnpvm-launchmeasurement` must match the launch measurement provided by the field MEASUREMENT of attestation report in Table 21 of [SEV Secure Nested Paging Firmware ABI Specification](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification). C code to obtain such a report can be found at https://github.com/microsoft/confidential-sidecar-containers/tree/main/tools/get-snp-report. Note that there are currently two versions - get-snp-report5.c for Linux Kernel version 5.15.* and get-snp-report6.c for kernels from 6.1 onwards.
 
 
 To validate the COSE_Sign1 envelop you need to unpack it to get `iss` and `feed` and check they are as expected.

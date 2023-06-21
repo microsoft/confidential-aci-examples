@@ -6,7 +6,7 @@ import uuid
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from infra.docker_client import get_docker_client
+from infra.clients import get_docker_client
 
 
 def build_and_push_images(image_tag: str, manifest: dict):

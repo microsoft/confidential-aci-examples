@@ -1,3 +1,8 @@
+# Setup the SSH_KEY
+echo "$SSH_KEY" > ~/.ssh/id_rsa
+chmod 600 ~/.ssh/id_rsa
+ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+
 # Install python dependencies
 pip install -r requirements.txt
 

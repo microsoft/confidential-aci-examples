@@ -13,8 +13,7 @@ from infra.vm.operations import copy_to_vm, run_on_vm
 
 
 def run_containerplat(
-    ip_address: str,
-    user_password: str,
+    vm_name: str,
     ports: Iterable[int],
     image: str,
 ) -> str:
@@ -26,48 +25,33 @@ def run_containerplat(
         ]
     )
     run_on_vm(
-        ip_address,
-        user_password,
+        vm_name,
         f"C:\ContainerPlat\crictl.exe pull --auth {b64encode(auth_string.encode('utf-8')).decode()} --pod-config C:\lcow_configs\lcow-pull-config.json {image}",
-        timeout=600,
     )
 
     # Run the container
     pod_id = run_on_vm(
-        ip_address,
-        user_password,
+        vm_name,
         f"C:\ContainerPlat\crictl.exe runp --runtime runhcs-lcow C:\lcow_configs\pod.json",
     ).strip("\r\n")
 
     # Run the container
     container_id = run_on_vm(
-        ip_address,
-        user_password,
+        vm_name,
         f"C:\ContainerPlat\crictl.exe create --no-pull {pod_id} C:\lcow_configs\lcow-container.json C:\lcow_configs\pod.json",
     ).strip("\r\n")
 
     run_on_vm(
-        ip_address,
-        user_password,
+        vm_name,
         f"C:\ContainerPlat\crictl.exe start {container_id}",
     ).strip("\r\n")
 
     endpoints_json = run_on_vm(
-        ip_address,
-        user_password,
+        vm_name,
         f"hnsdiag list endpoints -df",
     )
 
-    container_ip_address = json.loads(endpoints_json)["IPAddress"]
-
-    run_on_vm(
-        ip_address,
-        user_password,
-        f'powershell -Command "C:\passthrough_server.ps1 -ipAddress {container_ip_address}"',
-        timeout=0,
-    )
-
-    return ip_address
+    return json.loads(endpoints_json)["IPAddress"]
 
 
 if __name__ == "__main__":
@@ -87,8 +71,7 @@ if __name__ == "__main__":
 
         print(
             run_containerplat(
-                ip_address=vm_ip,
-                user_password=arm_template["variables"]["vmPassword"],
+                vm_name=f'{arm_template["variables"]["uniqueId"]}-vm',
                 ports=arm_template["variables"]["containerPorts"],
                 image=f"{os.getenv('AZURE_REGISTRY_URL')}/simple_server/primary:latest",
             )

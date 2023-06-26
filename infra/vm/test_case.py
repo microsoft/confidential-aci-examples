@@ -1,4 +1,5 @@
 import json
+import multiprocessing
 import os
 import tempfile
 import uuid
@@ -10,6 +11,7 @@ from infra.vm.deploy_containerplat import deploy_containerplat
 from infra.vm.generate_arm_template import generate_arm_template
 from infra.vm.get_containerplat import get_containerplat
 from infra.vm.get_ip import get_vm_ip
+from infra.vm.passthrough_server import run_passthrough_server
 from infra.vm.run_containerplat import run_containerplat
 from base64 import b64encode
 
@@ -70,22 +72,32 @@ def setUpVm(cls):
                     ip_address=vm_ip,
                     container_plat_path=temp_dir,
                     user_password=vm_user_password,
+                    vm_name=f'{arm_template["variables"]["uniqueId"]}-vm',
                     image=image,
                     security_policy=b64encode(security_policy.encode("utf-8")).decode(),
                 )
 
-                container_ip = run_containerplat(
-                    ip_address=vm_ip,
-                    user_password=vm_user_password,
+                container_ip_address = run_containerplat(
+                    vm_name=f'{arm_template["variables"]["uniqueId"]}-vm',
                     image=image,
                     ports=arm_template["variables"]["containerPorts"],
                 )
 
-                if cls.container_ip is None:
-                    cls.container_ip = container_ip
+                cls.passthrough_server = multiprocessing.Process(
+                    target=run_passthrough_server,
+                    kwargs={
+                        "vm_name": f'{arm_template["variables"]["uniqueId"]}-vm',
+                        "ports": {8000},
+                        "ip_address": container_ip_address,
+                    },
+                )
+                cls.passthrough_server.start()
+
+                cls.container_ip = "localhost"
 
 
 def tearDownVm(cls):
+    cls.passthrough_server.terminate()
     with open(f"examples/{cls.test_name}/arm_template.json", "r") as f:
         for idx, _ in enumerate(cls.manifest["containerGroups"]):
             delete_deployment(

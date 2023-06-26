@@ -14,9 +14,9 @@ class SimpleServerTest(TestCase):
         session = requests.Session()
         session.mount("http://", HTTPAdapter(max_retries=60))
         assert self.container_ip is not None
-        response = session.get(f"http://{self.container_ip}:8000/hello", timeout=10)
+        response = session.get(f"http://{self.container_ip}:8000/hello", timeout=1000)
         assert response.status_code == 200
-        assert response.content == b"Hello world!\n"
+        assert response.content.decode("utf-8").strip("\n") == "Hello world!"
 
 
 if __name__ == "__main__":

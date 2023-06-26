@@ -1,4 +1,7 @@
+import json
+import os
 import pexpect
+import subprocess
 
 
 def copy_to_vm(
@@ -17,19 +20,12 @@ def copy_to_vm(
 
 
 def run_on_vm(
-    ip_address: str,
-    user_password: str,
+    vm_name: str,
     command: str,
-    timeout: int = 30,
 ):
-    print(f"Running: {command}")
-    process = pexpect.spawn(
-        f"ssh -o StrictHostKeyChecking=no test-user@{ip_address} {repr(command)}"
-    )
-    process.expect(f"test-user@{ip_address}'s password: ")
-    process.sendline(user_password)
-    if timeout > 0:
-        process.expect(pexpect.EOF, timeout=timeout)
-    output = process.before.decode("utf-8")
+    print(f"Running command '{command}'")
+    command = f"{os.linesep}az vm run-command invoke -g $AZURE_RESOURCE_GROUP -n {vm_name} --command-id RunPowerShellScript --scripts '{command}'"
+    raw_output = subprocess.check_output(command, shell=True)
+    output = json.loads(raw_output.decode("utf-8"))["value"][0]["message"]
     print(output)
     return output

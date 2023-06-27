@@ -87,6 +87,12 @@
 														"additionalProperties": {
 															"type": "string"
 														}
+													},
+													"command": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														}
 													}
 												},
 												"required": [

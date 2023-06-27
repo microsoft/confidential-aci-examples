@@ -55,6 +55,11 @@ def generate_arm_template(
                                         "cpu": container["cores"],
                                     }
                                 },
+                                **(
+                                    {"command": container.get("command")}
+                                    if "command" in container
+                                    else {}
+                                ),
                             },
                         }
                         for idx, container in enumerate(container_group["containers"])

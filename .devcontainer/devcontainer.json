@@ -81,6 +81,12 @@
 													},
 													"ram": {
 														"type": "number"
+													},
+													"env": {
+														"type": "object",
+														"additionalProperties": {
+															"type": "string"
+														}
 													}
 												},
 												"required": [

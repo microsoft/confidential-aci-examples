@@ -45,7 +45,10 @@ def generate_arm_template(
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
                                 ],
-                                "environmentVariables": [],
+                                "environmentVariables": [
+                                    {"name": k, "value": v}
+                                    for k, v in (container.get("env") or {}).items()
+                                ],
                                 "resources": {
                                     "requests": {
                                         "memoryInGB": container["ram"],

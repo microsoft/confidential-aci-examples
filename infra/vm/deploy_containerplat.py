@@ -18,6 +18,7 @@ def deploy_containerplat(
     ip_address: str,
     container_plat_path: str,
     user_password: str,
+    vm_name: str,
     image: str,
     security_policy: str,
     ports: Iterable[int] = [],
@@ -63,21 +64,10 @@ def deploy_containerplat(
 
         copy_to_vm(ip_address, user_password, temp_dir, "/lcow_configs")
 
-    copy_to_vm(
-        ip_address,
-        user_password,
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "passthrough_server.ps1"
-        ),
-        "/passthrough_server.ps1",
-    )
-
     # Deploy Containerplat
     run_on_vm(
-        ip_address,
-        user_password,
+        vm_name,
         "C:\\container_plat_build\\deploy.exe",
-        timeout=600,
     )
 
 
@@ -106,6 +96,7 @@ if __name__ == "__main__":
                     ip_address=vm_ip,
                     container_plat_path=temp_dir,
                     user_password=arm_template["variables"]["vmPassword"],
+                    vm_name=f'{arm_template["variables"]["uniqueId"]}-vm',
                     image=f"{os.getenv('AZURE_REGISTRY_URL')}/simple_server/primary:latest",
                     security_policy=b64encode(security_policy.encode("utf-8")).decode(),
                     ports=arm_template["variables"]["containerPorts"],

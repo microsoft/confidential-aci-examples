@@ -4,6 +4,9 @@
 	"name": "Confidential ACI Dev",
 	"dockerFile": "Dockerfile",
 	"context": "..",
+	"hostRequirements": {
+		"memory": "8gb"
+	},
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest",

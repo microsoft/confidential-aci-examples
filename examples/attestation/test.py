@@ -1,13 +1,12 @@
 import struct
 import unittest
 import sys
-import requests
 import os
-from requests.adapters import HTTPAdapter
 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from infra.http_request import request
 from infra.test_case import TestCase
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -21,11 +20,8 @@ class AttestationTest(TestCase):
         assert self.container_ip is not None
 
         input_report_data = "EXAMPLEREPORTDATA"
-        session = requests.Session()
-        session.mount("http://", HTTPAdapter(max_retries=60))
-        response = session.get(
+        response = request(
             f"http://{self.container_ip}:8000/get_attestation?report_data={input_report_data}",
-            timeout=20,
         )
 
         assert response.status_code == 200
@@ -36,16 +32,12 @@ class AttestationTest(TestCase):
         assert self.container_ip is not None
 
         input_report_data = "EXAMPLEREPORTDATA"
-        session = requests.Session()
-        session.mount("http://", HTTPAdapter(max_retries=60))
-        report_response = session.get(
+        report_response = request(
             f"http://{self.container_ip}:8000/get_attestation?report_data={input_report_data}",
-            timeout=20,
         )
 
-        certificate_chain_response = session.get(
+        certificate_chain_response = request(
             f"http://{self.container_ip}:8000/get_certificate_chain",
-            timeout=20,
         )
 
         assert report_response.status_code == 200

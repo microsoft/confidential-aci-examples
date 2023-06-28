@@ -71,6 +71,7 @@ jobs:
         run: |
           python infra/deploy_arm_template.py \
             --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
+            --manifest-path examples/${{ inputs.test }}/manifest.json \
             --arm-template-path arm_template.json \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --deployment-name deployment-${{ steps.generate-name.outputs.name }} \

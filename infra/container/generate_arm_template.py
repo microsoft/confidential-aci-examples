@@ -32,6 +32,12 @@ def generate_arm_template(
                     "Owner": "c-aci-examples",
                     "GithubRepo": "microsoft/c-aci-examples",
                 },
+                "identity": {
+                    "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                        os.environ["AZURE_MANAGED_IDENTITY_ID"]: {},
+                    },
+                },
                 "properties": {
                     "sku": "Confidential",
                     "containers": [

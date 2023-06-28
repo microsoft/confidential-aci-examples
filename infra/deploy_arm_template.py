@@ -1,9 +1,9 @@
 import argparse
 import json
 import os
-import subprocess
 import sys
 import uuid
+import runpy
 from azure.mgmt.resource import ResourceManagementClient
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -19,7 +19,10 @@ def deploy_arm_template(
     deployment_name: str,
 ):
     if "preDeployScript" in manifest:
-        subprocess.run(manifest["preDeployScript"], shell=True, check=True)
+        runpy.run_path(
+            os.path.join("examples", manifest["testName"], manifest["preDeployScript"]),
+            run_name="__main__",
+        )
 
     print(f"Deploying {deployment_name} with resources:")
     for resource in arm_template["resources"]:

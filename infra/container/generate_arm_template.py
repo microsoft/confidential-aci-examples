@@ -52,7 +52,7 @@ def generate_arm_template(
                                     for port in container["ports"]
                                 ],
                                 "environmentVariables": [
-                                    {"name": k, "value": v}
+                                    {"name": k, "value": resolve_variable(v)}
                                     for k, v in (container.get("env") or {}).items()
                                 ],
                                 "resources": {

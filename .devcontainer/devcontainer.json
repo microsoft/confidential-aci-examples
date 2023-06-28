@@ -138,6 +138,9 @@
 								  },
 								  "required": ["username", "password"]
 								}
+							},
+							"preDeployScript": {
+								"type": "string"
 							}
 						},
 						"required": [

@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import subprocess
 import sys
 import uuid
 from azure.mgmt.resource import ResourceManagementClient
@@ -12,13 +13,18 @@ from infra.clients import get_resource_client
 
 def deploy_arm_template(
     resource_client: ResourceManagementClient,
+    manifest: dict,
     arm_template: dict,
     resource_group: str,
     deployment_name: str,
 ):
+    if "preDeployScript" in manifest:
+        subprocess.run(manifest["preDeployScript"], shell=True, check=True)
+
     print(f"Deploying {deployment_name} with resources:")
     for resource in arm_template["resources"]:
         print(f"    {resource['type'].split('/')[-1]} - {resource['name']}")
+
     resource_client.deployments.begin_create_or_update(
         resource_group,
         deployment_name,
@@ -39,6 +45,11 @@ if __name__ == "__main__":
         help="Subscription to deploy the container with",
     )
     parser.add_argument(
+        "--manifest-path",
+        help="The path to the manifest of the deployment",
+        required=True,
+    )
+    parser.add_argument(
         "--arm-template-path",
         help="The path to the ARM template to use for deployment",
         required=True,
@@ -54,12 +65,15 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    with open(args.arm_template_path) as f:
-        deploy_arm_template(
-            resource_client=get_resource_client(
-                args.subscription_id or os.environ["AZURE_SUBSCRIPTION_ID"]
-            ),
-            arm_template=json.load(f),
-            resource_group=args.resource_group or os.environ["AZURE_RESOURCE_GROUP"],
-            deployment_name=args.deployment_name or f"deployment-{uuid.uuid4()}",
-        )
+    with open(args.arm_template_path) as arm_template:
+        with open(args.manifest_path) as manifest:
+            deploy_arm_template(
+                resource_client=get_resource_client(
+                    args.subscription_id or os.environ["AZURE_SUBSCRIPTION_ID"]
+                ),
+                manifest=json.load(manifest),
+                arm_template=json.load(arm_template),
+                resource_group=args.resource_group
+                or os.environ["AZURE_RESOURCE_GROUP"],
+                deployment_name=args.deployment_name or f"deployment-{uuid.uuid4()}",
+            )

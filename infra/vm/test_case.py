@@ -45,6 +45,7 @@ def setUpVm(cls):
 
         deploy_arm_template(
             resource_client=get_resource_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
+            manifest=cls.manifest,
             arm_template=arm_template,
             resource_group=os.environ["AZURE_RESOURCE_GROUP"],
             deployment_name=f"{cls.deployment_name}-{idx}",

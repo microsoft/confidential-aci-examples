@@ -50,6 +50,7 @@ def setUpAci(cls):
 
     deploy_arm_template(
         resource_client=get_resource_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
+        manifest=cls.manifest,
         arm_template=add_security_policy_to_arm_template(
             arm_template=arm_template,
             security_policy=security_policy,

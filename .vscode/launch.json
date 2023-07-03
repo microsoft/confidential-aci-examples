@@ -79,6 +79,24 @@
             ]
         },
         {
+            "name": "Generate HSM ARM Template",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/key_release/generate_hsm_arm_template.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--name",
+                "caciexamples",
+                "--tenant-id",
+                "${env:MICROSOFT_TENANT_ID}",
+                "--admin-ids",
+                "${input:userId}",
+                "--out",
+                "examples/key_release/hsm_arm_template.json",
+            ]
+        },
+        {
             "name": "Deploy ARM Template",
             "type": "python",
             "request": "launch",
@@ -171,6 +189,11 @@
             "id": "deploymentName",
             "type": "promptString",
             "description": "Enter name of the deployment:",
+        },
+        {
+            "id": "userId",
+            "type": "promptString",
+            "description": "Enter object id of the account/s:",
         },
     ]
 }

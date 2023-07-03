@@ -22,7 +22,7 @@
 		"vscode": {
 			"extensions": [
 				"eamodio.gitlens",
-				"GitHub.copilot-nightly",
+				"GitHub.copilot",
 				"ms-python.black-formatter",
 				"ms-python.python",
 				"GitHub.vscode-github-actions",

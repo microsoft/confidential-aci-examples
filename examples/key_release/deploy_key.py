@@ -76,7 +76,8 @@ def deploy_key():
         },
     )
 
-    print(f"{response}")
+    assert response.status_code == 200, response.content
+    print(f"Deployed key {name}-key into the HSM")
 
 
 if __name__ == "__main__":

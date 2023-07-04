@@ -165,7 +165,7 @@
             "id": "securityPolicyPath",
             "type": "promptString",
             "description": "Enter the path to Security Policy file:",
-            "default": "examples/"
+            "default": "examples/simple_server/security_policies/allow_all.rego"
         },
         {
             "id": "deploymentName",

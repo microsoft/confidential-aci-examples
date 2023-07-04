@@ -37,18 +37,7 @@ def generate_arm_template(
                 "identity": {
                     "type": "UserAssigned",
                     "userAssignedIdentities": {
-                        "/".join(
-                            [
-                                "/subscriptions",
-                                os.environ["AZURE_SUBSCRIPTION_ID"],
-                                "resourcegroups",
-                                os.environ["AZURE_RESOURCE_GROUP"],
-                                "providers",
-                                "Microsoft.ManagedIdentity",
-                                "userAssignedIdentities",
-                                "caciexamples",
-                            ]
-                        ): {},
+                        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'caciexamples')]": {},
                     },
                 },
                 "properties": {

@@ -160,6 +160,7 @@
                 "simple_sidecar",
                 "attestation",
                 "remote_image",
+                "key_release",
             ],
         },
         {

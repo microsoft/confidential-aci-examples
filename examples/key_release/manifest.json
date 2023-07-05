@@ -7,7 +7,7 @@
                 {
                     "image": "http://mcr.microsoft.com/aci/skr:2.2",
                     "command": [ "/skr.sh" ],
-                    "ports": [ 8000 ],
+                    "ports": [ 8080 ],
                     "cores": 1,
                     "ram": 2
                 },
@@ -45,7 +45,7 @@
                     "ports": []
                 }
             ],
-            "ports": [ 8000 ]
+            "ports": [ 8080 ]
         }
     ],
     "securityPolicies": [],

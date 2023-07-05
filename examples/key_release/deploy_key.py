@@ -1,4 +1,4 @@
-from base64 import b64encode
+from base64 import b64encode, b64decode
 import binascii
 import hashlib
 import json
@@ -13,9 +13,14 @@ def deploy_key():
         arm_template = json.load(f)
     name = arm_template["variables"]["uniqueId"]
 
-    policy_path = os.getenv("SECURITY_POLICY", "key_release/_generated.rego")
-    with open(os.path.join("examples", policy_path), "rb") as f:
-        security_policy_digest = hashlib.sha256(f.read()).hexdigest()
+    resources = arm_template["resources"]
+    assert len(resources) == 1
+
+    security_policy_digest = hashlib.sha256(
+        b64decode(
+            resources[0]["properties"]["confidentialComputeProperties"]["ccePolicy"]
+        )
+    ).hexdigest()
 
     key = binascii.hexlify(secrets.token_bytes(32)).decode()
 

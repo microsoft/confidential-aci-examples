@@ -1,0 +1,5 @@
+FROM python:latest
+WORKDIR /app
+COPY key_release/payload.py payload.py
+RUN pip install requests
+CMD ["python", "payload.py"]

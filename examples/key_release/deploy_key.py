@@ -1,3 +1,4 @@
+import argparse
 from base64 import b64encode, b64decode
 import binascii
 import hashlib
@@ -8,9 +9,7 @@ import subprocess
 import requests
 
 
-def deploy_key():
-    with open(f"examples/key_release/arm_template.json", "r") as f:
-        arm_template = json.load(f)
+def deploy_key(arm_template: dict):
     name = arm_template["variables"]["uniqueId"]
 
     resources = arm_template["resources"]
@@ -84,4 +83,9 @@ def deploy_key():
 
 
 if __name__ == "__main__":
-    deploy_key()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--arm-template-path", required=True)
+    args = parser.parse_args()
+
+    with open(args.arm_template_path, "r") as f:
+        deploy_key(json.load(f))

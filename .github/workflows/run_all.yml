@@ -31,3 +31,10 @@ jobs:
     secrets: inherit
     with:
       test: remote_image
+
+  key-release:
+    name: Key Release
+    uses: ./.github/workflows/run_test.yml
+    secrets: inherit
+    with:
+      test: key_release

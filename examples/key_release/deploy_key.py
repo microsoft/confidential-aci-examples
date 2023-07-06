@@ -22,15 +22,13 @@ def deploy_key():
         )
     ).hexdigest()
 
-    key = binascii.hexlify(secrets.token_bytes(32)).decode()
-
     response = requests.put(
         url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}-key?api-version=7.3-preview",
         data=json.dumps(
             {
                 "key": {
                     "kty": "oct-HSM",
-                    "k": key,
+                    "k": binascii.hexlify(secrets.token_bytes(32)).decode(),
                     "key_size": 256,
                 },
                 "hsm": True,

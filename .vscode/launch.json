@@ -81,6 +81,18 @@
             ]
         },
         {
+            "name": "Deploy HSM",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/deploy_hsm.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--name",
+                "${input:hsmName}",
+            ]
+        },
+        {
             "name": "Deploy ARM Template",
             "type": "python",
             "request": "launch",
@@ -171,6 +183,11 @@
             "id": "deploymentName",
             "type": "promptString",
             "description": "Enter name of the deployment:",
+        },
+        {
+            "id": "hsmName",
+            "type": "promptString",
+            "description": "Enter name of the hsm:",
         },
     ]
 }

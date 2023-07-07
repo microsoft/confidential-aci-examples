@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import runpy
 import subprocess
 import sys
 import uuid
@@ -11,16 +12,22 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from infra.clients import get_resource_client
 
 
+def run_pre_deploy_script(manifest: dict, arm_template_path: str):
+    script_path = os.path.join(
+        "examples",
+        manifest["testName"],
+        manifest["preDeployScript"],
+    )
+    sys.argv = [script_path] + ["--arm-template-path", arm_template_path]
+    runpy.run_path(script_path, run_name="__main__")
+
+
 def deploy_arm_template(
     resource_client: ResourceManagementClient,
-    manifest: dict,
     arm_template: dict,
     resource_group: str,
     deployment_name: str,
 ):
-    if "preDeployScript" in manifest:
-        subprocess.run(manifest["preDeployScript"], shell=True, check=True)
-
     print(f"Deploying {deployment_name} with resources:")
     for resource in arm_template["resources"]:
         print(f"    {resource['type'].split('/')[-1]} - {resource['name']}")
@@ -65,14 +72,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    with open(args.arm_template_path) as arm_template:
-        with open(args.manifest_path) as manifest:
+    with open(args.arm_template_path) as arm_template_file:
+        with open(args.manifest_path) as manifest_file:
+            manifest = json.load(manifest_file)
+
+            if "preDeployScript" in manifest:
+                run_pre_deploy_script(manifest, args.arm_template_path)
+
             deploy_arm_template(
                 resource_client=get_resource_client(
                     args.subscription_id or os.environ["AZURE_SUBSCRIPTION_ID"]
                 ),
-                manifest=json.load(manifest),
-                arm_template=json.load(arm_template),
+                arm_template=json.load(arm_template_file),
                 resource_group=args.resource_group
                 or os.environ["AZURE_RESOURCE_GROUP"],
                 deployment_name=args.deployment_name or f"deployment-{uuid.uuid4()}",

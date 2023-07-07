@@ -1,0 +1,39 @@
+{
+    "testName": "key_release",
+    "images": {
+        "primary": "key_release/Dockerfile.primary"
+    },
+    "containerGroups": [
+        {
+            "containers": [
+                {
+                    "image": "http://mcr.microsoft.com/aci/skr:2.2",
+                    "command": [ "/skr.sh" ],
+                    "ports": [ 8080 ],
+                    "cores": 1,
+                    "ram": 2
+                },
+                {
+                    "image": "primary",
+                    "env": {
+                        "SkrClientMAAEndpoint": "$AZURE_ATTESTATION_ENDPOINT",
+                        "SkrClientAKVEndpoint": "$AZURE_HSM_ENDPOINT",
+                        "SkrClientKID": "[concat(variables('uniqueId'), '-key')]"
+                    },
+                    "cores": 1,
+                    "ram": 2,
+                    "ports": [ 8000 ]
+                }
+            ],
+            "ports": [ 8000, 8080 ]
+        }
+    ],
+    "securityPolicies": [],
+    "registryCredentials": {
+        "$AZURE_REGISTRY_URL": {
+            "username": "$AZURE_REGISTRY_USERNAME",
+            "password": "$AZURE_REGISTRY_PASSWORD"
+        }
+    },
+    "preDeployScript": "deploy_key.py"
+}

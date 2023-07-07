@@ -22,4 +22,4 @@
 # Skips deployment and uses existing with the given name
 # DEPLOYMENT_NAME=your-deployment-name
 # Uses the given policy file instead of generating one (relative to examples/)
-# SECURITY_POLICY=path/to/policy.rego
+SECURITY_POLICY=simple_server/security_policies/allow_all.rego

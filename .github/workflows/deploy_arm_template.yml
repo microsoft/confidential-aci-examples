@@ -68,6 +68,9 @@ jobs:
             --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Deploy Container on ACI
+        env:
+          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
+          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
         run: |
           python infra/deploy_arm_template.py \
             --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \

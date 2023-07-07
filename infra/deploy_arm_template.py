@@ -2,7 +2,6 @@ import argparse
 import json
 import os
 import runpy
-import subprocess
 import sys
 import uuid
 from azure.mgmt.resource import ResourceManagementClient

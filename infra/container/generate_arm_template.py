@@ -21,7 +21,9 @@ def generate_arm_template(
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
         "contentVersion": "1.0.0.0",
         "parameters": {},
-        "variables": {},
+        "variables": {
+            "uniqueId": name,
+        },
         "resources": [
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
@@ -31,6 +33,12 @@ def generate_arm_template(
                 "tags": {
                     "Owner": "c-aci-examples",
                     "GithubRepo": "microsoft/c-aci-examples",
+                },
+                "identity": {
+                    "type": "UserAssigned",
+                    "userAssignedIdentities": {
+                        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'caciexamples')]": {},
+                    },
                 },
                 "properties": {
                     "sku": "Confidential",
@@ -46,7 +54,7 @@ def generate_arm_template(
                                     for port in container["ports"]
                                 ],
                                 "environmentVariables": [
-                                    {"name": k, "value": v}
+                                    {"name": k, "value": resolve_variable(v)}
                                     for k, v in (container.get("env") or {}).items()
                                 ],
                                 "resources": {

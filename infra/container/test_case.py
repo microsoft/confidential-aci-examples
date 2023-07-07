@@ -6,7 +6,7 @@ from infra.add_security_policy_to_arm_template import (
     add_security_policy_to_arm_template,
 )
 from infra.clients import get_container_client, get_resource_client
-from infra.deploy_arm_template import deploy_arm_template
+from infra.deploy_arm_template import deploy_arm_template, run_pre_deploy_script
 from infra.container.generate_arm_template import generate_arm_template
 from infra.generate_security_policy import generate_security_policy
 from infra.container.get_ip import get_container_ip
@@ -32,12 +32,13 @@ def setUpAci(cls):
     )
 
     # Deploy the container with the freshly built image
+    arm_template_path = f"examples/{cls.test_name}/arm_template.json"
     arm_template = generate_arm_template(
         name=f"group-{cls.name}",
         image_tag=cls.image_tag,
         manifest=cls.manifest,
         location="eastus2euap",
-        out=f"examples/{cls.test_name}/arm_template.json",
+        out=arm_template_path,
     )
 
     if os.getenv("SECURITY_POLICY") is None:
@@ -55,10 +56,15 @@ def setUpAci(cls):
     with open(f"examples/{cls.test_name}/arm_template.json", "w") as f:
         json.dump(updated_arm_template, f, indent=2)
 
+    if "preDeployScript" in cls.manifest:
+        run_pre_deploy_script(cls.manifest, arm_template_path)
+
     deploy_arm_template(
         resource_client=get_resource_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
-        manifest=cls.manifest,
-        arm_template=updated_arm_template,
+        arm_template=add_security_policy_to_arm_template(
+            arm_template=arm_template,
+            security_policy=security_policy,
+        ),
         resource_group=os.environ["AZURE_RESOURCE_GROUP"],
         deployment_name=cls.deployment_name,
     )

@@ -6,7 +6,7 @@ import uuid
 from infra.build_and_push_images import build_and_push_images
 from infra.clients import get_network_client, get_resource_client
 from infra.delete_deployment import delete_deployment
-from infra.deploy_arm_template import deploy_arm_template
+from infra.deploy_arm_template import deploy_arm_template, run_pre_deploy_script
 from infra.vm.deploy_containerplat import deploy_containerplat
 from infra.vm.generate_arm_template import generate_arm_template
 from infra.vm.get_containerplat import get_containerplat
@@ -35,17 +35,20 @@ def setUpVm(cls):
         if vm_ip:
             return
 
+        arm_template_path = f"examples/{cls.test_name}/arm_template.json"
         arm_template = generate_arm_template(
             name=f"{cls.name}-{idx}",
             password=vm_user_password,
             location="eastus",
             manifest=cls.manifest,
-            out=f"examples/{cls.test_name}/arm_template.json",
+            out=arm_template_path,
         )
+
+        if "preDeployScript" in cls.manifest:
+            run_pre_deploy_script(cls.manifest, arm_template_path)
 
         deploy_arm_template(
             resource_client=get_resource_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
-            manifest=cls.manifest,
             arm_template=arm_template,
             resource_group=os.environ["AZURE_RESOURCE_GROUP"],
             deployment_name=f"{cls.deployment_name}-{idx}",

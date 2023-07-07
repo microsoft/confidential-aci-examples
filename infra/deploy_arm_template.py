@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import runpy
 import sys
 import uuid
 import runpy
@@ -11,9 +12,18 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from infra.clients import get_resource_client
 
 
+def run_pre_deploy_script(manifest: dict, arm_template_path: str):
+    script_path = os.path.join(
+        "examples",
+        manifest["testName"],
+        manifest["preDeployScript"],
+    )
+    sys.argv = [script_path] + ["--arm-template-path", arm_template_path]
+    runpy.run_path(script_path, run_name="__main__")
+
+
 def deploy_arm_template(
     resource_client: ResourceManagementClient,
-    manifest: dict,
     arm_template: dict,
     resource_group: str,
     deployment_name: str,
@@ -67,25 +77,12 @@ if __name__ == "__main__":
             manifest = json.load(manifest_file)
 
             if "preDeployScript" in manifest:
-                script_path = os.path.join(
-                    "examples",
-                    manifest["testName"],
-                    manifest["preDeployScript"],
-                )
-                sys.argv = [script_path] + [
-                    "--arm-template-path",
-                    args.arm_template_path,
-                ]
-                runpy.run_path(
-                    script_path,
-                    run_name="__main__",
-                )
+                run_pre_deploy_script(manifest, args.arm_template_path)
 
             deploy_arm_template(
                 resource_client=get_resource_client(
                     args.subscription_id or os.environ["AZURE_SUBSCRIPTION_ID"]
                 ),
-                manifest=manifest,
                 arm_template=json.load(arm_template_file),
                 resource_group=args.resource_group
                 or os.environ["AZURE_RESOURCE_GROUP"],

@@ -4,3 +4,5 @@ __pycache__
 !.vscode/tasks.json
 **/*arm_template.json
 **/_*.rego
+**/*.cer
+**/security_domain.json

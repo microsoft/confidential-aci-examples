@@ -74,6 +74,7 @@ if __name__ == "__main__":
         "--admin-ids",
         default=[
             os.environ["AZURE_SERVICE_PRINCIPAL_OBJECT_ID"],
+            os.environ["AZURE_MANAGED_IDENTITY_ID"],
         ],
         nargs="+",
     )

@@ -28,6 +28,7 @@ def request(
                 headers=headers,
                 timeout=timeout,
             )
+            session.close()
             return response
         except exceptions.ConnectionError:
             ...

@@ -4,7 +4,6 @@ import os
 import runpy
 import sys
 import uuid
-import runpy
 from azure.mgmt.resource import ResourceManagementClient
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

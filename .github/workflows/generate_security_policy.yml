@@ -53,7 +53,7 @@ jobs:
       - name: Generate ARM Template
         id: generate-arm-template
         run: |
-          echo "${{ inputs.manifest }}" | jq > manifest.json
+          echo '${{ inputs.manifest }}' | jq > manifest.json
           python infra/container/generate_arm_template.py \
             --name "not-relevant" \
             --image-tag ${{ inputs.id }} \
@@ -73,7 +73,7 @@ jobs:
 
       - name: Make Security Policies Directory
         run: |
-          echo "${{ inputs.manifest }}" | jq > manifest.json
+          echo '${{ inputs.manifest }}' | jq > manifest.json
           mkdir -p security_policies
           POLICIES=($(python infra/read_manifest_security_policies.py manifest.json | tr -d '[],'"'"))
           for POLICY in "${POLICIES[@]}"; do

@@ -41,7 +41,7 @@ jobs:
 
       - name: Resolve Variables
         id: resolve-variables
-        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/remote_image/manifest.json) >> $GITHUB_OUTPUT
+        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/remote_image/manifest.json)" >> $GITHUB_OUTPUT
 
   remote-image:
     name: Remote Image

@@ -45,7 +45,7 @@ jobs:
       - name: Get Images to Build
         id: get-images-to-build
         run: |
-          echo '${{ inputs.manifest }}' | jq > manifest.json
+          echo '${{ inputs.manifest }}' | base64 --decode | jq > manifest.json
           echo "images=$(python infra/read_manifest_images.py manifest.json)" >> $GITHUB_OUTPUT
 
   build-and-push-image:

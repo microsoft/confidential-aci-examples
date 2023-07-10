@@ -9,6 +9,9 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 [![Uptime of Containers on East US 2 EUAP](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_eastus2euap.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_eastus2euap.yml)
 [![Uptime of Containers on West Europe](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_west_europe.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_west_europe.yml)
 
+[![Attestation Test Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml)
+[![Key Release Test Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml)
+
 ## Setup Development Environment
 
 You can use Github Codespaces to create a fully ready to use development environment.

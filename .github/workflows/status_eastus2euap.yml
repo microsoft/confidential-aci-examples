@@ -2,7 +2,7 @@ name: Status of East US 2 EUAP
 
 on:
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 7 * * *"
   workflow_dispatch:
 
 jobs:

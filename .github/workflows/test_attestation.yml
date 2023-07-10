@@ -19,6 +19,8 @@ on:
   merge_group:
     branches:
       - main
+  schedule:
+    - cron: "0 7 * * *"
 
 jobs:
   attestation:

@@ -1,6 +1,7 @@
 name: Attestation
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
     branches:
@@ -23,9 +24,37 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
+  prepare:
+    name: Prepare Test
+    runs-on: ubuntu-latest
+    outputs:
+      manifest: ${{ steps.resolve-variables.outputs.manifest }}
+      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
+    steps:
+      - name: "Get Workflow ID"
+        id: workflow-id
+        run: |
+          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
+          echo $WORKFLOW_ID
+          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Resolve Variables
+        id: resolve-variables
+        env:
+          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
+          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/attestation/manifest.json) >> $GITHUB_OUTPUT
+
   attestation:
     name: Attestation
     uses: ./.github/workflows/run_test.yml
+    needs: prepare
     secrets: inherit
     with:
+      id: ${{ needs.prepare.outputs.workflow-id }}
+      manifest: ${{ needs.prepare.outputs.manifest }}
       test: attestation

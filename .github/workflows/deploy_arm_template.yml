@@ -7,6 +7,10 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
+      manifest:
+        description: "Manifest of the test to run"
+        required: false
+        type: string
       test:
         description: "Test to deploy ACI for"
         required: true
@@ -26,6 +30,10 @@ on:
       id:
         description: "Unique Identifier for this run"
         required: true
+        type: string
+      manifest:
+        description: "Manifest of the test to run"
+        required: false
         type: string
       test:
         description: "Test to deploy ACI for"
@@ -72,9 +80,10 @@ jobs:
           AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
           AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
         run: |
+          echo "${{ inputs.manifest }}" | jq > manifest.json
           python infra/deploy_arm_template.py \
             --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
-            --manifest-path examples/${{ inputs.test }}/manifest.json \
+            --manifest-path manifest.json \
             --arm-template-path arm_template.json \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --deployment-name deployment-${{ steps.generate-name.outputs.name }} \

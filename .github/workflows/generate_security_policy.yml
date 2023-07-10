@@ -7,6 +7,10 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
+      manifest:
+        description: "Manifest of the test to run"
+        required: false
+        type: string
       test:
         description: "Test to generate the Security Policy for"
         required: true
@@ -18,6 +22,10 @@ on:
       id:
         description: "Unique Identifier for this run"
         required: true
+        type: string
+      manifest:
+        description: "Manifest of the test to run"
+        required: false
         type: string
       test:
         description: "Name of the Test to generate the Security Policy for"
@@ -44,17 +52,12 @@ jobs:
 
       - name: Generate ARM Template
         id: generate-arm-template
-        env:
-          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
-          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
-          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
-          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
+          echo "${{ inputs.manifest }}" | jq > manifest.json
           python infra/container/generate_arm_template.py \
             --name "not-relevant" \
             --image-tag ${{ inputs.id }} \
-            --manifest-path examples/${{ inputs.test }}/manifest.json \
+            --manifest-path manifest.json \
             --location "not-relevant" \
             --out arm_template.json
 
@@ -70,8 +73,9 @@ jobs:
 
       - name: Make Security Policies Directory
         run: |
+          echo "${{ inputs.manifest }}" | jq > manifest.json
           mkdir -p security_policies
-          POLICIES=($(python infra/read_manifest_security_policies.py examples/${{ inputs.test }}/manifest.json | tr -d '[],'"'"))
+          POLICIES=($(python infra/read_manifest_security_policies.py manifest.json | tr -d '[],'"'"))
           for POLICY in "${POLICIES[@]}"; do
             cp examples/$POLICY security_policies/
           done

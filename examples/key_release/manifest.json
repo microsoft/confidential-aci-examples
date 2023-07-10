@@ -7,7 +7,7 @@
         {
             "containers": [
                 {
-                    "image": "http://mcr.microsoft.com/aci/skr:2.2",
+                    "image": "$KEY_RELEASE_IMAGE",
                     "command": [ "/skr.sh" ],
                     "ports": [ 8080 ],
                     "cores": 1,

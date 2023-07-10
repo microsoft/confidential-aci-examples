@@ -1,7 +1,20 @@
 name: Key Release
 
 on:
+  workflow_call:
+    inputs:
+      key_release_image:
+        description: "Unique Identifier for this run"
+        required: false
+        default: "http://mcr.microsoft.com/aci/skr:2.2"
+        type: string
   workflow_dispatch:
+    inputs:
+      key_release_image:
+        description: "Unique Identifier for this run"
+        required: false
+        default: "http://mcr.microsoft.com/aci/skr:2.2"
+        type: string
   push:
     branches:
       - main
@@ -23,9 +36,40 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
-  key_release:
+  prepare:
+    name: Prepare Test
+    runs-on: ubuntu-latest
+    outputs:
+      manifest: ${{ steps.resolve-variables.outputs.manifest }}
+      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
+    steps:
+      - name: "Get Workflow ID"
+        id: workflow-id
+        run: |
+          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
+          echo $WORKFLOW_ID
+          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Resolve Variables
+        id: resolve-variables
+        env:
+          KEY_RELEASE_IMAGE: ${{ inputs.key_release_image }}
+          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
+          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
+          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
+          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/key_release/manifest.json) >> $GITHUB_OUTPUT
+
+  key-release:
     name: Key Release
     uses: ./.github/workflows/run_test.yml
+    needs: prepare
     secrets: inherit
     with:
+      id: ${{ needs.prepare.outputs.workflow-id }}
+      manifest: ${{ needs.prepare.outputs.manifest }}
       test: key_release

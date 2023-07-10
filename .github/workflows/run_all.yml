@@ -6,35 +6,25 @@ on:
 jobs:
   simple-server:
     name: Simple Server
-    uses: ./.github/workflows/run_test.yml
+    uses: ./.github/workflows/test_simple_server.yml
     secrets: inherit
-    with:
-      test: simple_server
 
   simple-sidecar:
     name: Simple Sidecar
-    uses: ./.github/workflows/run_test.yml
+    uses: ./.github/workflows/test_simple_sidecar.yml
     secrets: inherit
-    with:
-      test: simple_sidecar
 
   attestation:
     name: Attestation
-    uses: ./.github/workflows/run_test.yml
+    uses: ./.github/workflows/test_attestation.yml
     secrets: inherit
-    with:
-      test: attestation
 
   remote-image:
     name: Remote Image
-    uses: ./.github/workflows/run_test.yml
+    uses: ./.github/workflows/test_remote_image.yml
     secrets: inherit
-    with:
-      test: remote_image
 
   key-release:
     name: Key Release
-    uses: ./.github/workflows/run_test.yml
+    uses: ./.github/workflows/test_key_release.yml
     secrets: inherit
-    with:
-      test: key_release

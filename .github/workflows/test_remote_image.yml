@@ -1,6 +1,7 @@
 name: Remote Image
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
     branches:
@@ -21,9 +22,33 @@ on:
       - main
 
 jobs:
+  prepare:
+    name: Prepare Test
+    runs-on: ubuntu-latest
+    outputs:
+      manifest: ${{ steps.resolve-variables.outputs.manifest }}
+      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
+    steps:
+      - name: "Get Workflow ID"
+        id: workflow-id
+        run: |
+          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
+          echo $WORKFLOW_ID
+          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Resolve Variables
+        id: resolve-variables
+        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/remote_image/manifest.json) >> $GITHUB_OUTPUT
+
   remote-image:
     name: Remote Image
     uses: ./.github/workflows/run_test.yml
+    needs: prepare
     secrets: inherit
     with:
+      id: ${{ needs.prepare.outputs.workflow-id }}
+      manifest: ${{ needs.prepare.outputs.manifest }}
       test: remote_image

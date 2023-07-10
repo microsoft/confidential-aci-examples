@@ -62,7 +62,7 @@ jobs:
           AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/key_release/manifest.json)" >> $GITHUB_OUTPUT
+        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/key_release/manifest.json | tr -d '\n')" >> $GITHUB_OUTPUT
 
   key-release:
     name: Key Release

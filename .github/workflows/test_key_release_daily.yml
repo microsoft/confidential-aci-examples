@@ -6,9 +6,16 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
+  prepare:
+    name: Prepare Test
+    runs-on: ubuntu-latest
+    outputs:
+      key_release_image: http://${{ secrets.SIDECARS_REGISTRY_URL }}/skr:main
+
   key-release:
     name: Key Release
     uses: ./.github/workflows/test_key_release.yml
+    needs: prepare
     secrets: inherit
     with:
-      key_release_image: http://${{ secrets.SIDECARS_REGISTRY_URL }}/skr:main
+      key_release_image: ${{ needs.prepare.outputs.key_release_image }}

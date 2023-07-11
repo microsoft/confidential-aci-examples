@@ -7,10 +7,6 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
-      manifest:
-        description: "Manifest of the test to run"
-        required: false
-        type: string
       test:
         description: "Test to generate the Security Policy for"
         required: true
@@ -22,10 +18,6 @@ on:
       id:
         description: "Unique Identifier for this run"
         required: true
-        type: string
-      manifest:
-        description: "Manifest of the test to run"
-        required: false
         type: string
       test:
         description: "Name of the Test to generate the Security Policy for"

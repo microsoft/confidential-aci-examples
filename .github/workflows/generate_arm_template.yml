@@ -31,10 +31,6 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
-      manifest:
-        description: "Manifest of the test to run"
-        required: false
-        type: string
       test:
         description: "Test to generate the ARM template for"
         required: true
@@ -81,7 +77,6 @@ jobs:
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
-          cat manifest.json
           python infra/container/generate_arm_template.py \
             --image-tag ${{ inputs.id }} \
             --name group-${{ steps.generate-name.outputs.name }} \

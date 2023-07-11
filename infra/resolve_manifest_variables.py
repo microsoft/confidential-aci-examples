@@ -25,4 +25,4 @@ if __name__ == "__main__":
     parser.add_argument("path", type=str, help="Path to manifest file")
     args = parser.parse_args()
     with open(args.path, "r") as manifest_file:
-        print(resolve_manifest_variables(json.load(manifest_file)))
+        print(json.dumps(resolve_manifest_variables(json.load(manifest_file))))

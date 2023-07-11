@@ -7,10 +7,6 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
-      manifest:
-        description: "Manifest of the test to run"
-        required: false
-        type: string
       test:
         description: "Test to run"
         required: true
@@ -27,10 +23,6 @@ on:
       id:
         description: "Unique Identifier for this run"
         required: true
-        type: string
-      manifest:
-        description: "Manifest of the test to run"
-        required: false
         type: string
       test:
         description: "Test to run"
@@ -49,7 +41,6 @@ jobs:
     secrets: inherit
     with:
       id: ${{ inputs.id }}
-      manifest: ${{ inputs.manifest }}
       test: ${{ inputs.test }}
 
   generate-security-policy:
@@ -59,7 +50,6 @@ jobs:
     secrets: inherit
     with:
       id: ${{ inputs.id }}
-      manifest: ${{ inputs.manifest }}
       test: ${{ inputs.test }}
 
   generate-arm-templates:
@@ -73,7 +63,6 @@ jobs:
         security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
     with:
       id: ${{ inputs.id }}
-      manifest: ${{ inputs.manifest }}
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}
@@ -90,7 +79,6 @@ jobs:
         security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
     with:
       id: ${{ inputs.id }}
-      manifest: ${{ inputs.manifest }}
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}

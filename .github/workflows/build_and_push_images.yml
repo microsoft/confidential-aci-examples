@@ -7,10 +7,6 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
-      manifest:
-        description: "Manifest of the test to run"
-        required: false
-        type: string
       test:
         description: "Test to build and push images for"
         required: true
@@ -22,10 +18,6 @@ on:
       id:
         description: "Unique Identifier for this run"
         required: true
-        type: string
-      manifest:
-        description: "Manifest of the test to run"
-        required: false
         type: string
       test:
         description: "Test to build and push images for"
@@ -42,10 +34,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Download Manifest
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.id }}_manifest
+          path: manifest.json
+
       - name: Get Images to Build
         id: get-images-to-build
         run: |
-          echo '${{ inputs.manifest }}' | base64 --decode | jq > manifest.json
           echo "images=$(python infra/read_manifest_images.py manifest.json)" >> $GITHUB_OUTPUT
 
   build-and-push-image:

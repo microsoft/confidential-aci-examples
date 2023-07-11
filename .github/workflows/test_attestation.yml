@@ -28,7 +28,6 @@ jobs:
     name: Prepare Test
     runs-on: ubuntu-latest
     outputs:
-      manifest: ${{ steps.resolve-variables.outputs.manifest }}
       workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
     steps:
       - name: "Get Workflow ID"
@@ -47,7 +46,13 @@ jobs:
           AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/attestation/manifest.json | base64 | tr -d '\n')" >> $GITHUB_OUTPUT
+        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/attestation/manifest.json | base64 | tr -d '\n')" > manifest.json
+
+      - name: Upload Manifest
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.workflow-id.outputs.workflow-id }}_manifest
+          path: manifest.json
 
   attestation:
     name: Attestation
@@ -56,5 +61,4 @@ jobs:
     secrets: inherit
     with:
       id: ${{ needs.prepare.outputs.workflow-id }}
-      manifest: ${{ needs.prepare.outputs.manifest }}
       test: attestation

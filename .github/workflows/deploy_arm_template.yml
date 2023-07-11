@@ -7,10 +7,6 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
-      manifest:
-        description: "Manifest of the test to run"
-        required: false
-        type: string
       test:
         description: "Test to deploy ACI for"
         required: true
@@ -30,10 +26,6 @@ on:
       id:
         description: "Unique Identifier for this run"
         required: true
-        type: string
-      manifest:
-        description: "Manifest of the test to run"
-        required: false
         type: string
       test:
         description: "Test to deploy ACI for"
@@ -60,6 +52,12 @@ jobs:
         id: generate-name
         run: echo "name=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
+      - name: Download Manifest
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.id }}_manifest
+          path: manifest.json
+
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v3
         with:
@@ -80,7 +78,6 @@ jobs:
           AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
           AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
         run: |
-          echo '${{ inputs.manifest }}' | base64 --decode | jq > manifest.json
           python infra/deploy_arm_template.py \
             --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
             --manifest-path manifest.json \

@@ -77,5 +77,4 @@ jobs:
     secrets: inherit
     with:
       id: ${{ needs.prepare.outputs.workflow-id }}
-      manifest: ${{ needs.prepare.outputs.manifest }}
       test: key_release

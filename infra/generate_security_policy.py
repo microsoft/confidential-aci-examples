@@ -8,6 +8,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from infra.login_arm_template_registries import login_arm_template_registries
 from infra.add_security_policy_to_arm_template import (
     add_security_policy_to_arm_template,
 )
@@ -22,15 +23,7 @@ def generate_security_policy(
         shell=True,
     )
 
-    for registry_info in arm_template["resources"][0]["properties"][
-        "imageRegistryCredentials"
-    ]:
-        registry, username, password = registry_info.values()
-        print(f"Logging into {registry}")
-        subprocess.run(
-            f"docker login {registry} --username {username} --password {password}",
-            shell=True,
-        )
+    login_arm_template_registries(arm_template)
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         arm_template_path = os.path.join(tmp_dir, "arm_template.json")

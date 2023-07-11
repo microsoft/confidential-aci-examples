@@ -42,11 +42,14 @@ jobs:
           az extension add --name confcom
           pip install -r requirements.txt
 
+      - name: Download Manifest
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.id }}_manifest
+
       - name: Generate ARM Template
         id: generate-arm-template
         env:
-          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
-          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
           AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
@@ -54,16 +57,9 @@ jobs:
           python infra/container/generate_arm_template.py \
             --name "not-relevant" \
             --image-tag ${{ inputs.id }} \
-            --manifest-path examples/${{ inputs.test }}/manifest.json \
+            --manifest-path manifest.json \
             --location "not-relevant" \
             --out arm_template.json
-
-      - name: Log in to Azure Container Registry
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.AZURE_REGISTRY_URL }}
-          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
 
       - name: Set Docker Permissions
         run: sudo usermod -aG docker $USER
@@ -71,7 +67,7 @@ jobs:
       - name: Make Security Policies Directory
         run: |
           mkdir -p security_policies
-          POLICIES=($(python infra/read_manifest_security_policies.py examples/${{ inputs.test }}/manifest.json | tr -d '[],'"'"))
+          POLICIES=($(python infra/read_manifest_security_policies.py manifest.json | tr -d '[],'"'"))
           for POLICY in "${POLICIES[@]}"; do
             cp examples/$POLICY security_policies/
           done
@@ -79,6 +75,7 @@ jobs:
       - name: Generate Security Policy
         id: generate-security-policy
         run: |
+          python infra/login_arm_template_registries.py --arm-template-path arm_template.json
           az confcom acipolicygen \
               -a arm_template.json \
               --outraw \

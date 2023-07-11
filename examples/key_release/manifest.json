@@ -7,7 +7,7 @@
         {
             "containers": [
                 {
-                    "image": "http://mcr.microsoft.com/aci/skr:2.2",
+                    "image": "$KEY_RELEASE_IMAGE",
                     "command": [ "/skr.sh" ],
                     "ports": [ 8080 ],
                     "cores": 1,
@@ -33,6 +33,10 @@
         "$AZURE_REGISTRY_URL": {
             "username": "$AZURE_REGISTRY_USERNAME",
             "password": "$AZURE_REGISTRY_PASSWORD"
+        },
+        "$SIDECARS_REGISTRY_URL": {
+            "username": "$SIDECARS_REGISTRY_USERNAME",
+            "password": "$SIDECARS_REGISTRY_PASSWORD"
         }
     },
     "preDeployScript": "deploy_key.py"

@@ -7,6 +7,10 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
+      manifest:
+        description: "Manifest of the test to run"
+        required: false
+        type: string
       test:
         description: "Test to generate the ARM template for"
         required: true
@@ -55,6 +59,11 @@ jobs:
         id: generate-name
         run: echo "name=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
+      - name: Download Manifest
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.id }}_manifest
+
       - name: Download Security Policy Artifact
         uses: actions/download-artifact@v3
         with:
@@ -64,8 +73,6 @@ jobs:
       - name: Generate ARM Template
         id: generate-arm-template
         env:
-          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
-          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
           AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
@@ -73,7 +80,7 @@ jobs:
           python infra/container/generate_arm_template.py \
             --image-tag ${{ inputs.id }} \
             --name group-${{ steps.generate-name.outputs.name }} \
-            --manifest-path examples/${{ inputs.test }}/manifest.json \
+            --manifest-path manifest.json \
             --location ${{ inputs.location }} \
             --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
             --out arm_template.json

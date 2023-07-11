@@ -52,6 +52,11 @@ jobs:
         id: generate-name
         run: echo "name=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
+      - name: Download Manifest
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.id }}_manifest
+
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v3
         with:
@@ -74,7 +79,7 @@ jobs:
         run: |
           python infra/deploy_arm_template.py \
             --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
-            --manifest-path examples/${{ inputs.test }}/manifest.json \
+            --manifest-path manifest.json \
             --arm-template-path arm_template.json \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --deployment-name deployment-${{ steps.generate-name.outputs.name }} \

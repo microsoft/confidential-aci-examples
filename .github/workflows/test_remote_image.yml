@@ -40,7 +40,7 @@ jobs:
 
       - name: Resolve Variables
         id: resolve-variables
-        run: echo "manifest=$(python infra/resolve_manifest_variables.py examples/remote_image/manifest.json | base64 | tr -d '\n')" > manifest.json
+        run: python infra/resolve_manifest_variables.py examples/remote_image/manifest.json > manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

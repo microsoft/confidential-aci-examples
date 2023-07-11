@@ -11,6 +11,7 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 
 [![Attestation Test Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml)
 [![Key Release Test Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml)
+[![Key Release Test Daily (Sidecar Repo Main Branch)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_daily.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_daily.yml)
 
 ## Setup Development Environment
 

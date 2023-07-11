@@ -1,0 +1,14 @@
+name: Key Release Daily
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"
+
+jobs:
+  key-release:
+    name: Key Release
+    uses: ./.github/workflows/test_key_release.yml
+    secrets: inherit
+    with:
+      key_release_image: http://${{ secrets.SIDECARS_REGISTRY_URL }}/skr:main

@@ -1,8 +1,13 @@
 import argparse
 import json
 import os
+import sys
 from typing import Optional
 import uuid
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from infra.resolve_manifest_variables import resolve_manifest_variables
 
 
 def generate_arm_template(
@@ -13,8 +18,7 @@ def generate_arm_template(
     security_policy: Optional[str] = None,
     out: Optional[str] = None,
 ):
-    def resolve_variable(value: str):
-        return os.environ[value.strip("$")] if "$" in value else value
+    manifest = resolve_manifest_variables(manifest)
 
     print(f"Generating ARM template for {name}")
     arm_template = {
@@ -54,7 +58,7 @@ def generate_arm_template(
                                     for port in container["ports"]
                                 ],
                                 "environmentVariables": [
-                                    {"name": k, "value": resolve_variable(v)}
+                                    {"name": k, "value": v}
                                     for k, v in (container.get("env") or {}).items()
                                 ],
                                 "resources": {
@@ -87,9 +91,9 @@ def generate_arm_template(
                     },
                     "imageRegistryCredentials": [
                         {
-                            "server": resolve_variable(server),
-                            "username": resolve_variable(credentials["username"]),
-                            "password": resolve_variable(credentials["password"]),
+                            "server": server,
+                            "username": credentials["username"],
+                            "password": credentials["password"],
                         }
                         for server, credentials in manifest[
                             "registryCredentials"

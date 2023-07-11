@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/push_latest_key_release.yml
       - examples/key_release/**
   workflow_dispatch:
 

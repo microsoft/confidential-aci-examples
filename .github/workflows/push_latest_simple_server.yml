@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/push_latest_simple_server.yml
       - examples/simple_server/**
   workflow_dispatch:
 

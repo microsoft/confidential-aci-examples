@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/push_latest_simple_sidecar.yml
       - examples/simple_sidecar/**
   workflow_dispatch:
 

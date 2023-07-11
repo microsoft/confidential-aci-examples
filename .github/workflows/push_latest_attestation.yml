@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/push_latest_attestation.yml
       - examples/attestation/**
   workflow_dispatch:
 

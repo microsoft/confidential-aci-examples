@@ -4,14 +4,14 @@ on:
   workflow_call:
     inputs:
       key_release_image:
-        description: "Unique Identifier for this run"
+        description: "The image of the SKR sidecar to use"
         required: false
         default: "http://mcr.microsoft.com/aci/skr:2.2"
         type: string
   workflow_dispatch:
     inputs:
       key_release_image:
-        description: "Unique Identifier for this run"
+        description: "The image of the SKR sidecar to use"
         required: false
         default: "http://mcr.microsoft.com/aci/skr:2.2"
         type: string

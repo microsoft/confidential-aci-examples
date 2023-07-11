@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       key_release_image: http://${{ secrets.SIDECARS_REGISTRY_URL }}/skr:main
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
   key-release:
     name: Key Release

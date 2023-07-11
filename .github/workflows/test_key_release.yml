@@ -56,7 +56,7 @@ jobs:
       - name: Resolve Variables
         id: resolve-variables
         env:
-          KEY_RELEASE_IMAGE: ${{ inputs.key_release_image }}
+          KEY_RELEASE_IMAGE: "${{ (github.event_name == 'pull_request' || github.event_name == 'push') && 'http://mcr.microsoft.com/aci/skr:2.2' || inputs.key_release_image }}"
           AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
           AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
           AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}

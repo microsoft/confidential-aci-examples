@@ -56,7 +56,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.id }}_manifest
-          path: manifest.json
 
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v3

@@ -125,6 +125,12 @@ jobs:
         id: generate-name
         run: echo "name=$(echo simple_server-${{ inputs.location }}-allow_all.rego-${{ steps.get-datetime.outputs.datetime }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
+      - name: Upload Manifest
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.generate-name.outputs.name }}_manifest
+          path: examples/simple_server/manifest.json
+
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v3
         with:

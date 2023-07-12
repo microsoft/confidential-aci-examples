@@ -128,7 +128,7 @@ jobs:
       - name: Upload Manifest
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.generate-name.outputs.name }}_manifest
+          name: ${{ needs.prep-deployment.outputs.datetime }}_manifest
           path: examples/simple_server/manifest.json
 
       - name: Upload ARM Template Artifact

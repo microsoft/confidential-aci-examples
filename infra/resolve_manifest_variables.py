@@ -6,18 +6,8 @@ import re
 
 
 def resolve_manifest_variables(manifest: dict) -> dict:
-    def clean_match(match):
-        return match.group(0).replace("$", "").strip('"')
-
-    manifest_str = json.dumps(manifest)
-    evaluated_manifest = json.loads(
-        re.sub(
-            pattern='"\$(.*?)"',
-            repl=lambda match: f'"{os.environ[clean_match(match)]}"',
-            string=manifest_str,
-        )
-    )
-    for container_group in evaluated_manifest["containerGroups"]:
+    manifest = json.loads(os.path.expandvars(json.dumps(manifest)))
+    for container_group in manifest["containerGroups"]:
         for container in container_group["containers"]:
             for key, value in container.get("env", {}).items():
                 if isinstance(value, dict):
@@ -25,7 +15,7 @@ def resolve_manifest_variables(manifest: dict) -> dict:
                         json.dumps(value).encode()
                     ).decode()
 
-    return evaluated_manifest
+    return manifest
 
 
 if __name__ == "__main__":

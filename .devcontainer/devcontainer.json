@@ -85,7 +85,7 @@
 													"env": {
 														"type": "object",
 														"additionalProperties": {
-															"type": "string"
+															"type": ["string", "object"]
 														}
 													},
 													"command": {

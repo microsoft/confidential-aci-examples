@@ -18,7 +18,7 @@
                     "env": {
                         "SkrClientMAAEndpoint": "$AZURE_ATTESTATION_ENDPOINT",
                         "SkrClientAKVEndpoint": "$AZURE_HSM_ENDPOINT",
-                        "SkrClientKID": "[concat(variables('uniqueId'), '-key')]"
+                        "SkrClientKID": "$UNIQUE_ID-key"
                     },
                     "cores": 1,
                     "ram": 2,

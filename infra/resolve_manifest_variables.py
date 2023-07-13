@@ -1,21 +1,21 @@
 import argparse
+from base64 import b64encode
 import json
 import os
 import re
 
 
 def resolve_manifest_variables(manifest: dict) -> dict:
-    def clean_match(match):
-        return match.group(0).replace("$", "").strip('"')
+    manifest = json.loads(os.path.expandvars(json.dumps(manifest)))
+    for container_group in manifest["containerGroups"]:
+        for container in container_group["containers"]:
+            for key, value in container.get("env", {}).items():
+                if isinstance(value, dict):
+                    container["env"][key] = b64encode(
+                        json.dumps(value).encode()
+                    ).decode()
 
-    manifest_str = json.dumps(manifest)
-    return json.loads(
-        re.sub(
-            pattern='"\$(.*?)"',
-            repl=lambda match: f'"{os.environ[clean_match(match)]}"',
-            string=manifest_str,
-        )
-    )
+    return manifest
 
 
 if __name__ == "__main__":

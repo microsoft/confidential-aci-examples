@@ -40,6 +40,8 @@ jobs:
 
       - name: Resolve Variables
         id: resolve-variables
+        env:
+          UNIQUE_ID: ${{ steps.workflow-id.outputs.workflow-id }}
         run: python infra/resolve_manifest_variables.py examples/remote_image/manifest.json > manifest.json
 
       - name: Upload Manifest

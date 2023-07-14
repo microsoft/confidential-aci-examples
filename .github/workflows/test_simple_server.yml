@@ -24,7 +24,7 @@ on:
 jobs:
   prepare:
     name: Prepare Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-16-core
     outputs:
       workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
     steps:

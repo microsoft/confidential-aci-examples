@@ -1,12 +1,10 @@
 import argparse
 import json
 import os
-import sys
 import time
 from typing import Optional
 from azure.mgmt.resource import ResourceManagementClient
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from infra.clients import get_resource_client
 

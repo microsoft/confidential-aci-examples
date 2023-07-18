@@ -18,6 +18,9 @@
 			"version": "latest"
 		}
 	},
+	"remoteEnv": {
+		"PYTHONPATH": "/workspaces/confidential-aci-examples"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -85,7 +88,10 @@
 													"env": {
 														"type": "object",
 														"additionalProperties": {
-															"type": ["string", "object"]
+															"type": [
+																"string",
+																"object"
+															]
 														}
 													},
 													"command": {
@@ -127,16 +133,19 @@
 							"registryCredentials": {
 								"type": "object",
 								"additionalProperties": {
-								  "type": "object",
-								  "properties": {
-									"username": {
-									  "type": "string"
+									"type": "object",
+									"properties": {
+										"username": {
+											"type": "string"
+										},
+										"password": {
+											"type": "string"
+										}
 									},
-									"password": {
-									  "type": "string"
-									}
-								  },
-								  "required": ["username", "password"]
+									"required": [
+										"username",
+										"password"
+									]
 								}
 							},
 							"preDeployScript": {

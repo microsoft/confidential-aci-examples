@@ -1,10 +1,8 @@
 import argparse
 import os
-import sys
 from typing import Optional
 from azure.mgmt.network import NetworkManagementClient
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from infra.clients import get_network_client
 

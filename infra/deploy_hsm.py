@@ -2,11 +2,9 @@ import argparse
 import json
 import os
 import subprocess
-import sys
 from typing import Iterable
 import uuid
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from infra.clients import get_resource_client
 from infra.deploy_arm_template import deploy_arm_template

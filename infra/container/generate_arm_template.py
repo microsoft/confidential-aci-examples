@@ -1,11 +1,9 @@
 import argparse
 import json
 import os
-import sys
 from typing import Optional
 import uuid
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from infra.resolve_manifest_variables import resolve_manifest_variables
 

@@ -2,11 +2,9 @@ import argparse
 import json
 import os
 import runpy
-import sys
 import uuid
 from azure.mgmt.resource import ResourceManagementClient
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from infra.clients import get_resource_client
 

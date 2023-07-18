@@ -1,11 +1,9 @@
 import argparse
 import json
 import os
-import sys
 from base64 import b64encode
 from typing import Iterable
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from infra.clients import get_network_client
 from infra.vm.get_ip import get_vm_ip

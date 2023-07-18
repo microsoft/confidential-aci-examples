@@ -4,9 +4,7 @@ import os
 import subprocess
 import tempfile
 from typing import Any, Dict
-import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from infra.login_arm_template_registries import login_arm_template_registries
 from infra.add_security_policy_to_arm_template import (

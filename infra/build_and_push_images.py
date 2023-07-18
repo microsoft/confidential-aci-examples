@@ -1,10 +1,8 @@
 import argparse
 import json
 import os
-import sys
 import uuid
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from infra.clients import get_docker_client
 

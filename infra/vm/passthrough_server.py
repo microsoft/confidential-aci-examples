@@ -4,10 +4,8 @@ import http.server
 import os
 from http.server import HTTPServer
 import re
-import sys
 from typing import Set
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from infra.vm.operations import run_on_vm
 

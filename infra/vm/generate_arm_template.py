@@ -3,9 +3,7 @@ import json
 import os
 from typing import Optional
 import uuid
-import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from infra.read_manifest_ports import read_manifest_ports
 

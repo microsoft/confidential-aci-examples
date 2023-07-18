@@ -2,6 +2,8 @@
 # Modify as necessary and source with:
 #     source ./env
 
+PYTHONPATH=$(dirname $(realpath $BASH_SOURCE))
+
 # AZURE_SUBSCRIPTION_ID=YOUR_AZURE_SUBSCRIPTION_ID
 # AZURE_RESOURCE_GROUP=YOUR_AZURE_RESOURCE_GROUP
 

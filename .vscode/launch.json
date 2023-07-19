@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "Build and Push Images",
             "type": "python",
@@ -93,6 +94,22 @@
             ]
         },
         {
+            "name": "Deploy Storage Container",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/deploy_storage_container.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--name",
+                "${input:storageAccountName}",
+                "--location",
+                "${input:resourceGroupLocation}",
+                "--container-name",
+                "${input:storageContainerName}",
+            ]
+        },
+        {
             "name": "Deploy ARM Template",
             "type": "python",
             "request": "launch",
@@ -157,6 +174,7 @@
                 "attestation",
                 "remote_image",
                 "key_release",
+                "encrypted_filesystem",
             ],
         },
         {
@@ -191,6 +209,21 @@
             "id": "hsmName",
             "type": "promptString",
             "description": "Enter name of the hsm:",
+        },
+        {
+            "id": "storageAccountName",
+            "type": "promptString",
+            "description": "Enter a name for the storage account:",
+        },
+        {
+            "id": "resourceGroupLocation",
+            "type": "promptString",
+            "description": "Enter the location of the storage account's resource group:",
+        },
+        {
+            "id": "storageContainerName",
+            "type": "promptString",
+            "description": "Enter a name for the storage container:",
         },
     ]
 }

@@ -1,4 +1,4 @@
-# Environement file for any VS Code run/debug/test tasks
+# Environment file for any VS Code run/debug/test tasks
 # Modify as necessary and source with:
 #     source ./env
 
@@ -12,6 +12,10 @@
 # AZURE_SERVICE_PRINCIPAL_APP_ID=YOUR_AZURE_SERVICE_PRINCIPAL_APP_ID
 # AZURE_SERVICE_PRINCIPAL_TENANT=YOUR_AZURE_SERVICE_PRINCIPAL_TENANT
 # AZURE_SERVICE_PRINCIPAL_PASSWORD=YOUR_AZURE_SERVICE_PRINCIPAL_PASSWORD
+
+# AZURE_STORAGE_ACCOUNT_NAME=YOUR_AZURE_STORAGE_ACCOUNT_NAME
+# AZURE_STORAGE_CONTAINER_NAME=YOUR_AZURE_STORAGE_CONTAINER_NAME
+# AZURE_STORAGE_CONTAINER_URL=https://<AZURE_STORAGE_ACCOUNT_NAME>.blob.core.windows.net/<AZURE_STORAGE_CONTAINER_NAME>
 #
 # Settable environment variables which control local workflows -----------------
 #

@@ -7,6 +7,11 @@ ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
 # Install python dependencies
 pip install -r requirements.txt
 
+# Install Linux dependencies
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install cryptsetup
+
 # Install the policy generation tool
 az extension add --name confcom
 

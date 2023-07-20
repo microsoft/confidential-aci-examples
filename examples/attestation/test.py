@@ -28,6 +28,15 @@ class AttestationTest(TestCase):
         report = struct.unpack_from(f"<{SNP_REPORT_STRUCTURE}", response.content, 0)
         assert report[10].rstrip(b"\x00").decode() == input_report_data
 
+        response = request(
+            f"http://{self.container_ip}:8000/get_attestation_from_sidecar?report_data={input_report_data}",
+        )
+        assert response.status_code == 200
+        sidecar_report = struct.unpack_from(
+            f"<{SNP_REPORT_STRUCTURE}", response.content, 0
+        )
+        assert sidecar_report == report
+
     def test_attestation_validation(self):
         assert self.container_ip is not None
 

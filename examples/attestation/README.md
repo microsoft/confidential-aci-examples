@@ -1,8 +1,10 @@
-# Attestation Example
+# Attestation
 
-This example demonstrates how to fetch and validate attestations from a confidential container instance. 
+This example demonstrates how to fetch and validate attestations from a confidential container instance. Attestations from SEV-SNP guests are obtained by calling a specific IOCTL with a report request. Full details can be found in AMD's [SEV-SNP documentation](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification). 
 
-The [manfiest](manifest.json) file describes two containers which are deployed when the example runs. The first container runs an HTTP server which the client side can make requests to. The second is the sidecar container from the [confidential-sidecar-containers](https://github.com/microsoft/confidential-sidecar-containers) repository.
+This example shows two different methods of fetching an attestation report. The first is to make the IOCTL call directly from the main container, and the second is to use an existing sidecar from the [confidential-sidecar-containers](https://github.com/microsoft/confidential-sidecar-containers) repository.
+
+The [manfiest](manifest.json) file describes two containers which are deployed when the example runs. The primary container runs a HTTP server for communication with the client as well as being capable of fetching an attestation locally, the other container is the attestation sidecar.
 
 The HTTP server has three endpoints that are called by the client side:
 
@@ -19,10 +21,6 @@ The HTTP server has three endpoints that are called by the client side:
     This endpoint is the same as `/get_attestation` except the logic used to fetch the attestation report lives in a sidecar container.
     
     The main container talks to the sidecar over gRPC using protobuf, the [definition](protobuf/attestation_sidecar.proto) of the interface and the python code generated from that is in the [protobuf](protobuf/) directory.
-    
-- `/get_maa_token_from_sidecar`
-
-    This endpoint is the same as `/get_attestation` except the logic used to fetch the attestation report lives in a sidecar container.
 
 ### Validating the Report
 
@@ -31,3 +29,4 @@ The code for validating an SNP report is in [validate_report.py](validate_report
 - The report contains the provided report data to validate it's the report that was requested.
 - The report is signed by the certificate which is part of a chain up to the AMD root of trust.
 
+You can also use the [Microsoft Azure Attestation](https://learn.microsoft.com/en-us/azure/attestation/overview) service to validate attestations, but this isn't demonstrated in this example.

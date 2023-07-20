@@ -1,92 +1,14 @@
 import argparse
-from base64 import b64encode, b64decode
-import binascii
-import hashlib
 import json
 import os
 import sys
 import tempfile
 import subprocess
-import requests
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from infra.clients import get_blob_service_client
-
-KEY_FILE_PATH = "keyfile.bin"
-
-
-def deploy_key(arm_template: dict, key: bytes):
-    name = arm_template["variables"]["uniqueId"]
-
-    resources = arm_template["resources"]
-    assert len(resources) == 1
-
-    security_policy_digest = hashlib.sha256(
-        b64decode(
-            resources[0]["properties"]["confidentialComputeProperties"]["ccePolicy"]
-        )
-    ).hexdigest()
-
-    response = requests.put(
-        url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}-key?api-version=7.3-preview",
-        data=json.dumps(
-            {
-                "key": {
-                    "kty": "oct-HSM",
-                    "k": key.decode(),
-                    "key_size": 256,
-                },
-                "hsm": True,
-                "attributes": {
-                    "exportable": True,
-                },
-                "release_policy": {
-                    "contentType": "application/json; charset=utf-8",
-                    "data": b64encode(
-                        json.dumps(
-                            {
-                                "version": "0.2",
-                                "anyOf": [
-                                    {
-                                        "authority": f"https://{os.environ['AZURE_ATTESTATION_ENDPOINT']}",
-                                        "allOf": [
-                                            {
-                                                "claim": "x-ms-sevsnpvm-hostdata",
-                                                "equals": security_policy_digest,
-                                            },
-                                            {
-                                                "claim": "x-ms-compliance-status",
-                                                "equals": "azure-compliant-uvm",
-                                            },
-                                            {
-                                                "claim": "x-ms-sevsnpvm-is-debuggable",
-                                                "equals": "false",
-                                            },
-                                        ],
-                                    }
-                                ],
-                            }
-                        ).encode()
-                    ).decode(),
-                    "immutable": False,
-                },
-            }
-        ),
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": "Bearer "
-            + json.loads(
-                subprocess.check_output(
-                    "az account get-access-token --resource https://managedhsm.azure.net",
-                    shell=True,
-                )
-            )["accessToken"],
-        },
-    )
-
-    assert response.status_code == 200, response.content
-    print(f"Deployed key {name}-key into the HSM")
+from infra.keys import generate_key_file, deploy_key
 
 
 # cryptsetupCommand runs cryptsetup with the provided arguments
@@ -101,9 +23,9 @@ def cryptsetup_command(args: list[str]):
     )
 
 
-def cryptsetup_format(image_name: str):
+def cryptsetup_format(image_name: str, key_file_path: str):
     args = ["luksFormat", "--type luks2", image_name,
-    "--key-file", KEY_FILE_PATH, "--batch-mode", "--sector-size 4096",
+    "--key-file", key_file_path, "--batch-mode", "--sector-size 4096",
     "--cipher aes-xts-plain64",
     "--pbkdf pbkdf2", "--pbkdf-force-iterations 1000"]
 
@@ -111,8 +33,8 @@ def cryptsetup_format(image_name: str):
 
 
 # cryptsetupOpen runs "cryptsetup luksOpen" with the right arguments.
-def cryptsetup_open(image_name: str, device_name: str):
-	args = [ "luksOpen", image_name, device_name, "--key-file", KEY_FILE_PATH,
+def cryptsetup_open(image_name: str, device_name: str, key_file_path: str):
+	args = [ "luksOpen", image_name, device_name, "--key-file", key_file_path,
 		# Don't use a journal to increase performance
 		"--integrity-no-journal",
 		"--persistent"]
@@ -125,7 +47,7 @@ def cryptsetup_close(device_name: str):
     cryptsetup_command(args)
 
 
-def generate_blob(name: str):
+def generate_blob(name: str, key_file_path: str):
     encrypted_image = name
     device_name = "cryptdevice1"
     device_name_path = f"/dev/mapper/{device_name}"
@@ -149,8 +71,8 @@ def generate_blob(name: str):
         shell=True,
     )
 
-    cryptsetup_format(encrypted_image)
-    cryptsetup_open(encrypted_image, device_name)
+    cryptsetup_format(encrypted_image, key_file_path)
+    cryptsetup_open(encrypted_image, device_name, key_file_path)
 
     try:
         print("[!] Formatting as ext4...")
@@ -194,30 +116,17 @@ def deploy_blob(arm_template: dict):
     print(f"Deployed blob {name} into the storage container")
 
 
-def generate_key_file():
-    if not os.path.exists(KEY_FILE_PATH):
-        print("Generating key file")
-        subprocess.check_call(f"dd if=/dev/random of={KEY_FILE_PATH} count=1 bs=32", shell=True)
-
-    print("Getting key in hex string format")
-    bFile = open(KEY_FILE_PATH,'rb')
-    bData = bFile.read(32)
-
-    subprocess.check_call(f"truncate -s 32 {KEY_FILE_PATH}", shell=True)
-    return binascii.hexlify(bData)
-
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--arm-template-path", required=True)
     args = parser.parse_args()
 
-    key = generate_key_file()
+    tmp_key_file = tempfile.NamedTemporaryFile()
+    key = generate_key_file(tmp_key_file)
 
     with open(args.arm_template_path, "r") as f:
-        deploy_blob(json.load(f))
+        # tmp_key_file.name will look something like '/tmp/tmptjujjt' -- the path to the file
+        deploy_blob(json.load(f), tmp_key_file.name)
         deploy_key(json.load(f), key)
 
-    # remove local key file
-    os.remove(KEY_FILE_PATH)
+    tmp_key_file.close()

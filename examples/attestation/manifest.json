@@ -11,9 +11,19 @@
                     "ports": [22, 8000],
                     "cores": 2,
                     "ram": 8
+                },
+                {
+                    "image": "$ATTESTATION_SIDECAR_IMAGE",
+                    "command": ["app", "-socket-address", "/mnt/uds/sock"],
+                    "env": {
+                        "AZURE_ATTESTATION_ENDPOINT": "$AZURE_ATTESTATION_ENDPOINT"
+                    },
+                    "ports": [8080],
+                    "cores": 1,
+                    "ram": 2
                 }
             ],
-            "ports": [22, 8000]
+            "ports": [22, 8000, 8080]
         }
     ],
     "securityPolicies": [],

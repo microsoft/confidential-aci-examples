@@ -1,5 +1,6 @@
 FROM python:latest
 WORKDIR /app
+COPY attestation/protobuf protobuf
 COPY attestation/get_attestation.py get_attestation.py
 COPY attestation/payload.py payload.py
 CMD ["python", "payload.py"]

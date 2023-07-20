@@ -16,6 +16,9 @@
 		"ghcr.io/devcontainers/features/python:1": {
 			"installTools": true,
 			"version": "latest"
+		},
+		"ghcr.io/devcontainers-contrib/features/protoc:1": {
+			"version": "latest"
 		}
 	},
 	"customizations": {
@@ -40,7 +43,10 @@
 				"python.testing.unittestEnabled": true,
 				"python.envFile": "${workspaceFolder}/env",
 				"python.defaultInterpreterPath": "/usr/local/python/current/bin/python",
-				"python.formatting.blackPath": "/usr/local/py-utils/bin/black"
+				"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+				"files.exclude": {
+					"**/__pycache__": true
+				}
 			},
 			"json.schemas": [
 				{
@@ -85,7 +91,10 @@
 													"env": {
 														"type": "object",
 														"additionalProperties": {
-															"type": ["string", "object"]
+															"type": [
+																"string",
+																"object"
+															]
 														}
 													},
 													"command": {
@@ -127,16 +136,19 @@
 							"registryCredentials": {
 								"type": "object",
 								"additionalProperties": {
-								  "type": "object",
-								  "properties": {
-									"username": {
-									  "type": "string"
+									"type": "object",
+									"properties": {
+										"username": {
+											"type": "string"
+										},
+										"password": {
+											"type": "string"
+										}
 									},
-									"password": {
-									  "type": "string"
-									}
-								  },
-								  "required": ["username", "password"]
+									"required": [
+										"username",
+										"password"
+									]
 								}
 							},
 							"preDeployScript": {

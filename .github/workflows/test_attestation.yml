@@ -48,6 +48,9 @@ jobs:
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
           UNIQUE_ID: ${{ steps.workflow-id.outputs.workflow-id }}
           ATTESTATION_SIDECAR_IMAGE: ${{ secrets.ATTESTATION_SIDECAR_IMAGE }}
+          SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
+          SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
+          SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}
         run: python infra/resolve_manifest_variables.py examples/attestation/manifest.json > manifest.json
 
       - name: Upload Manifest

@@ -104,7 +104,7 @@
                 "--name",
                 "${input:storageAccountName}",
                 "--location",
-                "${input:resourceGroupLocation}",
+                "${input:containerLocation}",
                 "--container-name",
                 "${input:storageContainerName}",
             ]
@@ -214,11 +214,6 @@
             "id": "storageAccountName",
             "type": "promptString",
             "description": "Enter a name for the storage account:",
-        },
-        {
-            "id": "resourceGroupLocation",
-            "type": "promptString",
-            "description": "Enter the location of the storage account's resource group:",
         },
         {
             "id": "storageContainerName",

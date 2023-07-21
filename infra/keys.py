@@ -85,7 +85,7 @@ def deploy_key(arm_template: dict, key: bytes):
     print(f"Deployed key {name}-key into the HSM")
 
 
-def generate_key_file(tmp_key_file: any):
+def generate_key_file(tmp_key_file: tempfile._TemporaryFileWrapper):
     print("Generating key file")
     subprocess.check_call(f"dd if=/dev/random of={tmp_key_file.name} count=1 bs=32", shell=True)
 

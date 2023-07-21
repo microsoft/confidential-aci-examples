@@ -121,12 +121,8 @@ if __name__ == "__main__":
     parser.add_argument("--arm-template-path", required=True)
     args = parser.parse_args()
 
-    tmp_key_file = tempfile.NamedTemporaryFile()
-    key = generate_key_file(tmp_key_file)
-
-    with open(args.arm_template_path, "r") as f:
+    with open(args.arm_template_path, "r") as f, tempfile.NamedTemporaryFile() as tmp_key_file:
+        key = generate_key_file(tmp_key_file)
         # tmp_key_file.name will look something like '/tmp/tmptjujjt' -- the path to the file
         deploy_blob(json.load(f), tmp_key_file.name)
         deploy_key(json.load(f), key)
-
-    tmp_key_file.close()

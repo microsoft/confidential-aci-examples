@@ -31,6 +31,10 @@
         "$AZURE_REGISTRY_URL": {
             "username": "$AZURE_REGISTRY_USERNAME",
             "password": "$AZURE_REGISTRY_PASSWORD"
+        },
+        "$SIDECARS_REGISTRY_URL": {
+            "username": "$SIDECARS_REGISTRY_USERNAME",
+            "password": "$SIDECARS_REGISTRY_PASSWORD"
         }
     }
 }

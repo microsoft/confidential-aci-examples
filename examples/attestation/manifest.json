@@ -9,8 +9,8 @@
                 {
                     "image": "primary",
                     "ports": [22, 8000],
-                    "cores": 2,
-                    "ram": 8
+                    "cores": 1,
+                    "ram": 2
                 },
                 {
                     "image": "$ATTESTATION_SIDECAR_IMAGE",

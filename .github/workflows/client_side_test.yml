@@ -80,6 +80,5 @@ jobs:
           CLEANUP_ACI: 0
         run: |
           python -m unittest discover \
-            -s examples \
-            -p '${{ inputs.test }}*.py' \
+            -s examples/${{ inputs.test }} \
             -v

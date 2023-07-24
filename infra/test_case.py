@@ -14,7 +14,7 @@ class TestCase(unittest.TestCase):
 
         self.test_name = inspect.getfile(self.__class__).split("/")[-2]
         self.image_tag = str(uuid.uuid4())
-        self.name = str(uuid.uuid4())
+        self.name = os.getenv("UNIQUE_ID", str(uuid.uuid4()))
 
         with open(f"examples/{self.test_name}/manifest.json", "r") as manifest_file:
             self.manifest = json.load(manifest_file)

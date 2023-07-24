@@ -27,7 +27,7 @@ class KeyReleaseTest(TestCase):
                 }
             ),
         )
-        assert response.status_code == 200, response.content.decode()
+        assert response.status_code == 200
         assert json.loads(json.loads(response.content.decode())["key"])["k"] != ""
 
 

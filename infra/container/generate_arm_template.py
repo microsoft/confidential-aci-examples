@@ -18,7 +18,8 @@ def generate_arm_template(
     security_policy: Optional[str] = None,
     out: Optional[str] = None,
 ):
-    os.environ["UNIQUE_ID"] = name
+    if "UNIQUE_ID" not in os.environ:
+        os.environ["UNIQUE_ID"] = name
     manifest = resolve_manifest_variables(manifest)
 
     print(f"Generating ARM template for {name}")

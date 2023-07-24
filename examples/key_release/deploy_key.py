@@ -86,7 +86,7 @@ def deploy_key(arm_template: dict):
     )
 
     assert response.status_code == 200, response.content
-    print(f"Deployed key {name}-key into the HSM")
+    print(f"Deployed key {name} into the HSM")
 
 
 if __name__ == "__main__":

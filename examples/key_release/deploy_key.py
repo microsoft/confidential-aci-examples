@@ -15,7 +15,7 @@ def deploy_key(arm_template: dict):
     for resource in arm_template["resources"]:
         for container in resource["properties"]["containers"]:
             for env_var in container["properties"]["environmentVariables"]:
-                if env_var["name"] == "SkrClientID":
+                if env_var["name"] == "SkrClientKID":
                     name = env_var["value"]
                     break
     assert name is not None

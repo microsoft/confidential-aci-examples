@@ -10,7 +10,14 @@ import requests
 
 
 def deploy_key(arm_template: dict):
-    name = arm_template["variables"]["uniqueId"]
+    name = None
+    for resource in arm_template["resources"]:
+        for container in resource["properties"]["containers"]:
+            for env_var in container["properties"]["environmentVariables"]:
+                if env_var["name"] == "SkrClientID":
+                    name = env_var["value"]
+                    break
+    assert name is not None
 
     resources = arm_template["resources"]
     assert len(resources) == 1

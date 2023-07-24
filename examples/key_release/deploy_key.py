@@ -29,7 +29,7 @@ def deploy_key(arm_template: dict):
     ).hexdigest()
 
     response = requests.put(
-        url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}-key?api-version=7.3-preview",
+        url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}?api-version=7.3-preview",
         data=json.dumps(
             {
                 "key": {

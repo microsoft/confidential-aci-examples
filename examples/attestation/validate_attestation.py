@@ -13,7 +13,7 @@ from cryptography.hazmat.primitives.asymmetric.ec import ECDSA
 from cryptography.hazmat.primitives.asymmetric.padding import PSS, MGF1
 from cryptography.hazmat.primitives.asymmetric.utils import encode_dss_signature
 
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from get_attestation import SIGNATURE_STRUCTURE, SNP_REPORT_STRUCTURE
 

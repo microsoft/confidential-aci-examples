@@ -4,8 +4,10 @@ import grpc
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs, urlparse
 
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from get_attestation import get_attestation_report
+
+sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), "protobuf"))
 import protobuf.attestation_sidecar_pb2 as attestation_sidecar
 import protobuf.attestation_sidecar_pb2_grpc as attestation_sidecar_grpc
 
@@ -24,13 +26,13 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             if self.path.startswith("/get_attestation_from_sidecar"):
                 request = attestation_sidecar.FetchAttestationRequest()
                 request.report_data = report_data.encode("utf-8")
-                with grpc.insecure_channel("unix:///mnt/uds/sock") as channel:
+                with grpc.insecure_channel("unix:/mnt/uds/sock") as channel:
                     stub = attestation_sidecar_grpc.AttestationContainerStub(channel)
                     response = stub.FetchAttestation(request)
-                    attesation = response.attestation
+                    attestation = response.attestation
 
             else:  # /get_attestation
-                attesation = get_attestation_report(report_data.encode("utf-8"))
+                attestation = get_attestation_report(report_data.encode("utf-8"))
 
             self.send_response(200)
             self.send_header("Content-type", "application/octet-stream")

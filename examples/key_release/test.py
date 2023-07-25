@@ -23,11 +23,11 @@ class KeyReleaseTest(TestCase):
                 {
                     "maa_endpoint": os.environ["AZURE_ATTESTATION_ENDPOINT"],
                     "akv_endpoint": os.environ["AZURE_HSM_ENDPOINT"],
-                    "kid": f"group-{self.name}-key",
+                    "kid": f"{self.name}-key",
                 }
             ),
         )
-        assert response.status_code == 200
+        assert response.status_code == 200, response.content.decode()
         assert json.loads(json.loads(response.content.decode())["key"])["k"] != ""
 
 

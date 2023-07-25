@@ -11,9 +11,14 @@ from infra.container.generate_arm_template import generate_arm_template
 from infra.generate_security_policy import generate_security_policy
 from infra.container.get_ip import get_container_ip
 from infra.delete_deployment import delete_deployment
+from infra.resolve_manifest_variables import resolve_manifest_variables
 
 
 def setUpAci(cls):
+    if "UNIQUE_ID" not in os.environ:
+        os.environ["UNIQUE_ID"] = cls.name
+    cls.manifest = resolve_manifest_variables(cls.manifest)
+
     # Check if the deployment already exists
     get_container_ip_func = lambda: get_container_ip(
         resource_client=get_resource_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
@@ -73,6 +78,7 @@ def setUpAci(cls):
 
 
 def tearDownAci(cls):
+    del os.environ["UNIQUE_ID"]
     if os.getenv("CLEANUP_ACI") not in ["0", "false", "False"]:
         with open(f"examples/{cls.test_name}/arm_template.json", "r") as f:
             delete_deployment(

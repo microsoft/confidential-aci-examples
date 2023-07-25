@@ -10,7 +10,14 @@ import requests
 
 
 def deploy_key(arm_template: dict):
-    name = arm_template["variables"]["uniqueId"]
+    name = None
+    for resource in arm_template["resources"]:
+        for container in resource["properties"]["containers"]:
+            for env_var in container["properties"]["environmentVariables"]:
+                if env_var["name"] == "SkrClientKID":
+                    name = env_var["value"]
+                    break
+    assert name is not None
 
     resources = arm_template["resources"]
     assert len(resources) == 1
@@ -22,7 +29,7 @@ def deploy_key(arm_template: dict):
     ).hexdigest()
 
     response = requests.put(
-        url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}-key?api-version=7.3-preview",
+        url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}?api-version=7.3-preview",
         data=json.dumps(
             {
                 "key": {
@@ -79,7 +86,7 @@ def deploy_key(arm_template: dict):
     )
 
     assert response.status_code == 200, response.content
-    print(f"Deployed key {name}-key into the HSM")
+    print(f"Deployed key {name} into the HSM")
 
 
 if __name__ == "__main__":

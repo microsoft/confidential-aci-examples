@@ -9,6 +9,9 @@
                 {
                     "image": "primary",
                     "ports": [22, 8000],
+                    "mounts": {
+                        "uds": "/mnt/uds"
+                    },
                     "cores": 1,
                     "ram": 2
                 },
@@ -19,11 +22,17 @@
                         "AZURE_ATTESTATION_ENDPOINT": "$AZURE_ATTESTATION_ENDPOINT"
                     },
                     "ports": [8080],
+                    "mounts": {
+                        "uds": "/mnt/uds"
+                    },
                     "cores": 1,
                     "ram": 2
                 }
             ],
-            "ports": [22, 8000, 8080]
+            "ports": [22, 8000, 8080],
+            "volumes": [
+                "uds"
+            ]
         }
     ],
     "securityPolicies": [],

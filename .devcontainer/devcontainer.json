@@ -82,6 +82,14 @@
 															"type": "number"
 														}
 													},
+													"mounts": {
+														"type": "object",
+														"additionalProperties": {
+															"type": [
+																"string"
+															]
+														}
+													},
 													"cores": {
 														"type": "number"
 													},
@@ -117,6 +125,12 @@
 											"type": "array",
 											"items": {
 												"type": "number"
+											}
+										},
+										"volumes": {
+											"type": "array",
+											"items": {
+												"type": "string"
 											}
 										}
 									},

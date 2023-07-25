@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/devcontainers/universal:linux
 
 # Install Linux dependencies
-RUN sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install -y cryptsetup
+RUN sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cryptsetup
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash

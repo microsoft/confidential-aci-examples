@@ -99,11 +99,11 @@ def generate_blob(name: str, key_file_path: str):
     os.remove(encrypted_image)
 
 
-def deploy_blob(arm_template: dict):
+def deploy_blob(arm_template: dict, key_file_path: str):
     name = arm_template["variables"]["uniqueId"] + "-blob"
 
     # generate encrypted blob
-    generate_blob(name)
+    generate_blob(name, key_file_path)
 
     # Deploy the container
     account_url = f"https://{os.environ['AZURE_STORAGE_ACCOUNT_NAME']}.blob.core.windows.net"

@@ -102,7 +102,7 @@ def generate_arm_template(
                             "name": volume,
                             "emptyDir": {},
                         }
-                        for volume in container_group["volumes"]
+                        for volume in container_group.get("volumes", [])
                     ],
                     "confidentialComputeProperties": {
                         "ccePolicy": security_policy,

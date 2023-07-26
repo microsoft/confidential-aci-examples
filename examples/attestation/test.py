@@ -38,7 +38,7 @@ class AttestationTest(TestCase):
 
         # We expect the signatures to be different as there are two different calls to the IOCTL
         # So only compare the body of the attestation report
-        assert sidecar_report[-1] == report[-1]
+        assert sidecar_report[:-1] == report[:-1]
 
     def test_attestation_validation(self):
         assert self.container_ip is not None

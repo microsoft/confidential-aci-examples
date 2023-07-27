@@ -5,7 +5,7 @@ from infra.build_and_push_images import build_and_push_images
 from infra.add_security_policy_to_arm_template import (
     add_security_policy_to_arm_template,
 )
-from infra.clients import get_container_client, get_resource_client
+from infra.clients import get_container_client, get_docker_client, get_resource_client
 from infra.deploy_arm_template import deploy_arm_template, run_pre_deploy_script
 from infra.container.generate_arm_template import generate_arm_template
 from infra.generate_security_policy import generate_security_policy
@@ -79,6 +79,15 @@ def setUpAci(cls):
 
 def tearDownAci(cls):
     del os.environ["UNIQUE_ID"]
+
+    registry = os.environ["AZURE_REGISTRY_URL"]
+    client = get_docker_client(
+        registry=registry,
+        registry_password=os.environ["AZURE_REGISTRY_PASSWORD"],
+    )
+    for image in client.images.list():
+        client.images.remove(image.id, force=True)
+
     if os.getenv("CLEANUP_ACI") not in ["0", "false", "False"]:
         with open(f"examples/{cls.test_name}/arm_template.json", "r") as f:
             delete_deployment(

@@ -80,14 +80,6 @@ def setUpAci(cls):
 
 def tearDownAci(cls):
     del os.environ["UNIQUE_ID"]
-
-    client = docker.from_env()
-    for image in client.images.list():
-        try:
-            client.images.remove(image.id, force=True)
-        except Exception as e:
-            print(f"Failed to remove image {image.id}: {e}")
-
     if os.getenv("CLEANUP_ACI") not in ["0", "false", "False"]:
         with open(f"examples/{cls.test_name}/arm_template.json", "r") as f:
             delete_deployment(

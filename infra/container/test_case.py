@@ -80,13 +80,13 @@ def setUpAci(cls):
 def tearDownAci(cls):
     del os.environ["UNIQUE_ID"]
 
-    registry = os.environ["AZURE_REGISTRY_URL"]
-    client = get_docker_client(
-        registry=registry,
-        registry_password=os.environ["AZURE_REGISTRY_PASSWORD"],
-    )
-    for image in client.images.list():
-        client.images.remove(image.id, force=True)
+    # registry = os.environ["AZURE_REGISTRY_URL"]
+    # client = get_docker_client(
+    #     registry=registry,
+    #     registry_password=os.environ["AZURE_REGISTRY_PASSWORD"],
+    # )
+    # for image in client.images.list():
+    #     client.images.remove(image.id, force=True)
 
     if os.getenv("CLEANUP_ACI") not in ["0", "false", "False"]:
         with open(f"examples/{cls.test_name}/arm_template.json", "r") as f:

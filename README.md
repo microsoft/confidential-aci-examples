@@ -13,6 +13,11 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 [![Key Release Test Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml)
 [![Key Release Test Daily (Sidecar Repo Main Branch)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_daily.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_daily.yml)
 
+## Examples
+
+### [Attestation](examples/attestation/README.md)
+Fetches and validates an SNP Attestation report, locally as well as using a sidecar.
+
 ## Setup Development Environment
 
 You can use Github Codespaces to create a fully ready to use development environment.

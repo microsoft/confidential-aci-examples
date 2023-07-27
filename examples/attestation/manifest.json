@@ -9,11 +9,30 @@
                 {
                     "image": "primary",
                     "ports": [22, 8000],
-                    "cores": 2,
-                    "ram": 8
+                    "mounts": {
+                        "uds": "/mnt/uds"
+                    },
+                    "cores": 1,
+                    "ram": 2
+                },
+                {
+                    "image": "$ATTESTATION_SIDECAR_IMAGE",
+                    "command": ["app", "-socket-address", "/mnt/uds/sock"],
+                    "env": {
+                        "AZURE_ATTESTATION_ENDPOINT": "$AZURE_ATTESTATION_ENDPOINT"
+                    },
+                    "ports": [8080],
+                    "mounts": {
+                        "uds": "/mnt/uds"
+                    },
+                    "cores": 1,
+                    "ram": 2
                 }
             ],
-            "ports": [22, 8000]
+            "ports": [22, 8000, 8080],
+            "volumes": [
+                "uds"
+            ]
         }
     ],
     "securityPolicies": [],
@@ -21,6 +40,10 @@
         "$AZURE_REGISTRY_URL": {
             "username": "$AZURE_REGISTRY_USERNAME",
             "password": "$AZURE_REGISTRY_PASSWORD"
+        },
+        "$SIDECARS_REGISTRY_URL": {
+            "username": "$SIDECARS_REGISTRY_USERNAME",
+            "password": "$SIDECARS_REGISTRY_PASSWORD"
         }
     }
 }

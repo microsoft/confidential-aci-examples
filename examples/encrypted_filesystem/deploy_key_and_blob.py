@@ -11,109 +11,96 @@ from infra.clients import get_blob_service_client
 from infra.keys import generate_key_file, deploy_key
 
 
-# cryptsetupCommand runs cryptsetup with the provided arguments
-def cryptsetup_command(args: list[str]):
-	# --debug and -v are used to increase the information printed by
-	# cryptsetup. By default, it doesn't print much information, which makes it
-	# hard to debug it when there are problems.
-    cmd = ["sudo cryptsetup --debug -v"] + args
-    subprocess.check_call(
-        " ".join(cmd),
-        shell=True,
-    )
+class CryptSetupFileSystem:
+    DEVICE_NAME = "cryptdevice1"
+    DEVICE_NAME_PATH = f"/dev/mapper/{DEVICE_NAME}"
 
+    def _run_command(self, *args):
+        subprocess.check_call(
+            " ".join(
+                [
+                    "sudo cryptsetup --debug -v",
+                    *args,
+                ]
+            ),
+            shell=True,
+        )
 
-def cryptsetup_format(image_name: str, key_file_path: str):
-    args = ["luksFormat", "--type luks2", image_name,
-    "--key-file", key_file_path, "--batch-mode", "--sector-size 4096",
-    "--cipher aes-xts-plain64",
-    "--pbkdf pbkdf2", "--pbkdf-force-iterations 1000"]
+    def __init__(self, key_path, image_path):
+        self.key_path = key_path
+        self.image_path = image_path
+        with open(image_path, "wb") as f:
+            f.seek(64 * 1024 * 1024 - 1)
+            f.write(b"\0")
 
-    cryptsetup_command(args)
+    def __enter__(self):
+        # Format
+        self._run_command(
+            "luksFormat",
+            "--type luks2",
+            self.image_path,
+            "--key-file",
+            f'"{self.key_path}"',
+            "--batch-mode",
+            "--sector-size 4096",
+            "--cipher aes-xts-plain64",
+            "--pbkdf pbkdf2",
+            "--pbkdf-force-iterations 1000",
+        )
 
+        # Open
+        self._run_command(
+            "luksOpen",
+            self.image_path,
+            self.DEVICE_NAME,
+            "--key-file",
+            self.key_path,
+            # Don't use a journal to increase performance
+            "--integrity-no-journal",
+            "--persistent",
+        )
 
-# cryptsetupOpen runs "cryptsetup luksOpen" with the right arguments.
-def cryptsetup_open(image_name: str, device_name: str, key_file_path: str):
-	args = [ "luksOpen", image_name, device_name, "--key-file", key_file_path,
-		# Don't use a journal to increase performance
-		"--integrity-no-journal",
-		"--persistent"]
+        # Mount
+        subprocess.check_call(f"sudo mkfs.ext4 {self.DEVICE_NAME_PATH}", shell=True)
+        self._dir = tempfile.TemporaryDirectory()
+        subprocess.check_call(
+            f"sudo mount -t ext4 {self.DEVICE_NAME_PATH} {self._dir.name} -o loop",
+            shell=True,
+        )
+        return self._dir.name
 
-	cryptsetup_command(args)
-
-
-def cryptsetup_close(device_name: str):
-    args = ["luksClose", device_name]
-    cryptsetup_command(args)
-
-
-def generate_blob(name: str, key_file_path: str):
-    encrypted_image = name
-    device_name = "cryptdevice1"
-    device_name_path = f"/dev/mapper/{device_name}"
-
-    # create folder to copy into filesystem
-    local_fs_name = "filesystem"
-    local_file_path = os.path.join(local_fs_name, "file.txt")
-    os.makedirs(local_fs_name,exist_ok=True)
-    with open(local_file_path, 'w') as f:
-        f.write("This is a file in the encrypted filesystem!")
-
-    print("Creating encrypted image ", encrypted_image)
-    subprocess.check_call(
-        " ".join(
-            [
-                f"rm -f {encrypted_image};",
-                f"touch {encrypted_image};",
-                f"truncate --size 64M {encrypted_image}",
-            ]
-        ),
-        shell=True,
-    )
-
-    cryptsetup_format(encrypted_image, key_file_path)
-    cryptsetup_open(encrypted_image, device_name, key_file_path)
-
-    try:
-        print("[!] Formatting as ext4...")
-        subprocess.check_call(f"sudo mkfs.ext4 {device_name_path}", shell=True)
-
-        print("[!] Mounting...")
-        with tempfile.TemporaryDirectory() as mount_point:
-            subprocess.check_call(f"sudo mount -t ext4 {device_name_path} {mount_point} -o loop", shell=True)
-
-            print("[!] Copying contents to encrypted device...")
-
-            # The /* is needed to copy folder contents instead of the folder + contents
-            subprocess.check_call(f"sudo cp -r filesystem/* {mount_point}", shell=True)
-            subprocess.check_call(f"ls {mount_point}", shell=True)
-
-            print("[!] Closing device...")
-            subprocess.check_call(f"sudo umount {mount_point}", shell=True)
-    finally:
-        cryptsetup_close(device_name)
-
-    # clean up local filesystem and encrypted image
-    os.remove(local_file_path)
-    os.rmdir(local_fs_name)
-    os.remove(encrypted_image)
+    def __exit__(self, exc_type, exc_value, traceback):
+        subprocess.check_call(f"sudo umount {self._dir.name}", shell=True)
+        self._run_command("luksClose", self.DEVICE_NAME)
+        self._dir.cleanup()
 
 
 def deploy_blob(arm_template: dict, key_file_path: str):
-    name = arm_template["variables"]["uniqueId"] + "-blob"
+    blob_name = arm_template["variables"]["uniqueId"] + "-blob"
+    blob_service_client = get_blob_service_client(
+        account_url=f"https://{os.environ['AZURE_STORAGE_ACCOUNT_NAME']}.blob.core.windows.net",
+    )
+    blob_client = blob_service_client.get_blob_client(
+        container=os.environ["AZURE_STORAGE_CONTAINER_NAME"], blob=blob_name
+    )
 
-    # generate encrypted blob
-    generate_blob(name, key_file_path)
+    if blob_client.exists():
+        blob_client.delete_blob()
 
-    # Deploy the container
-    account_url = f"https://{os.environ['AZURE_STORAGE_ACCOUNT_NAME']}.blob.core.windows.net"
-    blob_service_client = get_blob_service_client(account_url)
-    blob_client = blob_service_client.get_blob_client(container=os.environ['AZURE_STORAGE_CONTAINER_NAME'], blob=name)
+    with tempfile.TemporaryDirectory() as blob_dir:
+        blob_path = os.path.join(blob_dir, blob_name)
+        with CryptSetupFileSystem(key_file_path, blob_path) as filesystem:
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                tmp_file.write(b"This is a file in the encrypted filesystem!")
+                file_path = os.path.join(filesystem, "file.txt")
+                subprocess.check_call(
+                    f"sudo cp {tmp_file.name} {file_path}", shell=True
+                )
 
-    with open(file=name, mode="rb") as data:
-        blob_client.upload_blob(data)
-    
-    print(f"Deployed blob {name} into the storage container")
+            with open(blob_path, mode="rb") as data:
+                blob_client.upload_blob(data)
+
+    print(f"Deployed blob {blob_name} into the storage container")
 
 
 if __name__ == "__main__":
@@ -121,8 +108,11 @@ if __name__ == "__main__":
     parser.add_argument("--arm-template-path", required=True)
     args = parser.parse_args()
 
-    with open(args.arm_template_path, "r") as f, tempfile.NamedTemporaryFile() as tmp_key_file:
+    with open(
+        args.arm_template_path, "r"
+    ) as f, tempfile.NamedTemporaryFile() as tmp_key_file:
+        arm_template = json.load(f)
         key = generate_key_file(tmp_key_file)
         # tmp_key_file.name will look something like '/tmp/tmptjujjt' -- the path to the file
-        deploy_blob(json.load(f), tmp_key_file.name)
-        deploy_key(json.load(f), key)
+        deploy_blob(arm_template, tmp_key_file.name)
+        deploy_key(arm_template, key)

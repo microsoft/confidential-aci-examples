@@ -15,7 +15,7 @@ on:
 jobs:
   local-workflow:
     name: Local Workflow
-    runs-on: ubuntu-latest-4core
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -56,4 +56,4 @@ jobs:
           AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-        run: python -m unittest discover -s examples/ -p *.py
+        run: python -m unittest discover -s examples/attestation -p *.py

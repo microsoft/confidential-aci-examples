@@ -59,6 +59,15 @@ def generate_arm_template(
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
                                 ],
+                                "volumeMounts": [
+                                    {
+                                        "name": volumeName,
+                                        "mountPath": volumePath,
+                                    }
+                                    for volumeName, volumePath in container.get(
+                                        "mounts", {}
+                                    ).items()
+                                ],
                                 "environmentVariables": [
                                     {"name": k, "value": v}
                                     for k, v in (container.get("env") or {}).items()
@@ -88,6 +97,13 @@ def generate_arm_template(
                         ],
                         "type": "Public",
                     },
+                    "volumes": [
+                        {
+                            "name": volume,
+                            "emptyDir": {},
+                        }
+                        for volume in container_group.get("volumes", [])
+                    ],
                     "confidentialComputeProperties": {
                         "ccePolicy": security_policy,
                     },

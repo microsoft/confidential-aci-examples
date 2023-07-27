@@ -5,7 +5,7 @@ from requests import adapters, exceptions, Response, Session
 def request(
     url: str,
     retries: int = 60,
-    timeout: int = 10,
+    timeout: float = 10,
     method="get",
     data=None,
     headers=None,
@@ -33,7 +33,7 @@ def request(
         except exceptions.ConnectionError:
             ...
         except exceptions.Timeout:
-            timeout * 1.5
+            timeout *= 1.5
         finally:
             retries -= 1
 

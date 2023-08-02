@@ -21,7 +21,7 @@ def generate_arm_template(
     if "UNIQUE_ID" not in os.environ:
         os.environ["UNIQUE_ID"] = name
     manifest = resolve_manifest_variables(manifest)
-    
+
     print(f"Generating ARM template for {name}")
     arm_template = {
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -62,6 +62,15 @@ def generate_arm_template(
                                 "securityContext": {
                                     "privileged": container.get("privileged", False)
                                 },
+                                "volumeMounts": [
+                                    {
+                                        "name": volumeName,
+                                        "mountPath": volumePath,
+                                    }
+                                    for volumeName, volumePath in container.get(
+                                        "mounts", {}
+                                    ).items()
+                                ],
                                 "environmentVariables": [
                                     {"name": k, "value": v}
                                     for k, v in (container.get("env") or {}).items()
@@ -72,10 +81,6 @@ def generate_arm_template(
                                         "cpu": container["cores"],
                                     }
                                 },
-                                "volumeMounts": [
-                                    {"name": k, "mountPath": v}
-                                    for k, v in container.get("mounts" or {}).items()
-                                ],
                                 **(
                                     {"command": container.get("command")}
                                     if "command" in container
@@ -95,6 +100,13 @@ def generate_arm_template(
                         ],
                         "type": "Public",
                     },
+                    "volumes": [
+                        {
+                            "name": volume,
+                            "emptyDir": {},
+                        }
+                        for volume in container_group.get("volumes", [])
+                    ],
                     "confidentialComputeProperties": {
                         "ccePolicy": security_policy,
                     },

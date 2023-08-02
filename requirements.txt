@@ -7,3 +7,6 @@ azure-mgmt-network
 docker
 GitPython
 pexpect
+protobuf
+grpcio
+grpcio-tools

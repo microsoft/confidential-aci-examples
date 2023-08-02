@@ -1,5 +1,4 @@
 import os
-import requests
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 MOUNT_DIR = "/mnt/remote/share"

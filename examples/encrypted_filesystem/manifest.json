@@ -8,6 +8,7 @@
             "containers": [
                 {
                     "image": "$ENCRYPTED_FILESYSTEM_IMAGE",
+                    "privileged": true,
                     "env": {
                         "EncfsSideCarArgs": {
                             "azure_filesystems": [
@@ -29,6 +30,9 @@
                             ]
                         }
                     },
+                    "mounts": {
+                        "remotemounts": "/mnt/remote"
+                    },
                     "command": [ "/encfs.sh; cp ~/log.txt /mnt/remote/share/" ],
                     "ports": [ 8080 ],
                     "cores": 1,
@@ -36,6 +40,9 @@
                 },
                 {
                     "image": "primary",
+                    "mounts": {
+                        "remotemounts": "/mnt/remote"
+                    },
                     "cores": 1,
                     "ram": 2,
                     "ports": [ 8000 ]

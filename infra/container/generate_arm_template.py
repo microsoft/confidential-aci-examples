@@ -21,7 +21,7 @@ def generate_arm_template(
     if "UNIQUE_ID" not in os.environ:
         os.environ["UNIQUE_ID"] = name
     manifest = resolve_manifest_variables(manifest)
-
+    
     print(f"Generating ARM template for {name}")
     arm_template = {
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -59,6 +59,9 @@ def generate_arm_template(
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
                                 ],
+                                "securityContext": {
+                                    "privileged": container.get("privileged", False)
+                                },
                                 "environmentVariables": [
                                     {"name": k, "value": v}
                                     for k, v in (container.get("env") or {}).items()
@@ -69,6 +72,10 @@ def generate_arm_template(
                                         "cpu": container["cores"],
                                     }
                                 },
+                                "volumeMounts": [
+                                    {"name": k, "mountPath": v}
+                                    for k, v in container.get("mounts" or {}).items()
+                                ],
                                 **(
                                     {"command": container.get("command")}
                                     if "command" in container

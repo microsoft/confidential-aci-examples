@@ -83,4 +83,4 @@ jobs:
     secrets: inherit
     with:
       id: ${{ needs.prepare.outputs.workflow-id }}
-      test: encrypted-filesystem
+      test: encrypted_filesystem

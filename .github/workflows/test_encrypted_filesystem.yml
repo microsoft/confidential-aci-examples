@@ -56,7 +56,7 @@ jobs:
       - name: Resolve Variables
         id: resolve-variables
         env:
-          ENCRYPTED_FILESYSTEM_IMAGE: "${{ (github.event_name == 'pull_request' || github.event_name == 'push') && 'http://mcr.microsoft.com/aci/encfs:2.2' || inputs.encrypted_filesystem_image }}"
+          ENCRYPTED_FILESYSTEM_IMAGE: "${{ (github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'merge_group' || github.event_name == 'schedule') && 'http://mcr.microsoft.com/aci/encfs:2.2' || inputs.encrypted_filesystem_image }}"
           SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
           SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
           SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}

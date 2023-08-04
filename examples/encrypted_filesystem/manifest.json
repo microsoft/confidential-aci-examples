@@ -33,7 +33,7 @@
                     "mounts": {
                         "remotemounts": "/mnt/remote"
                     },
-                    "command": [ "/encfs.sh; cp /log.txt /mnt/remote/share/log.txt" ],
+                    "command": [ "/encfs.sh" ],
                     "ports": [ 8080 ],
                     "cores": 1,
                     "ram": 2

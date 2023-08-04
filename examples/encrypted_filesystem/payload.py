@@ -3,7 +3,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 MOUNT_DIR = "/mnt/remote/share"
 LOG_FILE = MOUNT_DIR + "/log.txt"
-KEY_NAME = os.environ["UNIQUE_ID"] + "-key"
+KEY_NAME = os.environ["KID"]
 
 def read_file(path: str) -> str:
     with open(path, "r") as f:

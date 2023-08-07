@@ -1,5 +1,5 @@
 import argparse
-from base64 import b64encode, b64decode
+from base64 import urlsafe_b64encode, b64encode, b64decode
 import binascii
 import hashlib
 import json
@@ -30,7 +30,7 @@ def deploy_key(arm_template: dict, key: bytes):
             {
                 "key": {
                     "kty": "oct-HSM",
-                    "k": key.decode(),
+                    "k": urlsafe_b64encode(binascii.unhexlify(key)).decode(),
                     "key_size": 256,
                 },
                 "hsm": True,
@@ -87,7 +87,9 @@ def deploy_key(arm_template: dict, key: bytes):
 
 def generate_key_file(tmp_key_file: BufferedWriter):
     print("Generating key file")
-    subprocess.check_call(f"dd if=/dev/random of={tmp_key_file.name} count=1 bs=32", shell=True)
+    subprocess.check_call(
+        f"dd if=/dev/random of={tmp_key_file.name} count=1 bs=32", shell=True
+    )
 
     print("Getting key in hex string format")
     bData = tmp_key_file.read(32)

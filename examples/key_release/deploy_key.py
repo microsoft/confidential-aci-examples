@@ -14,7 +14,19 @@ if __name__ == "__main__":
     parser.add_argument("--arm-template-path", required=True)
     args = parser.parse_args()
 
-    with open(args.arm_template_path, "r") as f, tempfile.NamedTemporaryFile() as tmp_key_file:
+    with open(
+        args.arm_template_path, "r"
+    ) as f, tempfile.NamedTemporaryFile() as tmp_key_file:
         key = generate_key_file(tmp_key_file)
-        # tmp_key_file.name will look something like '/tmp/tmptjujjt' -- the path to the file
-        deploy_key(json.load(f), key)
+        arm_template = json.load(f)
+
+        name = None
+        for resource in arm_template["resources"]:
+            for container in resource["properties"]["containers"]:
+                for env_var in container["properties"]["environmentVariables"]:
+                    if env_var["name"] == "SkrClientKID":
+                        name = env_var["value"]
+                        break
+        assert name is not None
+
+        deploy_key(name, arm_template, key)

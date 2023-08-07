@@ -112,4 +112,4 @@ if __name__ == "__main__":
         key = generate_key_file(tmp_key_file)
         # tmp_key_file.name will look something like '/tmp/tmptjujjt' -- the path to the file
         deploy_blob(arm_template, tmp_key_file.name)
-        deploy_key(arm_template, key)
+        deploy_key(arm_template["variables"]["uniqueId"], arm_template, key)

@@ -12,9 +12,7 @@ import requests
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
-def deploy_key(arm_template: dict, key: bytes):
-    name = arm_template["variables"]["uniqueId"]
-
+def deploy_key(name: str, arm_template: dict, key: bytes):
     resources = arm_template["resources"]
     assert len(resources) == 1
 
@@ -25,7 +23,7 @@ def deploy_key(arm_template: dict, key: bytes):
     ).hexdigest()
 
     response = requests.put(
-        url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}-key?api-version=7.3-preview",
+        url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}?api-version=7.3-preview",
         data=json.dumps(
             {
                 "key": {
@@ -82,7 +80,7 @@ def deploy_key(arm_template: dict, key: bytes):
     )
 
     assert response.status_code == 200, response.content
-    print(f"Deployed key {name}-key into the HSM")
+    print(f"Deployed key {name} into the HSM")
 
 
 def generate_key_file(tmp_key_file: BufferedWriter):

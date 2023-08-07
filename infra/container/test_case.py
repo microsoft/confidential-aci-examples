@@ -40,7 +40,7 @@ def setUpAci(cls):
     # Deploy the container with the freshly built image
     arm_template_path = f"examples/{cls.test_name}/arm_template.json"
     arm_template = generate_arm_template(
-        name=f"group-{cls.name}",
+        name=cls.name,
         image_tag=cls.image_tag,
         manifest=cls.manifest,
         location="eastus2euap",

@@ -9,10 +9,8 @@ from infra.test_case import TestCase
 
 
 class EncryptedFilesystemTest(TestCase):
-    def test_encfs_deployment_succeeded(self):
-        assert self.container_ip is not None
-
     def test_encfs_read(self):
+        assert self.container_ip is not None
         response = request(f"http://{self.container_ip}:8000/read")
         assert response.status_code == 200, response.content.decode("utf-8")
         assert (

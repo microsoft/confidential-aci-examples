@@ -46,140 +46,140 @@
 				"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
 				"files.exclude": {
 					"**/__pycache__": true
-				}
-			},
-			"json.schemas": [
-				{
-					"fileMatch": [
-						"examples/*/manifest.json"
-					],
-					"schema": {
-						"$schema": "http://json-schema.org/draft-07/schema#",
-						"type": "object",
-						"properties": {
-							"testName": {
-								"type": "string"
-							},
-							"images": {
-								"type": "object"
-							},
-							"containerGroups": {
-								"type": "array",
-								"items": {
-									"type": "object",
-									"properties": {
-										"containers": {
-											"type": "array",
-											"items": {
-												"type": "object",
-												"properties": {
-													"image": {
-														"type": "string"
-													},
-													"ports": {
-														"type": "array",
-														"items": {
-															"type": "number"
-														}
-													},
-													"mounts": {
-														"type": "object",
-														"additionalProperties": {
-															"type": [
-																"string"
-															]
-														}
-													},
-													"cores": {
-														"type": "number"
-													},
-													"ram": {
-														"type": "number"
-													},
-													"env": {
-														"type": "object",
-														"additionalProperties": {
-															"type": [
-																"string",
-																"object"
-															]
-														}
-													},
-													"command": {
-														"type": "array",
-														"items": {
+				},
+				"json.schemas": [
+					{
+						"fileMatch": [
+							"examples/*/manifest.json"
+						],
+						"schema": {
+							"$schema": "http://json-schema.org/draft-07/schema#",
+							"type": "object",
+							"properties": {
+								"testName": {
+									"type": "string"
+								},
+								"images": {
+									"type": "object"
+								},
+								"containerGroups": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"containers": {
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"image": {
 															"type": "string"
+														},
+														"ports": {
+															"type": "array",
+															"items": {
+																"type": "number"
+															}
+														},
+														"mounts": {
+															"type": "object",
+															"additionalProperties": {
+																"type": [
+																	"string"
+																]
+															}
+														},
+														"cores": {
+															"type": "number"
+														},
+														"ram": {
+															"type": "number"
+														},
+														"env": {
+															"type": "object",
+															"additionalProperties": {
+																"type": [
+																	"string",
+																	"object"
+																]
+															}
+														},
+														"command": {
+															"type": "array",
+															"items": {
+																"type": "string"
+															}
 														}
-													}
-												},
-												"required": [
-													"image",
-													"ports",
-													"cores",
-													"ram"
-												],
-												"additionalProperties": false
+													},
+													"required": [
+														"image",
+														"ports",
+														"cores",
+														"ram"
+													],
+													"additionalProperties": false
+												}
+											},
+											"ports": {
+												"type": "array",
+												"items": {
+													"type": "number"
+												}
+											},
+											"volumes": {
+												"type": "array",
+												"items": {
+													"type": "string"
+												}
 											}
 										},
-										"ports": {
-											"type": "array",
-											"items": {
-												"type": "number"
-											}
-										},
-										"volumes": {
-											"type": "array",
-											"items": {
+										"required": [
+											"containers",
+											"ports"
+										],
+										"additionalProperties": false
+									}
+								},
+								"securityPolicies": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								"registryCredentials": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {
+											"username": {
+												"type": "string"
+											},
+											"password": {
 												"type": "string"
 											}
-										}
-									},
-									"required": [
-										"containers",
-										"ports"
-									],
-									"additionalProperties": false
-								}
-							},
-							"securityPolicies": {
-								"type": "array",
-								"items": {
+										},
+										"required": [
+											"username",
+											"password"
+										]
+									}
+								},
+								"preDeployScript": {
 									"type": "string"
 								}
 							},
-							"registryCredentials": {
-								"type": "object",
-								"additionalProperties": {
-									"type": "object",
-									"properties": {
-										"username": {
-											"type": "string"
-										},
-										"password": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"username",
-										"password"
-									]
-								}
-							},
-							"preDeployScript": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"testName",
-							"images",
-							"containerGroups",
-							"securityPolicies",
-							"registryCredentials"
-						],
-						"additionalProperties": false
+							"required": [
+								"testName",
+								"images",
+								"containerGroups",
+								"securityPolicies",
+								"registryCredentials"
+							],
+							"additionalProperties": false
+						}
 					}
-				}
-			]
+				]
+			}
 		}
 	},
 	"postCreateCommand": "./setup.sh"

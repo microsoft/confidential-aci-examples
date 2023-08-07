@@ -52,9 +52,7 @@
             "volumes": ["remotemounts"]
         }
     ],
-    "securityPolicies": [
-        "simple_server/security_policies/allow_all.rego"
-    ],
+    "securityPolicies": [],
     "registryCredentials": {
         "$AZURE_REGISTRY_URL": {
             "username": "$AZURE_REGISTRY_USERNAME",

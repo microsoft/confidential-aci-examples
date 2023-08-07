@@ -40,9 +40,6 @@
                 },
                 {
                     "image": "primary",
-                    "env": {
-                        "KID": "$UNIQUE_ID-key"
-                    },
                     "mounts": {
                         "remotemounts": "/mnt/remote"
                     },

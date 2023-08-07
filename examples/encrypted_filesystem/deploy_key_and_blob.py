@@ -89,16 +89,13 @@ def deploy_blob(arm_template: dict, key_file_path: str):
 
     with tempfile.TemporaryDirectory() as blob_dir:
         blob_path = os.path.join(blob_dir, blob_name)
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            tmp_file.write(b"This is a file in the encrypted filesystem!")
         with CryptSetupFileSystem(key_file_path, blob_path) as filesystem:
-            with tempfile.NamedTemporaryFile() as tmp_file:
-                tmp_file.write(b"This is a file in the encrypted filesystem!")
-                file_path = os.path.join(filesystem, "file.txt")
-                subprocess.check_call(
-                    f"sudo cp {tmp_file.name} {file_path}", shell=True
-                )
-
-            with open(blob_path, mode="rb") as data:
-                blob_client.upload_blob(data)
+            file_path = os.path.join(filesystem, "file.txt")
+            subprocess.check_call(f"sudo cp {tmp_file.name} {file_path}", shell=True)
+        with open(blob_path, mode="rb") as data:
+            blob_client.upload_blob(data)
 
     print(f"Deployed blob {blob_name} into the storage container")
 

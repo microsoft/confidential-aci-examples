@@ -5,9 +5,11 @@ MOUNT_DIR = "/mnt/remote/share"
 LOG_FILE = MOUNT_DIR + "/log.txt"
 KEY_NAME = os.environ["KID"]
 
+
 def read_file(path: str) -> str:
     with open(path, "r") as f:
         return f.read()
+
 
 def write_file(path: str, content: str) -> str:
     try:
@@ -20,6 +22,7 @@ def write_file(path: str, content: str) -> str:
     except Exception as e:
         return "Failed to write file"
 
+
 def scan_file(path: str, text: str) -> str:
     try:
         with open(path, "r") as f:
@@ -30,53 +33,30 @@ def scan_file(path: str, text: str) -> str:
     except Exception as e:
         return "Failed to scan file"
 
+
 ENDPOINTS = {
-    "/read": {
-        "method": "GET",
-        "response": {
-            "content_type": "text/plain",
-            "body": read_file(os.path.join(MOUNT_DIR, "file.txt")),
-        },
-    },
-    "/write": {
-        "method": "GET",
-        "response": {
-            "content_type": "text/plain",
-            "body": write_file(os.path.join(MOUNT_DIR, "new_file.txt"), "This is a new file in the encrypted filesystem!")
-        },
-    },
-    "/maa_token": {
-        "method": "GET",
-        "response": {
-            "content_type": "text/plain",
-            "body": scan_file(LOG_FILE, "retrieving MAA token from MAA endpoint failed")
-        },
-    },
-    "/snp_report": {
-        "method": "GET",
-        "response": {
-            "content_type": "text/plain",
-            "body": scan_file(LOG_FILE, "fetching snp report failed")
-        },
-    },
-    "/key": {
-        "method": "GET",
-        "response": {
-            "content_type": "text/plain",
-            "body": scan_file(LOG_FILE, f"releasing the key {KEY_NAME} failed.")
-        },
-    }
+    "/read": lambda: read_file(os.path.join(MOUNT_DIR, "file.txt")),
+    "/write": lambda: write_file(
+        os.path.join(MOUNT_DIR, "new_file.txt"),
+        "This is a new file in the encrypted filesystem!",
+    ),
 }
 
 
 class MyRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path in ENDPOINTS and ENDPOINTS[self.path]["method"] == "GET":
-            self.send_response(200)
-            response = ENDPOINTS[self.path]["response"]
-            self.send_header("Content-type", response["content_type"])
-            self.end_headers()
-            self.wfile.write(response["body"].encode("utf-8"))
+            try:
+                result = ENDPOINTS[self.path]()
+                self.send_response(200)
+                self.send_header("Content-type", "text/plain")
+                self.end_headers()
+                self.wfile.write(result.encode("utf-8"))
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-type", "text/plain")
+                self.end_headers()
+                self.wfile.write(str(e).encode("utf-8"))
         else:
             self.send_response(404)
             self.end_headers()

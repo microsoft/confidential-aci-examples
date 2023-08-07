@@ -2,8 +2,6 @@ import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 MOUNT_DIR = "/mnt/remote/share"
-LOG_FILE = MOUNT_DIR + "/log.txt"
-KEY_NAME = os.environ["KID"]
 
 
 def read_file(path: str) -> str:
@@ -21,17 +19,6 @@ def write_file(path: str, content: str) -> str:
         return read_file(path)
     except Exception as e:
         return "Failed to write file"
-
-
-def scan_file(path: str, text: str) -> str:
-    try:
-        with open(path, "r") as f:
-            if text in f.read():
-                return "Found text in file"
-            else:
-                return "Did not find text in file"
-    except Exception as e:
-        return "Failed to scan file"
 
 
 ENDPOINTS = {

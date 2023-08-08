@@ -35,7 +35,6 @@ def generate_security_policy(
         subprocess.check_output(
             f"az confcom acipolicygen -a {arm_template_path} --outraw > {security_policy_path}",
             shell=True,
-            check=True,
         )
 
         with open(security_policy_path, "rb") as f:

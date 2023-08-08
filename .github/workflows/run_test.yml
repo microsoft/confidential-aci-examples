@@ -57,9 +57,6 @@ jobs:
     name: "Generate Security Policy"
     uses: ./.github/workflows/generate_security_policy.yml
     needs: [build-and-push-images]
-    strategy:
-      matrix:
-        location: ${{ fromJson(inputs.locations) }}
     secrets: inherit
     strategy:
       matrix:

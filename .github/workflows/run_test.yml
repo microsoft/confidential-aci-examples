@@ -18,6 +18,11 @@ on:
         default: '["eastus2euap", "northeurope"]'
         required: false
         type: string
+      skip-cleanup:
+        description: "Skip cleanup"
+        default: false
+        required: false
+        type: boolean
   workflow_call:
     inputs:
       id:
@@ -33,6 +38,11 @@ on:
         default: '["eastus2euap", "northeurope"]'
         required: false
         type: string
+      skip-cleanup:
+        description: "Skip cleanup"
+        default: false
+        required: false
+        type: boolean
 
 jobs:
   build-and-push-images:
@@ -104,7 +114,7 @@ jobs:
     uses: ./.github/workflows/delete_deployment.yml
     needs: [generate-security-policy, client-side-tests]
     secrets: inherit
-    if: always()
+    if: ${{ inputs.skip-cleanup == false }}
     strategy:
       fail-fast: false
       matrix:

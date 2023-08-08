@@ -32,6 +32,8 @@ def generate_security_policy(
         with open(arm_template_path, "w") as f:
             json.dump(arm_template, f, indent=2)
 
+        print(f"Generating Security Policy for {arm_template['resources'][0]['properties']['containers'][0]['properties']['image']} and {arm_template['resources'][0]['properties']['containers'][1]['properties']['image']}")
+
         subprocess.check_output(
             f"az confcom acipolicygen -a {arm_template_path} --outraw > {security_policy_path}",
             shell=True,

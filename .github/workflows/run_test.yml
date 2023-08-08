@@ -61,6 +61,9 @@ jobs:
       matrix:
         location: ${{ fromJson(inputs.locations) }}
     secrets: inherit
+    strategy:
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
     with:
       id: ${{ inputs.id }}
       test: ${{ inputs.test }}

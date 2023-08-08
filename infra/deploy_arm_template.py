@@ -85,5 +85,5 @@ if __name__ == "__main__":
                 arm_template=json.load(arm_template_file),
                 resource_group=args.resource_group
                 or os.environ["AZURE_RESOURCE_GROUP"],
-                deployment_name=args.deployment_name or f"deployment-{uuid.uuid4()}",
+                deployment_name=args.deployment_name or f"{uuid.uuid4()}-deployment",
             )

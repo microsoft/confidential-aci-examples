@@ -27,6 +27,6 @@ if __name__ == "__main__":
                     if env_var["name"] == "SkrClientKID":
                         name = env_var["value"]
                         break
-        assert name is not None
+        assert name is not None, "Could not find SkrClientKID in arm template"
 
         deploy_key(name, arm_template, key)

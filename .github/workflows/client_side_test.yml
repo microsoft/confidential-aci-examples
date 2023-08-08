@@ -74,7 +74,7 @@ jobs:
 
       - name: Run Tests
         env:
-          DEPLOYMENT_NAME: deployment-${{ steps.generate-name.outputs.name }}
+          DEPLOYMENT_NAME: ${{ steps.generate-name.outputs.name }}-deployment
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
           AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}

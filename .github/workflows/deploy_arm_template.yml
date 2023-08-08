@@ -85,7 +85,7 @@ jobs:
             --manifest-path manifest.json \
             --arm-template-path arm_template.json \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --deployment-name deployment-${{ steps.generate-name.outputs.name }} \
+            --deployment-name ${{ steps.generate-name.outputs.name }}-deployment \
 
       - name: Check Container is Running
         run: |

@@ -79,7 +79,7 @@ jobs:
         run: |
           python infra/container/generate_arm_template.py \
             --image-tag ${{ inputs.id }} \
-            --name group-${{ steps.generate-name.outputs.name }} \
+            --name ${{ steps.generate-name.outputs.name }} \
             --manifest-path manifest.json \
             --location ${{ inputs.location }} \
             --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \

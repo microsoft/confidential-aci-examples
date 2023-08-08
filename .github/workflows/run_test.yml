@@ -48,9 +48,13 @@ jobs:
     uses: ./.github/workflows/generate_security_policy.yml
     needs: [build-and-push-images]
     secrets: inherit
+    strategy:
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
     with:
       id: ${{ inputs.id }}
       test: ${{ inputs.test }}
+      location: ${{ matrix.location }}
 
   generate-arm-templates:
     name: "Generate ARM Templates"

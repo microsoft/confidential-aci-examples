@@ -92,7 +92,7 @@ if __name__ == "__main__":
             out=os.path.join(args.out, "hsm_arm_template.json"),
         ),
         resource_group=os.environ["AZURE_RESOURCE_GROUP"],
-        deployment_name=f"hsm-deployment-{uuid.uuid4()}",
+        deployment_name=f"{uuid.uuid4()}-hsm-deployment",
     )
 
     # Activate the HSM

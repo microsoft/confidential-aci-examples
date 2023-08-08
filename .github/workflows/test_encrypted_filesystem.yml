@@ -84,4 +84,3 @@ jobs:
     with:
       id: ${{ needs.prepare.outputs.workflow-id }}
       test: encrypted_filesystem
-      skip-cleanup: true

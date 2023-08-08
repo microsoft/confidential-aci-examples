@@ -55,9 +55,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Generate Matrix Cell Name
-        id: generate-name
-        run: echo "name=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+      - name: Generate Matrix Cell Names
+        id: generate-names
+        run: |
+          echo "security-policy-name=$(echo ${{ inputs.test }}-${{ inputs.location }}-_generated.rego-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+          echo "arm-template-name=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
       - name: Download Manifest
         uses: actions/download-artifact@v3
@@ -67,7 +69,7 @@ jobs:
       - name: Download Security Policy Artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ inputs.id }}_security_policies
+          name: ${{ steps.generate-names.outputs.security-policy-name }}_security_policies
           path: security_policies
 
       - name: Generate ARM Template
@@ -79,7 +81,7 @@ jobs:
         run: |
           python infra/container/generate_arm_template.py \
             --image-tag ${{ inputs.id }} \
-            --name group-${{ steps.generate-name.outputs.name }} \
+            --name group-${{ steps.generate-names.outputs.arm-template-name }} \
             --manifest-path manifest.json \
             --location ${{ inputs.location }} \
             --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
@@ -91,5 +93,5 @@ jobs:
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.generate-name.outputs.name }}_arm_template
+          name: ${{ steps.generate-names.outputs.arm-template-name }}_arm_template
           path: arm_template.json

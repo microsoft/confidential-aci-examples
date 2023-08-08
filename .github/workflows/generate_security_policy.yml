@@ -13,6 +13,10 @@ on:
         type: choice
         options:
           - simple_server
+      location:
+        description: "Location to deploy to"
+        required: true
+        type: string
   workflow_call:
     inputs:
       id:
@@ -21,6 +25,10 @@ on:
         type: string
       test:
         description: "Name of the Test to generate the Security Policy for"
+        required: true
+        type: string
+      location:
+        description: "Location to deploy to"
         required: true
         type: string
     outputs:
@@ -47,6 +55,10 @@ jobs:
         with:
           name: ${{ inputs.id }}_manifest
 
+      - name: Generate Matrix Cell Name
+        id: generate-name
+        run: echo "name=$(echo ${{ inputs.test }}-${{ inputs.location }}-_generated.rego-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+
       - name: Generate ARM Template
         id: generate-arm-template
         env:
@@ -55,10 +67,10 @@ jobs:
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
           python infra/container/generate_arm_template.py \
-            --name "not-relevant" \
+            --name "group-${{ steps.generate-name.outputs.name }}" \
             --image-tag ${{ inputs.id }} \
             --manifest-path manifest.json \
-            --location "not-relevant" \
+            --location "${{ inputs.location }}" \
             --out arm_template.json
 
       - name: Set Docker Permissions
@@ -93,5 +105,5 @@ jobs:
       - name: Upload Security Policy Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ inputs.id }}_security_policies
+          name: ${{ steps.generate-name.outputs.name }}_security_policies
           path: security_policies

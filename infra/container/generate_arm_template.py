@@ -59,6 +59,9 @@ def generate_arm_template(
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
                                 ],
+                                "securityContext": {
+                                    "privileged": container.get("privileged", False)
+                                },
                                 "volumeMounts": [
                                     {
                                         "name": volumeName,

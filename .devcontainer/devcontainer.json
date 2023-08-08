@@ -75,6 +75,9 @@
 														"image": {
 															"type": "string"
 														},
+														"privileged": {
+															"type": "boolean"
+														},
 														"ports": {
 															"type": "array",
 															"items": {

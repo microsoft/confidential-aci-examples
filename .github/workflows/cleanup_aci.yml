@@ -28,7 +28,7 @@ jobs:
         run: |
           RUNNING_CONTAINERS=$(az container list \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --query "[?starts_with(name, 'group-')]")
+            --query "[?ends_with(name, '-group')]")
 
           for container in $(echo $RUNNING_CONTAINERS | jq -r '.[].id'); do
               echo "Deleting container group: ${container}"

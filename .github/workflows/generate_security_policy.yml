@@ -67,7 +67,7 @@ jobs:
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
           python infra/container/generate_arm_template.py \
-            --name "group-${{ steps.generate-name.outputs.name }}" \
+            --name "${{ steps.generate-name.outputs.name }}-group" \
             --image-tag ${{ inputs.id }} \
             --manifest-path manifest.json \
             --location "${{ inputs.location }}" \

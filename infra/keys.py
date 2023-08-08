@@ -1,4 +1,3 @@
-import argparse
 from base64 import urlsafe_b64encode, b64encode, b64decode
 import binascii
 import hashlib

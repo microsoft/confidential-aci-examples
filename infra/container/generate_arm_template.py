@@ -34,7 +34,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2023-05-01",
-                "name": name.replace("_", "-"),
+                "name": f"{name}-group".replace("_", "-"),
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -50,7 +50,7 @@ def generate_arm_template(
                     "sku": "Confidential",
                     "containers": [
                         {
-                            "name": f"{name}-{idx}".replace("_", "-"),
+                            "name": f"{name}-container-{idx}".replace("_", "-"),
                             "properties": {
                                 "image": container["image"].split("://")[1]
                                 if container["image"].startswith("http")
@@ -172,7 +172,7 @@ if __name__ == "__main__":
     with open(args.manifest_path, "r") as manifest_file:
         manifest = json.load(manifest_file)
         generate_arm_template(
-            name=args.name or f"group-{uuid.uuid4()}",
+            name=args.name or f"{uuid.uuid4()}-group",
             image_tag=args.image_tag,
             location=args.location,
             manifest=manifest,

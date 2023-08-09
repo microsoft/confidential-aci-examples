@@ -22,7 +22,7 @@ class EncryptedFilesystemTest(TestCase):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/write")
-        assert response.status_code == 200
+        assert response.status_code == 200, response.content.decode("utf-8")
         assert response.content.decode("utf-8").strip("\n") == "This is a new file in the encrypted filesystem!"
 
 

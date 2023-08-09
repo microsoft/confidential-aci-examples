@@ -1,0 +1,33 @@
+name: Push Latest Encrypted Filesystem Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/push_latest_encrypted_filesystem.yml
+      - examples/encrypted_filesystem/**
+  workflow_dispatch:
+
+jobs:
+  prepare:
+    name: Prepare Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Upload Manifest
+        uses: actions/upload-artifact@v3
+        with:
+          name: latest_manifest
+          path: examples/encrypted_filesystem/manifest.json
+
+  push-latest-encrypted-filesystem:
+    name: "Push Latest Encrypted Filesystem Image"
+    uses: ./.github/workflows/build_and_push_images.yml
+    needs: prepare
+    secrets: inherit
+    with:
+      id: latest
+      test: encrypted_filesystem

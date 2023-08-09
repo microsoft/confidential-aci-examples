@@ -1,4 +1,5 @@
 azure-identity
+azure-storage-blob
 azure-mgmt-resource
 azure-mgmt-containerinstance
 azure-mgmt-compute

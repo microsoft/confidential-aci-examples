@@ -11,9 +11,9 @@ def resolve_manifest_variables(manifest: dict) -> dict:
         for container in container_group["containers"]:
             for key, value in container.get("env", {}).items():
                 if isinstance(value, dict):
-                    container["env"][key] = b64encode(
-                        json.dumps(value).encode()
-                    ).decode()
+                    json_str = json.dumps(value)
+                    if "$" not in json_str:
+                        container["env"][key] = b64encode(json_str.encode()).decode()
 
     return manifest
 

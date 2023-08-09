@@ -1,0 +1,4 @@
+FROM python:latest
+WORKDIR /app
+COPY encrypted_filesystem/payload.py payload.py
+CMD ["python", "payload.py"]

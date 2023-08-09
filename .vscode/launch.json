@@ -93,6 +93,22 @@
             ]
         },
         {
+            "name": "Deploy Storage Container",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/deploy_storage_container.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--name",
+                "${input:storageAccountName}",
+                "--location",
+                "${input:containerLocation}",
+                "--container-name",
+                "${input:storageContainerName}",
+            ]
+        },
+        {
             "name": "Deploy ARM Template",
             "type": "python",
             "request": "launch",
@@ -157,6 +173,7 @@
                 "attestation",
                 "remote_image",
                 "key_release",
+                "encrypted_filesystem",
             ],
         },
         {
@@ -191,6 +208,16 @@
             "id": "hsmName",
             "type": "promptString",
             "description": "Enter name of the hsm:",
+        },
+        {
+            "id": "storageAccountName",
+            "type": "promptString",
+            "description": "Enter a name for the storage account:",
+        },
+        {
+            "id": "storageContainerName",
+            "type": "promptString",
+            "description": "Enter a name for the storage container:",
         },
     ]
 }

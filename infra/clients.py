@@ -6,6 +6,7 @@ from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.resource import ResourceManagementClient
 from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient
 
 
 @lru_cache
@@ -40,3 +41,7 @@ def get_network_client(subscription_id: str) -> NetworkManagementClient:
 @lru_cache
 def get_resource_client(subscription_id: str) -> ResourceManagementClient:
     return ResourceManagementClient(DefaultAzureCredential(), subscription_id)
+
+@lru_cache
+def get_blob_service_client(account_url: str) -> BlobServiceClient:
+    return BlobServiceClient(account_url, DefaultAzureCredential())

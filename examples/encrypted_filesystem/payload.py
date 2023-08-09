@@ -5,11 +5,8 @@ MOUNT_DIR = "/mnt/remote/share"
 
 
 def read_file(path: str) -> str:
-    print (os.getcwd())
-    print(os.listdir("/mnt/remote"))
-    print(os.listdir(MOUNT_DIR))
     with open(path, "r") as f:
-        return f.read()
+        return os.getcwd() + os.listdir("/mnt/remote") + os.listdir(MOUNT_DIR) + f.read()
 
 
 def write_file(path: str, content: str) -> str:

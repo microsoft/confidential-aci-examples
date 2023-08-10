@@ -10,8 +10,7 @@ def read_file(path: str) -> str:
         with open(path, "r") as f:
             return f.read()
     else:
-        dirs_str = "\n".join(os.listdir("/mnt/remote"))
-        return dirs_str
+        return "File in Mount Path does not exist"
 
 
 def write_file(path: str, content: str) -> str:
@@ -23,7 +22,7 @@ def write_file(path: str, content: str) -> str:
                 f.write(content)
             return read_file(path)
         except Exception as e:
-            return "Failed to write file"
+            return "Failed to write file to Mount Path"
     else:
         return "Mount Path does not exist"
 

@@ -15,7 +15,12 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 
 ## Examples
 
+### [Simple Server](examples/simple_server/README.md)
+
+Hello world server running in a confidential container.
+
 ### [Attestation](examples/attestation/README.md)
+
 Fetches and validates an SNP Attestation report, locally as well as using a sidecar.
 
 ## Setup Development Environment

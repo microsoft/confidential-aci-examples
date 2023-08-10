@@ -23,6 +23,10 @@ Hello world server running in a confidential container.
 
 Deploys two containers in the same container group and demostrates communication between the two.
 
+### [Remote Image](examples/remote_image/README.md)
+
+Simplest possible example to demonstrate how resources are managed by this repo.
+
 ### [Attestation](examples/attestation/README.md)
 
 Fetches and validates an SNP Attestation report, locally as well as using a sidecar.

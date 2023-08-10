@@ -37,22 +37,6 @@
             ]
         },
         {
-            "name": "Generate VM ARM Template",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/vm/generate_arm_template.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "--location",
-                "${input:containerLocation}",
-                "--manifest-path",
-                "examples/${input:testName}/manifest.json",
-                "--out",
-                "examples/${input:testName}/${input:armTemplateName}"
-            ]
-        },
-        {
             "name": "Generate and Add Security Policy",
             "type": "python",
             "request": "launch",
@@ -79,6 +63,43 @@
                 "--security-policy-path",
                 "${input:securityPolicyPath}",
             ]
+        },
+        {
+            "name": "Deploy ARM Template",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/deploy_arm_template.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--manifest-path",
+                "examples/${input:testName}/manifest.json",
+                "--arm-template-path",
+                "examples/${input:testName}/${input:armTemplateName}",
+            ]
+        },
+        {
+            "name": "Delete Deployment",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/delete_deployment.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--deployment-name",
+                "${input:deploymentName}",
+                "--arm-template-path",
+                "examples/${input:testName}/${input:armTemplateName}",
+                "--asynchronous",
+            ]
+        },
+        {
+            "name": "------------------",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/simple_server/__init__.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
         },
         {
             "name": "Deploy HSM",
@@ -109,17 +130,27 @@
             ]
         },
         {
-            "name": "Deploy ARM Template",
+            "name": "------------------",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/deploy_arm_template.py",
+            "program": "examples/simple_server/__init__.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+        },
+        {
+            "name": "Generate VM ARM Template",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/infra/vm/generate_arm_template.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
+                "--location",
+                "${input:containerLocation}",
                 "--manifest-path",
                 "examples/${input:testName}/manifest.json",
-                "--arm-template-path",
-                "examples/${input:testName}/${input:armTemplateName}",
+                "--out",
+                "examples/${input:testName}/${input:armTemplateName}"
             ]
         },
         {
@@ -144,21 +175,6 @@
             "args": [
                 "--arm-template-path",
                 "examples/${input:testName}/${input:armTemplateName}",
-            ]
-        },
-        {
-            "name": "Delete Deployment",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/delete_deployment.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "--deployment-name",
-                "${input:deploymentName}",
-                "--arm-template-path",
-                "examples/${input:testName}/${input:armTemplateName}",
-                "--asynchronous",
             ]
         },
     ],

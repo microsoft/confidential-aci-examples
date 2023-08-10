@@ -97,6 +97,8 @@ To do so, log into Azure with an account which has access to both the Azure DevO
 
 ### 1. Create a new directory under examples with the name of your new test
 
+- Must contain an \_\_init\_\_.py file.
+
 ### 2. Add a manifest file
 
 - Must be directly under your new directory and named `manifest.json`

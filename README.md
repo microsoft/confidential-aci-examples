@@ -19,6 +19,10 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 
 Hello world server running in a confidential container.
 
+### [Simple Sidecar](examples/simple_sidecar/README.md)
+
+Deploys two containers in the same container group and demostrates communication between the two.
+
 ### [Attestation](examples/attestation/README.md)
 
 Fetches and validates an SNP Attestation report, locally as well as using a sidecar.

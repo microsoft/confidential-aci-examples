@@ -13,6 +13,7 @@ class EncryptedFilesystemTest(TestCase):
         assert self.container_ip is not None
         response = request(f"http://{self.container_ip}:8000/read")
         assert response.status_code == 200, response.content.decode("utf-8")
+        print(response.content.decode("utf-8"))
         assert (
             response.content.decode("utf-8").strip("\n")
             == "This is a file in the encrypted filesystem!"

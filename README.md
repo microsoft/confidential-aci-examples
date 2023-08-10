@@ -55,7 +55,7 @@ The simplest way to run the tests locally is to use Github Codespaces.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=616412316&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope)
 
-This will setup a full development environment with everything needed to run examples.
+This will set up a full development environment with everything needed to run examples.
 
 > **CREDENTIALS:** If you do not have write permissions on this project or you checkout manually i.e. without using Codespaces, you will need to provide your own credentials by modifying the [Environment file](env) and re-running [setup.sh](setup.sh)
 

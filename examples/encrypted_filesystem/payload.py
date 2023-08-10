@@ -5,6 +5,7 @@ MOUNT_DIR = "/mnt/remote/share"
 
 
 def read_file(path: str) -> str:
+    # path should be in mount directory if mount succeeded
     if os.path.exists(path):
         with open(path, "r") as f:
             return f.read()
@@ -14,10 +15,10 @@ def read_file(path: str) -> str:
 
 
 def write_file(path: str, content: str) -> str:
-    # directory should exist if mount succeeded
-    if os.path.exists(path):
+    # mount directory should exist if mount succeeded
+    if os.path.exists(MOUNT_DIR):
         try:
-            # make file if it doesn't exist
+            # make file in mount directory
             with open(path, "w") as f:
                 f.write(content)
             return read_file(path)

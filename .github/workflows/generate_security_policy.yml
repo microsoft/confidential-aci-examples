@@ -90,6 +90,7 @@ jobs:
           python infra/login_arm_template_registries.py --arm-template-path arm_template.json
           az confcom acipolicygen \
               -a arm_template.json \
+              --debug-mode \
               --outraw \
               --save-to-file security_policies/_generated.rego
 

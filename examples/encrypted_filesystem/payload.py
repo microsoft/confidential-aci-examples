@@ -10,19 +10,21 @@ def read_file(path: str) -> str:
             return f.read()
     else:
         dirs_str = "\n".join(os.listdir("/mnt/remote"))
-        return "\n".join(os.getcwd() + dirs_str)
+        return os.getcwd() + dirs_str
 
 
 def write_file(path: str, content: str) -> str:
-    try:
-        # make directory if it doesn't exist
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        # make file if it doesn't exist
-        with open(path, "w") as f:
-            f.write(content)
-        return read_file(path)
-    except Exception as e:
-        return "Failed to write file"
+    # directory should exist if mount succeeded
+    if os.path.exists(path):
+        try:
+            # make file if it doesn't exist
+            with open(path, "w") as f:
+                f.write(content)
+            return read_file(path)
+        except Exception as e:
+            return "Failed to write file"
+    else:
+        return "Mount Path does not exist"
 
 
 ENDPOINTS = {

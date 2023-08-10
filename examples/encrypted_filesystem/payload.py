@@ -9,7 +9,7 @@ def read_file(path: str) -> str:
         with open(path, "r") as f:
             return f.read()
     else:
-        dirs_str = "\n".join(os.listdir("/mnt/remote") + os.listdir(MOUNT_DIR))
+        dirs_str = "\n".join(os.listdir("/mnt/remote"))
         return "\n".join(os.getcwd() + dirs_str)
 
 

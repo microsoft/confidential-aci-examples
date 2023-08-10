@@ -111,7 +111,7 @@ To do so, log into Azure with an account which has access to both the Azure DevO
 
 - Must contain two jobs
   - Prepare which generates a unique ID for the run and uploads a version of the test manifest which has been run through [resolve_manifest_variables.py](infra/resolve_manifest_variables.py)
-  - Calls [run_test.yml](.github/workflows/run_test.yml) with the name of your unique ID and the test name
+  - [run_test.yml](.github/workflows/run_test.yml) with the name of your unique ID and the test name
 
 ---
 

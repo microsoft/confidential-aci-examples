@@ -31,6 +31,10 @@ Simplest possible example to demonstrate how resources are managed by this repo.
 
 Fetches and validates an SNP Attestation report, locally as well as using a sidecar.
 
+### [Key Release](examples/key_release)
+
+Uses attestation to perform a secure key release from an Azure HSM.
+
 ## Setup Development Environment
 
 You can use Github Codespaces to create a fully ready to use development environment.

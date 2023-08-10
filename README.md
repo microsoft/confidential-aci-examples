@@ -67,7 +67,7 @@ Then you can open VS Code's testing view, where examples can be run with or with
 
 ### 3. Locally Step by Step
 
-If a particular step of an example needs debugging, they can be run manually through VS Codes Run and Debug View. Most examples follow these steps:
+If a particular step of an example needs debugging, they can be run manually through [VS Codes Run and Debug View](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations). Most examples follow these steps:
 
 1. Build and Push Images
 2. Generate ARM Template for ACI deployment

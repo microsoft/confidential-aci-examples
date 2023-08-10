@@ -10,7 +10,7 @@ def read_file(path: str) -> str:
         with open(path, "r") as f:
             return f.read()
     else:
-        dirs_str = "\n".join(os.listdir("/mnt"))
+        dirs_str = "\n".join(os.listdir("/mnt/remote"))
         return dirs_str
 
 

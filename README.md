@@ -119,7 +119,7 @@ To do so, log into Azure with an account which has access to both the Azure DevO
 ### 5. Update existing workflows
 
 - Update [run_all.yml](.github/workflows/run_all.yml) to include your new example
-- If the example requires new repository secrets, they need to be added to [local_workflow.yml](.github/workflows/local_workflow.yml)
+- If the example requires new repository secrets, they need to be added to [local_workflow.yml](.github/workflows/local_workflow.yml). Adding new secrets requires Administrative access on this repository.
 
 ---
 

@@ -10,8 +10,8 @@ def read_file(path: str) -> str:
         with open(path, "r") as f:
             return f.read()
     else:
-        dirs_str = "\n".join(os.listdir("/mnt/remote"))
-        return os.getcwd() + dirs_str
+        dirs_str = "\n".join([os.getcwd()] + os.listdir(os.getcwd) + os.listdir("/mnt/remote"))
+        return dirs_str
 
 
 def write_file(path: str, content: str) -> str:

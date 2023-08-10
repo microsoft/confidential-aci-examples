@@ -15,11 +15,6 @@
                 },
                 {
                     "image": "primary",
-                    "env": {
-                        "SkrClientMAAEndpoint": "$AZURE_ATTESTATION_ENDPOINT",
-                        "SkrClientAKVEndpoint": "$AZURE_HSM_ENDPOINT",
-                        "SkrClientKID": "$UNIQUE_ID-key"
-                    },
                     "cores": 1,
                     "ram": 2,
                     "ports": [ 8000 ]

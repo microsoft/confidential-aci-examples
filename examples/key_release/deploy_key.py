@@ -19,14 +19,4 @@ if __name__ == "__main__":
     ) as f, tempfile.NamedTemporaryFile() as tmp_key_file:
         key = generate_key_file(tmp_key_file)
         arm_template = json.load(f)
-
-        name = None
-        for resource in arm_template["resources"]:
-            for container in resource["properties"]["containers"]:
-                for env_var in container["properties"]["environmentVariables"]:
-                    if env_var["name"] == "SkrClientKID":
-                        name = env_var["value"]
-                        break
-        assert name is not None, "Could not find SkrClientKID in arm template"
-
-        deploy_key(name, arm_template, key)
+        deploy_key(f'{arm_template["variables"]["uniqueId"]}-key', arm_template, key)

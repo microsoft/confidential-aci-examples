@@ -118,7 +118,7 @@ jobs:
     uses: ./.github/workflows/delete_deployment.yml
     needs: [generate-security-policy, client-side-tests]
     secrets: inherit
-    if: always() && ${{ inputs.skip-cleanup == false }}
+    if: ${{ (needs.client-side-tests.result == 'success' || needs.client-side-tests.result == 'failure') && inputs.skip-cleanup == false }}
     strategy:
       fail-fast: false
       matrix:

@@ -37,7 +37,7 @@ Hello world server running in a confidential container.
 
 ### [Simple Sidecar](examples/simple_sidecar)
 
-Deploys two containers in the same container group and demostrate communication between the two.
+Deploys two containers in the same container group and demostrates communication between the two.
 
 ## How to Run Examples
 
@@ -51,7 +51,7 @@ See all workflows [here](https://github.com/microsoft/confidential-aci-examples/
 
 ### 2. Whole Tests Locally
 
-The simplest way to run the tests locally is to use the repositories Codespace.
+The simplest way to run the tests locally is to use Github Codespaces.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=616412316&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestEurope)
 
@@ -61,7 +61,7 @@ This will setup a full development environment with everything needed to run exa
 
 > **MANUAL SETUP:** To checkout and setup manually, please refer to the [Dockerfile](.devcontainer/Dockerfile) and [.devcontainer](.devcontainer/devcontainer.json) to follow the setup process.
 
-Then you can open VS Code's testing view.
+Then you can open VS Code's testing view, where examples can be run with or without a debugger.
 
 <img src="docs/testing_view.png" alt="VS Codes Testing View" width=400px>
 
@@ -99,7 +99,7 @@ To do so, log into Azure with an account which has access to both the Azure DevO
 
 ### 2. Add a manifest file
 
-- Must be named `manifest.json`
+- Must be directly under your new directory and named `manifest.json`
 - At least one container image is needed, so create a Dockerfile and mention it in the manifest
 - Manifest files are automatically validated if running in codespaces, otherwise refer to the schema in [.devcontainer.json](.devcontainer/devcontainer.json)
 
@@ -110,8 +110,8 @@ To do so, log into Azure with an account which has access to both the Azure DevO
 ### 4. Add a Github Actions workflow
 
 - Must contain two jobs
-  - Prepare which generates a unique ID for the run and uploads a version of the test manifest which has been run through [resolve_manifest_variables.py](infra/resolve_manifest_variables.py)
-  - [run_test.yml](.github/workflows/run_test.yml) with the name of your unique ID and the test name
+  - One which generates a unique ID for the run and uploads a version of the test manifest which has been run through [resolve_manifest_variables.py](infra/resolve_manifest_variables.py)
+  - One which depends on the first and calls [run_test.yml](.github/workflows/run_test.yml) with your unique ID and the test name
 
 ---
 

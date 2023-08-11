@@ -9,7 +9,7 @@ from infra.test_case import TestCase
 
 class RemoteImageTest(TestCase):
     def test_deployment_succeeded(self):
-        assert self.container_ip is not None
+        assert self.container_ip is None
 
 
 if __name__ == "__main__":

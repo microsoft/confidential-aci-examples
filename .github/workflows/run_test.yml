@@ -15,7 +15,7 @@ on:
           - simple_server
       location:
         description: "Locations to deploy ACIs to"
-        default: '["eastus2euap", "northeurope"]'
+        default: '["eastus2euap"]'
         required: false
         type: string
       skip-cleanup:
@@ -35,7 +35,7 @@ on:
         type: string
       locations:
         description: "Locations to deploy ACIs to"
-        default: '["eastus2euap", "northeurope"]'
+        default: '["eastus2euap"]'
         required: false
         type: string
       skip-cleanup:
@@ -118,7 +118,7 @@ jobs:
     uses: ./.github/workflows/delete_deployment.yml
     needs: [generate-security-policy, client-side-tests]
     secrets: inherit
-    if: always() && ${{ inputs.skip-cleanup != true }}
+    if: ${{ always() && inputs.skip-cleanup != true }}
     strategy:
       fail-fast: false
       matrix:

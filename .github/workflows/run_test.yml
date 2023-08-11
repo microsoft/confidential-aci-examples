@@ -23,6 +23,11 @@ on:
         default: false
         required: false
         type: boolean
+      debuggable-generated-policy:
+        description: "Make a Security Policy which allows debugging"
+        default: false
+        required: false
+        type: boolean
   workflow_call:
     inputs:
       id:
@@ -40,6 +45,11 @@ on:
         type: string
       skip-cleanup:
         description: "Skip cleanup"
+        default: false
+        required: false
+        type: boolean
+      debuggable-generated-policy:
+        description: "Make a Security Policy which allows debugging"
         default: false
         required: false
         type: boolean
@@ -65,6 +75,7 @@ jobs:
       id: ${{ inputs.id }}
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
+      debuggable-generated-policy: ${{ inputs.debuggable-generated-policy }}
 
   generate-arm-templates:
     name: "Generate ARM Templates"

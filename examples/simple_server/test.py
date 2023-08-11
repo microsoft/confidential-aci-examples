@@ -13,7 +13,7 @@ class SimpleServerTest(TestCase):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/hello")
-        assert response.status_code != 200
+        assert response.status_code == 200
         assert response.content.decode("utf-8").strip("\n") == "Hello world!"
 
 

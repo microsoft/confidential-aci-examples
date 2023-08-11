@@ -10,8 +10,12 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 [![Uptime of Containers on West Europe](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_west_europe.yml/badge.svg)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_west_europe.yml)
 
 [![Attestation Test Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml)
+
 [![Key Release Test Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml)
 [![Key Release Test Daily (Sidecar Repo Main Branch)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_daily.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_daily.yml)
+
+[![Encrypted Filesystem Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem.yml)
+[![Encrypted Filesystem Test Daily (Sidecar Repo Main Branch)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem_daily.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem_daily.yml)
 
 ## Examples
 

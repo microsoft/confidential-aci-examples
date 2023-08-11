@@ -29,10 +29,9 @@ class CryptSetupFileSystem:
     def __init__(self, key_path, image_path):
         self.key_path = key_path
         self.image_path = image_path
-        subprocess.check_call(f"truncate --size 64M {image_path}", shell=True)
-        # with open(image_path, "wb") as f:
-        #     f.seek(64 * 1024 * 1024 - 1)
-        #     f.write(b"\0")
+        with open(image_path, "wb") as f:
+            f.seek(64 * 1024 * 1024 - 1)
+            f.write(b"\0")
 
     def __enter__(self):
         # Format

@@ -15,7 +15,7 @@ on:
           - simple_server
       location:
         description: "Locations to deploy ACIs to"
-        default: '["eastus2euap"]'
+        default: '["eastus2euap", "westeurope"]'
         required: false
         type: string
       skip-cleanup:
@@ -35,7 +35,7 @@ on:
         type: string
       locations:
         description: "Locations to deploy ACIs to"
-        default: '["eastus2euap"]'
+        default: '["eastus2euap", "westeurope"]'
         required: false
         type: string
       skip-cleanup:

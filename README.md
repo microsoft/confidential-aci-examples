@@ -35,6 +35,10 @@ Fetches and validates an SNP Attestation report, locally as well as using a side
 
 Uses attestation to perform a secure key release from an Azure HSM.
 
+### [Encrypted Filesystem](examples/encrypted_filesystem)
+
+Uses the [Encrypted Filesystem sidecar](https://github.com/microsoft/confidential-sidecar-containers) to demonstrate using attestation to perform a secure key release from an Azure HSM which is then used to decrypt a simple filesystem.
+
 ## Setup Development Environment
 
 You can use Github Codespaces to create a fully ready to use development environment.

@@ -29,9 +29,10 @@ class CryptSetupFileSystem:
     def __init__(self, key_path, image_path):
         self.key_path = key_path
         self.image_path = image_path
-        with open(image_path, "wb") as f:
-            f.seek(64 * 1024 * 1024 - 1)
-            f.write(b"\0")
+        subprocess.check_call(f"truncate --size 64M {image_path}", shell=True)
+        # with open(image_path, "wb") as f:
+        #     f.seek(64 * 1024 * 1024 - 1)
+        #     f.write(b"\0")
 
     def __enter__(self):
         # Format
@@ -98,7 +99,6 @@ def deploy_blob(arm_template: dict, key_file_path: str):
             blob_client.upload_blob(data)
 
     print(f"Deployed blob {blob_name} into the storage container")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

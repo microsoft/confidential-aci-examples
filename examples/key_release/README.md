@@ -8,7 +8,7 @@ It uses the SKR (Secure Key Release) sidecar from the [Confidential Sidecars Rep
 
 The sidecar can release keys from either Azure Key Vault (AKV) or Azure Managed HSM (mHSM), this example uses the latter.
 
-Due to slow spin up time, this repository uses a single statically created mHSM, the code to do this can be found at [infra/deploy_hsm.py](../infra/deploy_hsm.py).
+Due to slow spin up time, this repository uses a single statically created mHSM, the code to do this can be found at [infra/deploy_hsm.py](../../infra/deploy_hsm.py).
 
 Access is tightly controlled in mHSMs, the deployment script will also assign Administrator and Crypto User/Officer roles to the service principal and managed identity used by this repository's codespace.
 

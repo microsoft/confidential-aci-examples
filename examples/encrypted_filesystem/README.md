@@ -1,6 +1,6 @@
 # Encrypted Filesystem
 
-This example builds on the [Key Release](../key_release/README.md) example by using the key to decrypt some memory containing a filesystem. This demonstrates how users with sensitive data can be crytographically assured that only their code can access their data.
+This example builds on the [Key Release](../key_release/README.md) example by using the key to decrypt some memory containing a filesystem. This demonstrates how users with sensitive data can be cryptographically assured that only their code can access their data.
 
 It uses the EncFS sidecar from the [Confidential Sidecars Repository](https://github.com/microsoft/confidential-sidecar-containers). The sidecar will attempt to perform a key release based on the args provided via an environment variable, use the key to decrypt the filesystem, and then mount it in a volume which the primary container can then access.
 

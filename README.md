@@ -15,8 +15,29 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 
 ## Examples
 
+### [Simple Server](examples/simple_server/README.md)
+
+Hello world server running in a confidential container.
+
+### [Simple Sidecar](examples/simple_sidecar/README.md)
+
+Deploys two containers in the same container group and demostrates communication between the two.
+
+### [Remote Image](examples/remote_image/README.md)
+
+Simplest possible example to demonstrate how resources are managed by this repo.
+
 ### [Attestation](examples/attestation/README.md)
+
 Fetches and validates an SNP Attestation report, locally as well as using a sidecar.
+
+### [Key Release](examples/key_release)
+
+Uses attestation to perform a secure key release from an Azure HSM.
+
+### [Encrypted Filesystem](examples/encrypted_filesystem)
+
+Uses the [Encrypted Filesystem sidecar](https://github.com/microsoft/confidential-sidecar-containers) to demonstrate using attestation to perform a secure key release from an Azure HSM which is then used to decrypt a simple filesystem.
 
 ## Setup Development Environment
 

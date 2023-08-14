@@ -61,4 +61,3 @@ jobs:
     with:
       id: ${{ needs.prepare.outputs.workflow-id }}
       test: simple_server
-      debug: true

@@ -129,7 +129,7 @@ jobs:
     uses: ./.github/workflows/delete_deployment.yml
     needs: [generate-security-policy, client-side-tests]
     secrets: inherit
-    if: ${{ always() && (inputs.skip-cleanup != true || inputs.debug != true) }}
+    if: ${{ always() && (inputs.skip-cleanup != true && inputs.debug != true) }}
     strategy:
       fail-fast: false
       matrix:

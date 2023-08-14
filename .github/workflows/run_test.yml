@@ -23,6 +23,11 @@ on:
         default: false
         required: false
         type: boolean
+      debug:
+        description: "Debuggable Security Policy"
+        default: false
+        required: false
+        type: boolean
   workflow_call:
     inputs:
       id:
@@ -40,6 +45,11 @@ on:
         type: string
       skip-cleanup:
         description: "Skip cleanup"
+        default: false
+        required: false
+        type: boolean
+      debug:
+        description: "Debuggable Security Policy"
         default: false
         required: false
         type: boolean
@@ -65,6 +75,7 @@ jobs:
       id: ${{ inputs.id }}
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
+      debug: ${{ inputs.debug }}
 
   generate-arm-templates:
     name: "Generate ARM Templates"
@@ -118,7 +129,7 @@ jobs:
     uses: ./.github/workflows/delete_deployment.yml
     needs: [generate-security-policy, client-side-tests]
     secrets: inherit
-    if: ${{ always() && inputs.skip-cleanup != true }}
+    if: ${{ always() && (inputs.skip-cleanup != true && inputs.debug != true) }}
     strategy:
       fail-fast: false
       matrix:

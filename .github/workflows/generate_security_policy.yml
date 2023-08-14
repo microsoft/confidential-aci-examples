@@ -17,6 +17,11 @@ on:
         description: "Location to deploy to"
         required: true
         type: string
+      debug:
+        description: "Debuggable Security Policy"
+        default: false
+        required: false
+        type: boolean
   workflow_call:
     inputs:
       id:
@@ -31,6 +36,11 @@ on:
         description: "Location to deploy to"
         required: true
         type: string
+      debug:
+        description: "Debuggable Security Policy"
+        default: false
+        required: false
+        type: boolean
     outputs:
       security-policies:
         value: ${{ jobs.generate-security-policy.outputs.security-policies }}
@@ -88,11 +98,15 @@ jobs:
         id: generate-security-policy
         run: |
           python infra/login_arm_template_registries.py --arm-template-path arm_template.json
-          az confcom acipolicygen \
+          command="az confcom acipolicygen \
               -a arm_template.json \
               --debug-mode \
               --outraw \
-              --save-to-file security_policies/_generated.rego
+              --save-to-file security_policies/_generated.rego"
+            if [ "${{ inputs.debug }}" = "true" ]; then
+              command="$command --debug-mode"
+            fi
+            $command
 
       - name: Print Security Policy
         run: cat security_policies/_generated.rego

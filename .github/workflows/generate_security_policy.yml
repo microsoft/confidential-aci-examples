@@ -17,8 +17,8 @@ on:
         description: "Location to deploy to"
         required: true
         type: string
-      debuggable-generated-policy:
-        description: "Make a Security Policy which allows debugging"
+      debug:
+        description: "Debuggable Security Policy"
         default: false
         required: false
         type: boolean
@@ -36,8 +36,8 @@ on:
         description: "Location to deploy to"
         required: true
         type: string
-      debuggable-generated-policy:
-        description: "Make a Security Policy which allows debugging"
+      debug:
+        description: "Debuggable Security Policy"
         default: false
         required: false
         type: boolean
@@ -102,7 +102,7 @@ jobs:
               -a arm_template.json \
               --outraw \
               --save-to-file security_policies/_generated.rego"
-            if [ "${{ inputs.debuggable-generated-policy }}" = "true" ]; then
+            if [ "${{ inputs.debug }}" = "true" ]; then
               command="$command --debug-mode"
             fi
             $command

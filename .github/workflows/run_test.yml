@@ -23,8 +23,8 @@ on:
         default: false
         required: false
         type: boolean
-      debuggable-generated-policy:
-        description: "Make a Security Policy which allows debugging"
+      debug:
+        description: "Debuggable Security Policy"
         default: false
         required: false
         type: boolean
@@ -48,8 +48,8 @@ on:
         default: false
         required: false
         type: boolean
-      debuggable-generated-policy:
-        description: "Make a Security Policy which allows debugging"
+      debug:
+        description: "Debuggable Security Policy"
         default: false
         required: false
         type: boolean
@@ -75,7 +75,7 @@ jobs:
       id: ${{ inputs.id }}
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
-      debuggable-generated-policy: ${{ inputs.debuggable-generated-policy }}
+      debug: ${{ inputs.debug }}
 
   generate-arm-templates:
     name: "Generate ARM Templates"

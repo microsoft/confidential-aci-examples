@@ -18,5 +18,11 @@ jobs:
             --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
             --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
+      - name: Get Connection String
+        run: |
+          CONNECTION_STRING=$(az storage account show-connection-string \
+            --name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }})
+
       - name: Delete Blobs
-        run: az storage blob list --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --query "[].name" -o tsv --auth-mode login | xargs -I{} az storage blob delete --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {} --auth-mode login
+        run: az storage blob list --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --query "[].name" -o tsv --connection-string $CONNECTION_STRING | xargs -I{} az storage blob delete --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {} --connection-string $CONNECTION_STRING

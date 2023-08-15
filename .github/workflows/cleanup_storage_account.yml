@@ -1,7 +1,6 @@
 name: Cleanup Storage Account
 
 on:
-  workflow_call: 
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
@@ -25,7 +24,7 @@ jobs:
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --query connectionString \
             --output tsv)
-          echo "CONNECTION_STRING = $CONNECTION_STRING"
+          echo "CONNECTION_STRING=$CONNECTION_STRING" >> $GITHUB_ENV
 
       - name: Delete Blobs
         run: |

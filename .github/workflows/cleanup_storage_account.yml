@@ -28,4 +28,6 @@ jobs:
           echo "CONNECTION_STRING = $CONNECTION_STRING"
 
       - name: Delete Blobs
-        run: az storage blob delete-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --source ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --connection-string $CONNECTION_STRING
+        run: |
+          echo $CONNECTION_STRING
+          az storage blob delete-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --source ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --connection-string $CONNECTION_STRING

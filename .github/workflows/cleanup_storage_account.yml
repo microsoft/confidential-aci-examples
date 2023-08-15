@@ -1,6 +1,7 @@
 name: Cleanup Storage Account
 
 on:
+  workflow_call: 
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
@@ -18,4 +19,4 @@ jobs:
             --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Delete Blobs
-        run: az storage blob list --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --query "[].name" -o tsv | xargs -I{} az storage blob delete --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {}
+        run: az storage blob list --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --query "[].name" -o tsv | xargs -I{} az storage blob delete --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {} --auth-mode login

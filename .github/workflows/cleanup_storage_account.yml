@@ -25,7 +25,7 @@ jobs:
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --query connectionString \
             --output tsv)
-          echo "CONNECTION_STRING=$CONNECTION_STRING"
+          echo "CONNECTION_STRING = $CONNECTION_STRING"
 
       - name: Delete Blobs
-        run: az storage blob list --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --query "[].name" -o tsv --connection-string $CONNECTION_STRING | xargs -I{} az storage blob delete --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {} --connection-string $CONNECTION_STRING
+        run: az storage blob delete-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --source ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --connection-string $CONNECTION_STRING

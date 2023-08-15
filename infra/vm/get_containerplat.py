@@ -1,5 +1,54 @@
+from contextlib import contextmanager
+import glob
+import os
+import shutil
 import subprocess
 import json
+import tempfile
+import zipfile
+
+
+def build_hcsshim(
+    package_path: str,
+    hcsshim_path: str = "git@github.com:microsoft/hcsshim.git",
+):
+    with tempfile.TemporaryDirectory() as hcsshim_dir:
+        with update_package(package_path) as package_dir:
+            os.chdir(hcsshim_dir)
+            subprocess.check_output(
+                f"git clone {hcsshim_path} github.com/Microsoft/hcsshim", shell=True
+            )
+            os.chdir("github.com/Microsoft/hcsshim")
+            os.environ["GOPATH"] = hcsshim_dir
+            os.environ["GOOS"] = "windows"
+            os.environ["GO_BUILD_FLAGS"] = "-tags=rego"
+            for target in [
+                "cmd/containerd-shim-runhcs-v1",
+                "cmd/device-util",
+                "cmd/jobobject-util",
+                "cmd/ncproxy",
+                "cmd/runhcs",
+                "cmd/shimdiag",
+                "internal/tools/grantvmgroupaccess",
+                "internal/tools/zapdir",
+            ]:
+                subprocess.check_output(
+                    f"go build github.com/Microsoft/hcsshim/{target}", shell=True
+                )
+            for file in glob.glob("*.exe"):
+                shutil.copy(file, package_dir)
+
+
+@contextmanager
+def update_package(package_path: str):
+    with tempfile.TemporaryDirectory() as unzipped_dir:
+        with zipfile.ZipFile(package_path, "a") as zip_ref:
+            zip_ref.extractall(unzipped_dir)
+            yield unzipped_dir
+            for root, dirs, files in os.walk(unzipped_dir):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    zip_ref.write(file_path, os.path.relpath(file_path, unzipped_dir))
 
 
 def get_containerplat(directory_path: str):
@@ -22,4 +71,8 @@ def get_containerplat(directory_path: str):
     subprocess.run(
         f"cat {directory_path}/deploy.json | jq",
         shell=True,
+    )
+
+    build_hcsshim(
+        package_path=f"{directory_path}/package.zip",
     )

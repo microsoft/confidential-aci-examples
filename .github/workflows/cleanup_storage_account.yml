@@ -23,6 +23,7 @@ jobs:
           CONNECTION_STRING=$(az storage account show-connection-string \
             --name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }})
+          echo "CONNECTION_STRING=$CONNECTION_STRING"
 
       - name: Delete Blobs
         run: az storage blob list --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --query "[].name" -o tsv --connection-string $CONNECTION_STRING | xargs -I{} az storage blob delete --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {} --connection-string $CONNECTION_STRING

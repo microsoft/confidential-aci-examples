@@ -16,7 +16,7 @@ def read_file(path: str) -> str:
 
 def write_file(path: str, content: str) -> str:
     # mount directory should exist if mount succeeded
-    if os.path.exists(Path(path).absolute()):
+    if os.path.exists(Path(path).parent.resolve()):
         # make file in mount directory
         with open(path, "w") as f:
             f.write(content)

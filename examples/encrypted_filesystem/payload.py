@@ -1,7 +1,9 @@
 import os
+from pathlib import Path
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-MOUNT_DIR = "/mnt/remote/share"
+MOUNT_DIR1 = "/mnt/remote1/share"
+MOUNT_DIR2 = "/mnt/remote2/share"
 
 
 def read_file(path: str) -> str:
@@ -15,7 +17,7 @@ def read_file(path: str) -> str:
 
 def write_file(path: str, content: str) -> str:
     # mount directory should exist if mount succeeded
-    if os.path.exists(MOUNT_DIR):
+    if os.path.exists(Path(path).absolute()):
         # make file in mount directory
         with open(path, "w") as f:
             f.write(content)
@@ -25,9 +27,14 @@ def write_file(path: str, content: str) -> str:
 
 
 ENDPOINTS = {
-    "/read": lambda: read_file(os.path.join(MOUNT_DIR, "file.txt")),
-    "/write": lambda: write_file(
-        os.path.join(MOUNT_DIR, "new_file.txt"),
+    "/read1": lambda: read_file(os.path.join(MOUNT_DIR1, "file.txt")),
+    "/write1": lambda: write_file(
+        os.path.join(MOUNT_DIR1, "new_file.txt"),
+        "This is a new file in the encrypted filesystem!",
+    ),
+    "/read2": lambda: read_file(os.path.join(MOUNT_DIR2, "file.txt")),
+    "/write2": lambda: write_file(
+        os.path.join(MOUNT_DIR2, "new_file.txt"),
         "This is a new file in the encrypted filesystem!",
     ),
 }

@@ -14,6 +14,7 @@ def build_hcsshim(
     package_path: str,
     hcsshim_url: str,
 ):
+    prev_dir = os.getcwd()
     with tempfile.TemporaryDirectory() as hcsshim_dir:
         with update_package(package_path) as package_dir:
             os.chdir(hcsshim_dir)
@@ -39,3 +40,4 @@ def build_hcsshim(
                 )
             for file in glob.glob("*.exe"):
                 shutil.copy(file, package_dir)
+    prev_dir = os.chdir(prev_dir)

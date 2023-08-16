@@ -70,7 +70,10 @@ def setUpVm(cls):
             image = f"{os.getenv('AZURE_REGISTRY_URL')}/{cls.manifest['testName']}/{container['image']}:{cls.image_tag}"
 
             with tempfile.TemporaryDirectory() as temp_dir:
-                get_containerplat(temp_dir)
+                get_containerplat(
+                    directory_path=temp_dir,
+                    hcsshim_url="git@github.com:microsoft/hcsshim.git",
+                )
 
                 deploy_containerplat(
                     ip_address=vm_ip,

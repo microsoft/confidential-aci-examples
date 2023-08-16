@@ -11,7 +11,7 @@ def read_file(path: str) -> str:
         with open(path, "r") as f:
             return f.read()
     else:
-        return "File in Mount Path does not exist"
+        return f"{path} in Mount Path does not exist"
 
 
 def write_file(path: str, content: str) -> str:
@@ -22,7 +22,7 @@ def write_file(path: str, content: str) -> str:
             f.write(content)
         return read_file(path)
     else:
-        return "Mount Path does not exist"
+        return f"{path} does not exist"
 
 
 ENDPOINTS = {

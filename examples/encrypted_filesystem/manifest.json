@@ -13,7 +13,7 @@
                         "EncfsSideCarArgs": {
                             "azure_filesystems": [
                                {
-                                  "mount_point": "/mnt/remote1/share",
+                                  "mount_point": "/mnt/remote/share1",
                                   "azure_url": "$AZURE_STORAGE_CONTAINER_URL/$UNIQUE_ID-blob1",
                                   "azure_url_private": true,
                                   "read_write": true,
@@ -26,12 +26,27 @@
                                         "endpoint": "$AZURE_HSM_ENDPOINT"
                                      }
                                   }
-                               }
+                               },
+                               {
+                                "mount_point": "/mnt/remote/share2",
+                                "azure_url": "$AZURE_STORAGE_CONTAINER_URL/$UNIQUE_ID-blob2",
+                                "azure_url_private": true,
+                                "read_write": false,
+                                "key": {
+                                   "kid": "$UNIQUE_ID-key",
+                                   "authority": {
+                                      "endpoint": "$AZURE_ATTESTATION_ENDPOINT"
+                                   },
+                                   "akv": {
+                                      "endpoint": "$AZURE_HSM_ENDPOINT"
+                                   }
+                                }
+                             }
                             ]
                         }
                     },
                     "mounts": {
-                        "remotemount1": "/mnt/remote1"
+                        "remotemounts": "/mnt/remote"
                     },
                     "command": [ "/encfs.sh" ],
                     "ports": [ 8080 ],
@@ -41,48 +56,15 @@
                 {
                     "image": "primary",
                     "mounts": {
-                        "remotemount1": "/mnt/remote1",
-                        "remotemount2": "/mnt/remote2"
+                        "remotemounts": "/mnt/remote"
                     },
                     "cores": 1,
                     "ram": 2,
                     "ports": [ 8000 ]
-                }, 
-                {
-                    "image": "$ENCRYPTED_FILESYSTEM_IMAGE",
-                    "privileged": true,
-                    "env": {
-                        "EncfsSideCarArgs": {
-                            "azure_filesystems": [
-                               {
-                                  "mount_point": "/mnt/remote2/share",
-                                  "azure_url": "$AZURE_STORAGE_CONTAINER_URL/$UNIQUE_ID-blob2",
-                                  "azure_url_private": true,
-                                  "read_write": false,
-                                  "key": {
-                                     "kid": "$UNIQUE_ID-key",
-                                     "authority": {
-                                        "endpoint": "$AZURE_ATTESTATION_ENDPOINT"
-                                     },
-                                     "akv": {
-                                        "endpoint": "$AZURE_HSM_ENDPOINT"
-                                     }
-                                  }
-                               }
-                            ]
-                        }
-                    },
-                    "mounts": {
-                        "remotemount2": "/mnt/remote2"
-                    },
-                    "command": [ "/encfs.sh" ],
-                    "ports": [ 8008 ],
-                    "cores": 1,
-                    "ram": 2
                 }
             ],
-            "ports": [ 8000, 8080, 8008 ],
-            "volumes": ["remotemount1", "remotemount2"]
+            "ports": [ 8000, 8080 ],
+            "volumes": ["remotemount"]
         }
     ],
     "securityPolicies": [],

@@ -9,7 +9,7 @@ from infra.test_case import TestCase
 
 
 class EncryptedFilesystemTestRW(TestCase):
-    def test_encfs_read(self):
+    def test_encfs_rw_read(self):
         assert self.container_ip is not None
         response = request(f"http://{self.container_ip}:8000/read1")
         assert response.status_code == 200, response.content.decode("utf-8")
@@ -19,7 +19,7 @@ class EncryptedFilesystemTestRW(TestCase):
             == "This is a file in the encrypted filesystem!"
         )
 
-    def test_encfs_write(self):
+    def test_encfs_rw_write(self):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/write1")
@@ -28,7 +28,7 @@ class EncryptedFilesystemTestRW(TestCase):
         assert response.content.decode("utf-8").strip("\n") == "This is a new file in the encrypted filesystem!"
 
 class EncryptedFilesystemTestRO(TestCase):
-    def test_encfs_read(self):
+    def test_encfs_ro_read(self):
         assert self.container_ip is not None
         response = request(f"http://{self.container_ip}:8000/read2")
         assert response.status_code == 200, response.content.decode("utf-8")
@@ -38,7 +38,7 @@ class EncryptedFilesystemTestRO(TestCase):
             == "This is a file in the encrypted filesystem!"
         )
 
-    def test_encfs_write(self):
+    def test_encfs_ro_write(self):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/write2")

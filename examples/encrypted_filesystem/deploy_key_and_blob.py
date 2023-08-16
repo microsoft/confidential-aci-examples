@@ -96,7 +96,7 @@ def deploy_blobs(arm_template: dict, key_file_path: str):
                 file_path = os.path.join(filesystem, "file.txt")
                 subprocess.check_call(f"sudo cp {tmp_file.name} {file_path}", shell=True)
             with open(blob_path, mode="rb") as data:
-                blob_client.upload_blob(data=data, blob_type="PageBlob")
+                blob_client.upload_blob(data=data, blob_type="PageBlob" if i == 0 else "BlockBlob")
 
         print(f"Deployed blob {blob_name} into the storage container")
 

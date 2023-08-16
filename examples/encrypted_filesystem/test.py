@@ -11,9 +11,10 @@ from infra.test_case import TestCase
 class EncryptedFilesystemTestRW(TestCase):
     def test_encfs_rw_read(self):
         assert self.container_ip is not None
+
         response = request(f"http://{self.container_ip}:8000/read1")
-        assert response.status_code == 200, response.content.decode("utf-8")
         print(response.content.decode("utf-8"))
+        assert response.status_code == 200, response.content.decode("utf-8")
         assert (
             response.content.decode("utf-8").strip("\n")
             == "This is a file in the encrypted filesystem!"
@@ -23,16 +24,17 @@ class EncryptedFilesystemTestRW(TestCase):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/write1")
-        assert response.status_code == 200, response.content.decode("utf-8")
         print(response.content.decode("utf-8"))
+        assert response.status_code == 200, response.content.decode("utf-8")
         assert response.content.decode("utf-8").strip("\n") == "This is a new file in the encrypted filesystem!"
 
 class EncryptedFilesystemTestRO(TestCase):
     def test_encfs_ro_read(self):
         assert self.container_ip is not None
+
         response = request(f"http://{self.container_ip}:8000/read2")
-        assert response.status_code == 200, response.content.decode("utf-8")
         print(response.content.decode("utf-8"))
+        assert response.status_code == 200, response.content.decode("utf-8")
         assert (
             response.content.decode("utf-8").strip("\n")
             == "This is a file in the encrypted filesystem!"
@@ -42,8 +44,8 @@ class EncryptedFilesystemTestRO(TestCase):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/write2")
-        assert response.status_code == 400, response.content.decode("utf-8")
         print(response.content.decode("utf-8"))
+        assert response.status_code == 400, response.content.decode("utf-8")
         #assert response.content.decode("utf-8").strip("\n") == "This is a new file in the encrypted filesystem!"
 
 

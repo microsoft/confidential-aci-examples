@@ -7,7 +7,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from infra.vm.get_containerplat import update_package
+from infra.vm.update_containerplat import update_package
 
 
 def build_hcsshim(

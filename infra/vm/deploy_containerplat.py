@@ -74,6 +74,7 @@ def deploy_containerplat(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--arm-template-path", required=True)
+    parser.add_argument("--hcsshim-url")
     args = parser.parse_args()
 
     with open(args.arm_template_path) as f:
@@ -91,7 +92,10 @@ if __name__ == "__main__":
             assert vm_ip
 
             with tempfile.TemporaryDirectory() as temp_dir:
-                get_containerplat(temp_dir)
+                get_containerplat(
+                    directory_path=temp_dir,
+                    hcsshim_url=args.hcsshim_url or None,
+                )
                 deploy_containerplat(
                     ip_address=vm_ip,
                     container_plat_path=temp_dir,

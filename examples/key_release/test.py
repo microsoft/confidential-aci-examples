@@ -45,7 +45,7 @@ class KeyReleaseTest(TestCase):
         assert response.status_code == 200, response.content.decode()
         assert json.loads(json.loads(response.content.decode())["key"])["k"] != ""
 
-    def test_raw_attest(selAddf):
+    def test_raw_attest(self):
         assert self.container_ip is not None
 
         input_report_data = b"EXAMPLEREPORTDATA"

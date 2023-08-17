@@ -1,34 +1,38 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+from http.client import HTTPConnection
 
 import requests
 
 
-class MyRequestHandler(BaseHTTPRequestHandler):
+class MyRequestHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
-        response = requests.post(
-            url=f"http://localhost:8080{self.path}",
-            headers=dict(self.headers),
-            data=self.rfile.read(int(self.headers.get("Content-Length", 0))),
-        )
-        self.send_response(response.status_code)
-        for header, value in response.headers.items():
-            self.send_header(header, value)
-        self.end_headers()
+        content_length = int(self.headers["Content-Length"])
+        post_data = self.rfile.read(content_length)
 
-        self.wfile.write(response.content)
+        conn = HTTPConnection("localhost", 8080)
+        conn.request("POST", self.path, body=post_data, headers=self.headers)
+        response = conn.getresponse()
+
+        self.send_response(response.status)
+        for key, value in response.getheaders():
+            if key != "Transfer-Encoding":
+                self.send_header(key, value)
+        self.end_headers()
+        self.wfile.write(response.read())
+
+        conn.close()
 
     def do_GET(self):
-        response = requests.get(
-            url=f"http://localhost:8080{self.path}",
-            headers=dict(self.headers),
-            data=self.rfile.read(int(self.headers.get("Content-Length", 0))),
-        )
-        self.send_response(response.status_code)
-        for header, value in response.headers.items():
-            self.send_header(header, value)
+        conn = HTTPConnection("localhost", 8080)
+        conn.request("GET", self.path, headers=self.headers)
+        response = conn.getresponse()
+
+        self.send_response(response.status)
+        for key, value in response.getheaders():
+            self.send_header(key, value)
         self.end_headers()
 
-        self.wfile.write(response.content)
+        conn.close()
 
 
 def run():

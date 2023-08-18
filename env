@@ -27,3 +27,8 @@
 # DEPLOYMENT_NAME=your-deployment-name
 # Uses the given policy file instead of generating one (relative to examples/)
 # SECURITY_POLICY=simple_server/security_policies/allow_all.rego
+#
+# Sidecar Images ---------------------------------------------------------------
+# ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:main
+# ENCRYPTED_FILESYSTEM_IMAGE=http://mcr.microsoft.com/aci/encfs:2.2
+# KEY_RELEASE_IMAGE=http://mcr.microsoft.com/aci/skr:2.2

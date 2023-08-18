@@ -27,7 +27,7 @@ jobs:
           RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/virtualNetworks'].id" --output tsv)"
           RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/networkSecurityGroups'].id" --output tsv)"
 
-          if [[ -n $RESOURCES ]]; then
+          if [[ -n $(echo "$RESOURCES" | sed 's/[[:space:]]*$//') ]]; then
             echo -e "Deleting: \n$(echo $RESOURCES | tr ' ' '\n')"
             az resource delete --verbose --ids $RESOURCES
           fi

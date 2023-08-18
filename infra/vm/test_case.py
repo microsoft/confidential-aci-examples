@@ -72,7 +72,9 @@ def setUpVm(cls):
             with tempfile.TemporaryDirectory() as temp_dir:
                 get_containerplat(
                     directory_path=temp_dir,
-                    hcsshim_url="git@github.com:microsoft/hcsshim.git",
+                    hcsshim_url=os.getenv(
+                        "HCSSHIM_URL", "git@github.com:microsoft/hcsshim.git"
+                    ),
                 )
 
                 deploy_containerplat(

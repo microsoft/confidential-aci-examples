@@ -5,13 +5,28 @@
         {
             "containers": [
                 {
-                    "image": "http://mcr.microsoft.com/azuredocs/aci-helloworld:latest",
-                    "ports": [22, 8000],
-                    "cores": 2,
-                    "ram": 8
+                    "image": "http://registry.hub.docker.com/library/alpine:latest",
+                    "cores": 1,
+                    "ram": 2,
+                    "ports": [22]
+                },
+                {
+                    "image": "http://registry.hub.docker.com/library/nginx:stable",
+                    "cores": 1,
+                    "ram": 2
+                },
+                {
+                    "image": "http://registry.hub.docker.com/library/busybox:latest",
+                    "cores": 1,
+                    "ram": 2
+                },
+                {
+                    "image": "http://registry.hub.docker.com/library/ubuntu:latest",
+                    "cores": 1,
+                    "ram": 2
                 }
             ],
-            "ports": [22, 8000]
+            "ports": [22]
         }
     ],
     "securityPolicies": [],

@@ -34,7 +34,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2023-05-01",
-                "name": f"{name}-group".replace("_", "-"),
+                "name": f"{name}-group-{group_idx}".replace("_", "-"),
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -58,7 +58,9 @@ def generate_arm_template(
                                 "ports": [
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
-                                ],
+                                ]
+                                if "ports" in container
+                                else [],
                                 "securityContext": {
                                     "privileged": container.get("privileged", False)
                                 },
@@ -122,7 +124,7 @@ def generate_arm_template(
                     ],
                 },
             }
-            for container_group in manifest["containerGroups"]
+            for group_idx, container_group in enumerate(manifest["containerGroups"])
         ],
     }
     print("Done")

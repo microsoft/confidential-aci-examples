@@ -1,0 +1,42 @@
+name: VM Backend
+
+on:
+  workflow_dispatch:
+
+jobs:
+  simple-server:
+    name: Simple Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          az extension add --name confcom
+
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.AZURE_REGISTRY_URL }}
+          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+
+      - name: Set Docker Permissions
+        run: sudo usermod -aG docker $USER
+
+      - name: Run Tests
+        env:
+          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
+          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+          BACKEND: VM
+        run: python -m unittest discover -s examples/simple_server -p *.py

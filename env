@@ -30,5 +30,5 @@
 #
 # Sidecar Images ---------------------------------------------------------------
 # ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:main
-# ENCRYPTED_FILESYSTEM_IMAGE=http://mcr.microsoft.com/aci/encfs:2.2
-# KEY_RELEASE_IMAGE=http://mcr.microsoft.com/aci/skr:2.2
+# ENCRYPTED_FILESYSTEM_IMAGE=http://mcr.microsoft.com/aci/encfs:2.3
+# KEY_RELEASE_IMAGE=http://mcr.microsoft.com/aci/skr:2.3

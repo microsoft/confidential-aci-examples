@@ -6,24 +6,53 @@
             "containers": [
                 {
                     "image": "http://registry.hub.docker.com/library/alpine:latest",
+                    "ports": [22],
                     "cores": 1,
-                    "ram": 2,
-                    "ports": [22]
-                },
+                    "ram": 4
+                }
+            ],
+            "ports": [22]
+        },
+        {
+            "containers": [
                 {
                     "image": "http://registry.hub.docker.com/library/nginx:stable",
+                    "ports": [22],
                     "cores": 1,
-                    "ram": 2
-                },
+                    "ram": 4
+                }
+            ],
+            "ports": [22]
+        },
+        {
+            "containers": [
                 {
                     "image": "http://registry.hub.docker.com/library/busybox:latest",
+                    "ports": [22],
                     "cores": 1,
-                    "ram": 2
-                },
+                    "ram": 4
+                }
+            ],
+            "ports": [22]
+        },
+        {
+            "containers": [
                 {
                     "image": "http://registry.hub.docker.com/library/ubuntu:latest",
+                    "ports": [22],
                     "cores": 1,
-                    "ram": 2
+                    "ram": 4
+                }
+            ],
+            "ports": [22]
+        },
+        {
+            "containers": [
+                {
+                    "image": "http://registry.hub.docker.com/library/python:latest",
+                    "ports": [22],
+                    "cores": 1,
+                    "ram": 4
                 }
             ],
             "ports": [22]

@@ -22,7 +22,7 @@
 # Type of backend to use for tests
 # BACKEND=VM
 # Removes deployments after test is done
-# CLEANUP_ACI=1
+# CLEANUP_ACI=0
 # Skips deployment and uses existing with the given name
 # DEPLOYMENT_NAME=your-deployment-name
 # Uses the given policy file instead of generating one (relative to examples/)

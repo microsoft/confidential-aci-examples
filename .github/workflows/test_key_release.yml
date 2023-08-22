@@ -6,14 +6,14 @@ on:
       key_release_image:
         description: "The image of the SKR sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/skr:2.2"
+        default: "http://mcr.microsoft.com/aci/skr:2.3"
         type: string
   workflow_dispatch:
     inputs:
       key_release_image:
         description: "The image of the SKR sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/skr:2.2"
+        default: "http://mcr.microsoft.com/aci/skr:2.3"
         type: string
   push:
     branches:
@@ -56,7 +56,7 @@ jobs:
       - name: Resolve Variables
         id: resolve-variables
         env:
-          KEY_RELEASE_IMAGE: "${{ (github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'merge_group' || github.event_name == 'schedule' ) && 'http://mcr.microsoft.com/aci/skr:2.2' || inputs.key_release_image }}"
+          KEY_RELEASE_IMAGE: "${{ (github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'merge_group' || github.event_name == 'schedule' ) && 'http://mcr.microsoft.com/aci/skr:2.3' || inputs.key_release_image }}"
           SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
           SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
           SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}

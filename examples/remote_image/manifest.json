@@ -8,7 +8,8 @@
                     "image": "http://registry.hub.docker.com/library/alpine:latest",
                     "ports": [22],
                     "cores": 1,
-                    "ram": 4
+                    "ram": 4,
+                    "command": ["sleep", "1000"]
                 }
             ],
             "ports": [22]
@@ -19,7 +20,8 @@
                     "image": "http://registry.hub.docker.com/library/nginx:stable",
                     "ports": [22],
                     "cores": 1,
-                    "ram": 4
+                    "ram": 4,
+                    "command": ["sleep", "1000"]
                 }
             ],
             "ports": [22]
@@ -30,7 +32,8 @@
                     "image": "http://registry.hub.docker.com/library/busybox:latest",
                     "ports": [22],
                     "cores": 1,
-                    "ram": 4
+                    "ram": 4,
+                    "command": ["sleep", "1000"]
                 }
             ],
             "ports": [22]
@@ -41,7 +44,8 @@
                     "image": "http://registry.hub.docker.com/library/ubuntu:latest",
                     "ports": [22],
                     "cores": 1,
-                    "ram": 4
+                    "ram": 4,
+                    "command": ["sleep", "1000"]
                 }
             ],
             "ports": [22]
@@ -52,7 +56,8 @@
                     "image": "http://registry.hub.docker.com/library/python:latest",
                     "ports": [22],
                     "cores": 1,
-                    "ram": 4
+                    "ram": 4,
+                    "command": ["sleep", "1000"]
                 }
             ],
             "ports": [22]

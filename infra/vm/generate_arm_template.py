@@ -266,7 +266,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--location",
         help="The location of the container to deploy",
-        default="eastus2euap",
+        default="westeurope",
     )
     parser.add_argument(
         "--manifest-path",

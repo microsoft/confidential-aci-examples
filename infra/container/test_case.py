@@ -43,7 +43,7 @@ def setUpAci(cls):
         name=cls.name,
         image_tag=cls.image_tag,
         manifest=cls.manifest,
-        location="eastus2euap",
+        location="westeurope",
         out=arm_template_path,
     )
 

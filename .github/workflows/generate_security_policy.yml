@@ -100,12 +100,11 @@ jobs:
           python infra/login_arm_template_registries.py --arm-template-path arm_template.json
           command="az confcom acipolicygen \
               -a arm_template.json \
-              --outraw \
-              > security_policies/_generated.rego"
+              --outraw"
             if [ "${{ inputs.debug }}" = "true" ]; then
               command="$command --debug-mode"
             fi
-            $command
+            $command > security_policies/_generated.rego
 
       - name: Print Security Policy
         run: cat security_policies/_generated.rego

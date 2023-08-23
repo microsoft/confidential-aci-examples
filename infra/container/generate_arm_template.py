@@ -26,7 +26,7 @@ def generate_arm_template(
     if security_policy:
         raw_policy = b64decode(security_policy)
         security_policy = [
-            b64encode(f"package{policy}".encode())
+            b64encode(f"package{policy}".encode()).decode()
             for policy in raw_policy.decode().split("package")[1:]
         ]
         assert len(manifest["containerGroups"]) == len(

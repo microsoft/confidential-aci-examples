@@ -22,6 +22,15 @@ def generate_arm_template(
         os.environ["UNIQUE_ID"] = name
     manifest = resolve_manifest_variables(manifest)
 
+    if security_policy:
+        security_policy = [
+            "package" + policy
+            for policy in security_policy.decode().split("package")[1:]
+        ]
+        assert len(manifest["containerGroups"]) == len(security_policy)
+    else:
+        security_policy = [None for _ in range(len(manifest["containerGroups"]))]
+
     print(f"Generating ARM template for {name}")
     arm_template = {
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -110,7 +119,7 @@ def generate_arm_template(
                         for volume in container_group.get("volumes", [])
                     ],
                     "confidentialComputeProperties": {
-                        "ccePolicy": security_policy,
+                        "ccePolicy": security_policy[group_idx],
                     },
                     "imageRegistryCredentials": [
                         {

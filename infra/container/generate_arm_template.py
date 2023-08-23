@@ -24,11 +24,11 @@ def generate_arm_template(
 
     if security_policy:
         security_policy = [
-            "package" + policy for policy in security_policy.split("package")[1:]
+            "package" + policy for policy in security_policy.split("package")
         ]
-        print(f"{security_policy=}")
-        print(f"{manifest['containerGroups']=}")
-        assert len(manifest["containerGroups"]) == len(security_policy)
+        assert len(manifest["containerGroups"]) == len(
+            security_policy
+        ), f"{security_policy=} doesn't match {manifest['containerGroups']=}"
     else:
         security_policy = [None for _ in range(len(manifest["containerGroups"]))]
 

@@ -1,4 +1,5 @@
 import argparse
+from base64 import base64encode, base64decode
 import json
 import os
 import sys
@@ -23,8 +24,10 @@ def generate_arm_template(
     manifest = resolve_manifest_variables(manifest)
 
     if security_policy:
+        raw_policy = base64decode(security_policy)
         security_policy = [
-            "package" + policy for policy in security_policy.split("package")
+            base64encode("package" + policy)
+            for policy in raw_policy.split("package")[1:]
         ]
         assert len(manifest["containerGroups"]) == len(
             security_policy

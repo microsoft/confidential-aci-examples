@@ -101,7 +101,7 @@ jobs:
           command="az confcom acipolicygen \
               -a arm_template.json \
               --outraw \
-              --save-to-file security_policies/_generated.rego"
+              > security_policies/_generated.rego"
             if [ "${{ inputs.debug }}" = "true" ]; then
               command="$command --debug-mode"
             fi

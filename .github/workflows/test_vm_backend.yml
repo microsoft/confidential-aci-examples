@@ -43,4 +43,6 @@ jobs:
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
           BACKEND: VM
-        run: python -m unittest discover -s examples/simple_server -p *.py
+        run: |
+          ./setup.sh
+          python -m unittest discover -s examples/simple_server -p *.py

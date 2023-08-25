@@ -70,7 +70,7 @@ jobs:
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
         run: |
           if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
-            ENCRYPTED_FILESYSTEM_IMAGE="http://mcr.microsoft.com/aci/skr:2.3"
+            ENCRYPTED_FILESYSTEM_IMAGE="http://mcr.microsoft.com/aci/encfs:2.3"
           fi
           python infra/resolve_manifest_variables.py examples/encrypted_filesystem/manifest.json > manifest.json
 

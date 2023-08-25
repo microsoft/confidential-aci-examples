@@ -56,7 +56,7 @@ jobs:
       - name: Resolve Variables
         id: resolve-variables
         env:
-          KEY_RELEASE_IMAGE: "${{ (github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'merge_group' || github.event_name == 'schedule' ) && 'http://mcr.microsoft.com/aci/skr:2.3' || inputs.key_release_image }}"
+          KEY_RELEASE_IMAGE: "${{ inputs.key_release_image }}"
           SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
           SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
           SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}
@@ -66,7 +66,11 @@ jobs:
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
           UNIQUE_ID: ${{ steps.workflow-id.outputs.workflow-id }}
-        run: python infra/resolve_manifest_variables.py examples/key_release/manifest.json > manifest.json
+        run: |
+          if [ -z "$KEY_RELEASE_IMAGE" ]; then
+            KEY_RELEASE_IMAGE="http://mcr.microsoft.com/aci/skr:2.3"
+          fi
+          python infra/resolve_manifest_variables.py examples/key_release/manifest.json > manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

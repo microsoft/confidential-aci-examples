@@ -56,7 +56,7 @@ jobs:
       - name: Resolve Variables
         id: resolve-variables
         env:
-          ENCRYPTED_FILESYSTEM_IMAGE: "${{ (github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'merge_group' || github.event_name == 'schedule') && 'http://mcr.microsoft.com/aci/encfs:2.3' || inputs.encrypted_filesystem_image }}"
+          ENCRYPTED_FILESYSTEM_IMAGE: "${{ inputs.encrypted_filesystem_image }}"
           SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
           SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
           SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}
@@ -68,7 +68,11 @@ jobs:
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
-        run: python infra/resolve_manifest_variables.py examples/encrypted_filesystem/manifest.json > manifest.json
+        run: |
+          if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
+            ENCRYPTED_FILESYSTEM_IMAGE="http://mcr.microsoft.com/aci/skr:2.3"
+          fi
+          python infra/resolve_manifest_variables.py examples/encrypted_filesystem/manifest.json > manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

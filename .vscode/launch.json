@@ -163,6 +163,8 @@
             "args": [
                 "--arm-template-path",
                 "examples/${input:testName}/${input:armTemplateName}",
+                "--hcsshim-url",
+                "${input:hcsShimUrl}",
             ]
         },
         {
@@ -234,6 +236,12 @@
             "id": "storageContainerName",
             "type": "promptString",
             "description": "Enter a name for the storage container:",
+        },
+        {
+            "id": "hcsShimUrl",
+            "type": "promptString",
+            "description": "Enter the URL of HCSShim to deploy:",
+            "default": "git@github.com:microsoft/hcsshim.git"
         },
     ]
 }

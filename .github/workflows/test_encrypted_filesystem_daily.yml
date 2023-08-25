@@ -6,19 +6,9 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
-  prepare:
-    name: Prepare Test
-    runs-on: ubuntu-latest
-    outputs:
-      encrypted_filesystem_image: http://${{ secrets.SIDECARS_REGISTRY_URL }}/encfs:main
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
   encrypted-filesystem:
     name: Encrypted Filesystem
     uses: ./.github/workflows/test_encrypted_filesystem.yml
-    needs: prepare
     secrets: inherit
     with:
-      encrypted_filesystem_image: ${{ needs.prepare.outputs.encrypted_filesystem_image }}
+      encrypted_filesystem_image: http://confidentialsidecars.azurecr.io/encfs:main

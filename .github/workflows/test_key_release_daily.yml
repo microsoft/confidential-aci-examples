@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 7 * * *"
+  pull_request:
+    paths:
+      - .github/workflows/test_key_release_daily.yml
 
 jobs:
   key-release:
@@ -11,4 +14,4 @@ jobs:
     uses: ./.github/workflows/test_key_release.yml
     secrets: inherit
     with:
-      key_release_image: http://${{ vars.SIDECARS_REGISTRY }}/skr:main
+      key_release_image: http://confidentialsidecars.azurecr.io/skr:main

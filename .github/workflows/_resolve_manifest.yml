@@ -48,6 +48,10 @@ jobs:
           echo $manifest
           manifest=$(echo $manifest | sed 's/"/\\"/g')
           echo $manifest
+          manifest=$(echo $manifest | sed 's/{/\\{/g')
+          echo $manifest
+          manifest=$(echo $manifest | sed 's/}/\\}/g')
+          echo $manifest
           echo "manifest=$manifest" >> GITHUB_OUTPUT
           
       - name: Print Manifest

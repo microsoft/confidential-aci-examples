@@ -22,9 +22,18 @@ on:
       - main
 
 jobs:
+  
+  resolve_manifest:
+    name: Resolve Manifest
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      manifest: examples/simple_server/manifest.json
+  
   prepare:
     name: Prepare Test
     runs-on: ubuntu-latest
+    needs: resolve_manifest
     outputs:
       workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
     steps:
@@ -40,12 +49,7 @@ jobs:
 
       - name: Resolve Variables
         id: resolve-variables
-        env:
-          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
-          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-          UNIQUE_ID: ${{ steps.workflow-id.outputs.workflow-id }}
-        run: python infra/resolve_manifest_variables.py examples/simple_server/manifest.json > manifest.json
+        run: echo ${{ needs.resolve_manifest.outputs.manifest }} > manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

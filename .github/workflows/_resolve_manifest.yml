@@ -7,6 +7,10 @@ on:
         required: true
         type: string
         description: The Path to the Manifest File
+    outputs:
+      manifest:
+        description: The manifest whith values resolved
+        value: ${{ jobs.resolve-manifest-variables.outputs.manifest }}
         
 jobs:
   

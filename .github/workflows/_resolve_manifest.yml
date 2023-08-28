@@ -43,4 +43,6 @@ jobs:
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
-        run: echo "manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }})" >> GITHUB_OUTPUT
+        run: |
+          echo "manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }})"
+          echo "manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }})" >> GITHUB_OUTPUT

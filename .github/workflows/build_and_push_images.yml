@@ -11,6 +11,11 @@ on:
         description: "Test to build and push images for"
         required: true
         type: string
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
   workflow_call:
     inputs:
       id:
@@ -22,6 +27,7 @@ on:
         required: true
         type: string
       manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
         type: string
         default: ""
         required: false

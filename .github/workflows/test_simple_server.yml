@@ -22,7 +22,6 @@ on:
       - main
 
 jobs:
-  
   prepare:
     name: Prepare Test
     runs-on: ubuntu-latest

@@ -21,6 +21,11 @@ on:
         description: "Security policy to use for ACI"
         required: true
         type: string
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
   workflow_call:
     inputs:
       id:
@@ -40,6 +45,7 @@ on:
         required: true
         type: string
       manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
         type: string
         default: ""
         required: false

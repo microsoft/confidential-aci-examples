@@ -47,11 +47,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Resolve Variables
-        id: resolve-variables
+      - name: Import Decryption Key
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt | sed 's/\\"/"/g' > manifest.json
+          
+      - name: Resolve Variables
+        id: resolve-variables
+        run: echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt | sed 's/\\"/"/g' > manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

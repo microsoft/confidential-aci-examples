@@ -49,10 +49,10 @@ jobs:
           WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
           echo $WORKFLOW_ID
           echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
-          
+
       - name: Define Image to Use
         id: resolve-image
-        env: 
+        env:
           ENCRYPTED_FILESYSTEM_IMAGE: ${{ inputs.encrypted_filesystem_image }}
         run: |
           if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then

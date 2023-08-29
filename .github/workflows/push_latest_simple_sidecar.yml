@@ -10,7 +10,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   push-latest-simple-sidecar:
     name: "Push Latest Simple Sidecar Images"
     uses: ./.github/workflows/build_and_push_images.yml

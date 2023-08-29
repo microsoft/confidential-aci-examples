@@ -51,7 +51,6 @@ on:
         required: false
 
 jobs:
-
   resolve-manifest:
     name: Resolve Manifest Variables
     uses: ./.github/workflows/_resolve_manifest.yml
@@ -59,7 +58,7 @@ jobs:
     with:
       manifest: examples/${{ inputs.test }}/manifest.json
       modifiers: ${{ inputs.manifest-modifiers }}
-      
+
   deploy-container:
     name: Deploy Container (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest

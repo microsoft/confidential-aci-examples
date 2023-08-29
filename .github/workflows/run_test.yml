@@ -72,7 +72,7 @@ jobs:
     with:
       id: ${{ inputs.id }}
       test: ${{ inputs.test }}
-      manifest-modifiers: ${{ inputs.manifest-modifiers }}  
+      manifest-modifiers: ${{ inputs.manifest-modifiers }}
 
   generate-security-policy:
     name: "Generate Security Policy"

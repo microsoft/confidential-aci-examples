@@ -10,7 +10,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   push-latest-key-release:
     name: "Push Latest Key Release Image"
     uses: ./.github/workflows/build_and_push_images.yml

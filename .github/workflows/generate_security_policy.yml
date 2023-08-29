@@ -56,7 +56,6 @@ on:
         value: ${{ jobs.generate-security-policy.outputs.security-policies }}
 
 jobs:
-
   resolve-manifest:
     name: Resolve Manifest Variables
     uses: ./.github/workflows/_resolve_manifest.yml

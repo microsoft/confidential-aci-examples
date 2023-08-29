@@ -49,10 +49,10 @@ jobs:
           WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
           echo $WORKFLOW_ID
           echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
-          
+
       - name: Define Image to Use
         id: resolve-image
-        env: 
+        env:
           KEY_RELEASE_IMAGE: ${{ inputs.key_release_image }}
         run: |
           if [ -z "$KEY_RELEASE_IMAGE" ]; then

@@ -55,7 +55,6 @@ on:
         required: false
 
 jobs:
-
   resolve-manifest:
     name: Resolve Manifest Variables
     uses: ./.github/workflows/_resolve_manifest.yml
@@ -63,7 +62,7 @@ jobs:
     with:
       manifest: examples/${{ inputs.test }}/manifest.json
       modifiers: ${{ inputs.manifest-modifiers }}
-      
+
   generate-arm-template:
     name: Generate ARM Template (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest

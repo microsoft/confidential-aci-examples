@@ -53,7 +53,7 @@ jobs:
           
       - name: Resolve Variables
         id: resolve-variables
-        run: echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt | sed 's/\\"/"/g' > manifest.json
+        run: echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

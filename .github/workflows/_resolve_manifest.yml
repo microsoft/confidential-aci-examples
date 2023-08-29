@@ -52,8 +52,15 @@ jobs:
           echo $manifest
           manifest=$(echo $manifest | sed 's/}/\\}/g')
           echo $manifest
+          manifest=$(echo $manifest | sed 's/,/\\,/g')
+          echo $manifest
+          manifest=$(echo $manifest | sed 's/:/\\:/g')
+          echo $manifest
+          echo "manifest_raw=manifest" >> GITHUB_OUTPUT
           echo "manifest=$manifest" >> GITHUB_OUTPUT
           
       - name: Print Manifest
-        run: echo ${{ steps.resolve.outputs.manifest}}
+        run: |
+          echo ${{ steps.resolve.outputs.manifest}}
+          echo ${{ steps.resolve.outputs.manifest_raw}}
           

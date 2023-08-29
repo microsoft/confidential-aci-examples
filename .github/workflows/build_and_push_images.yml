@@ -21,6 +21,10 @@ on:
         description: "Test to build and push images for"
         required: true
         type: string
+      manifest-modifiers:
+        type: string
+        default: ""
+        required: false
 
 jobs:
   
@@ -31,6 +35,7 @@ jobs:
     with:
       id: ${{ inputs.id }}
       manifest: examples/${{ inputs.test }}/manifest.json
+      modifiers: ${{ inputs.manifest-modifiers }}
   
   get-images-to-build:
     name: Get Images to Build

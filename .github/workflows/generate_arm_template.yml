@@ -43,6 +43,10 @@ on:
         description: "Security policy to use for ACI"
         required: true
         type: string
+      manifest-modifiers:
+        type: string
+        default: ""
+        required: false
 
 jobs:
 
@@ -53,6 +57,7 @@ jobs:
     with:
       id: ${{ inputs.id }}
       manifest: examples/${{ inputs.test }}/manifest.json
+      modifiers: ${{ inputs.manifest-modifiers }}
       
   generate-arm-template:
     name: Generate ARM Template (${{ inputs.location }}/${{ inputs.security-policy }})

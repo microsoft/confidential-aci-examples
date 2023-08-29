@@ -11,6 +11,10 @@ on:
         required: true
         type: string
         description: The Path to the Manifest File
+      modifiers:
+        type: string
+        required: false
+        default: ""
     outputs:
       manifest:
         description: The manifest whith values resolved
@@ -53,6 +57,11 @@ jobs:
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
           UNIQUE_ID: ${{ inputs.id }}
         run: 
+          IFS=";" read -ra modifiers <<< "${{ inputs.modifiers }}"
+          for modifier in "${modifiers[@]}"; do
+            IFS="=" read -ra key_value <<< "$modifier"
+            export "${key_value[0]}"="${key_value[1]}"
+          done
           echo "manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }} |
               gpg --armor --encrypt --no-tty --batch --trust-model always -r "Github Actions <\" \">" | 
               sed ':a;N;$!ba;s/\n/\\n/g')" >> $GITHUB_OUTPUT

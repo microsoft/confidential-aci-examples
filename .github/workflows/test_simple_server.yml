@@ -24,7 +24,7 @@ on:
 jobs:
   
   resolve-manifest:
-    name: Resolve Manifest
+    name: Resolve Manifest Variables
     uses: ./.github/workflows/_resolve_manifest.yml
     secrets: inherit
     with:

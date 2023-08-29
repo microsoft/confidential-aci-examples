@@ -45,7 +45,7 @@ jobs:
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
         run: |
           echo -e "${{ secrets.ENCRYPTION_KEY }}" | gpg --import
-          manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }} | sed 's/"/\\"/g' | gpg --armor --encrypt --no-tty --batch --trust-model always -r "Github Actions <\" \">")
+          manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }} | sed 's/"/\\"/g' | gpg --armor --encrypt --no-tty --batch --trust-model always -r "Github Actions <\" \">" | sed ':a;N;$!ba;s/\n/\\n/g')
           echo $manifest
           echo "manifest=$manifest" >> $GITHUB_OUTPUT
           

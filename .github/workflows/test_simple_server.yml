@@ -51,7 +51,7 @@ jobs:
         id: resolve-variables
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          echo ${{ needs.resolve-manifest.outputs.manifest }}| sed 's/\\n/\n/g' | gpg --decrypt > manifest.json
+          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

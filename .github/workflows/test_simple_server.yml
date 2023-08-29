@@ -52,8 +52,8 @@ jobs:
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
           manifest=$(echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt)
-          echo -e $manifest
           echo -e "$manifest" > manifest.json
+          cat manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

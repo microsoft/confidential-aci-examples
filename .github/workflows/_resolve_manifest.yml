@@ -58,9 +58,15 @@ jobs:
           echo $manifest
           echo "manifest_raw=manifest" >> GITHUB_OUTPUT
           echo "manifest=$manifest" >> GITHUB_OUTPUT
+          echo "manifest_raw_env=manifest" >> GITHUB_ENV
+          echo "manifest_env=$manifest" >> GITHUB_ENV
           
       - name: Print Manifest
         run: |
           echo ${{ steps.resolve.outputs.manifest}}
           echo ${{ steps.resolve.outputs.manifest_raw}}
+          echo $manifest
+          echo $manifest_raw
+          echo $manifest_env
+          echo $manifest_raw_env
           

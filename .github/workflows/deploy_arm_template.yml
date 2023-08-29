@@ -43,7 +43,7 @@ on:
 jobs:
 
   resolve-manifest:
-    name: Deploy Container (${{ inputs.location }}/${{ inputs.security-policy }}) / Resolve Manifest Variables
+    name: Resolve Manifest Variables
     uses: ./.github/workflows/_resolve_manifest.yml
     secrets: inherit
     with:

@@ -42,12 +42,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Decrypt Manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
 
       - name: Get Images to Build
         id: get-images-to-build
         run: |
-          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
           echo "images=$(python infra/read_manifest_images.py manifest.json)" >> $GITHUB_OUTPUT
 
   build-and-push-image:

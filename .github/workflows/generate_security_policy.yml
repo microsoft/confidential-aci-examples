@@ -46,9 +46,18 @@ on:
         value: ${{ jobs.generate-security-policy.outputs.security-policies }}
 
 jobs:
+
+  resolve-manifest:
+    name: Resolve Manifest Variables
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      manifest: examples/${{ inputs.test }}/manifest.json
+
   generate-security-policy:
     name: Generate Security Policy
     runs-on: ubuntu-latest
+    needs: resolve-manifest
     outputs:
       security-policies: ${{ steps.find-policies.outputs.security-policies }}
     steps:
@@ -60,10 +69,10 @@ jobs:
           az extension add --name confcom
           pip install -r requirements.txt
 
-      - name: Download Manifest
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ inputs.id }}_manifest
+      - name: Decrypt Manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
 
       - name: Generate Matrix Cell Name
         id: generate-name

@@ -81,7 +81,7 @@ jobs:
           AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
           AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
           CLEANUP_ACI: 0
-          UNIQUE_ID: ${{ inputs.id }}
+          UNIQUE_ID: ${{ steps.generate-name.outputs.name }}
         run: |
           python -m unittest discover \
             -s examples/${{ inputs.test }} \

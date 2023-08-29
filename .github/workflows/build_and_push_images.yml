@@ -47,7 +47,7 @@ jobs:
         id: get-images-to-build
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          echo "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
+          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
           echo "images=$(python infra/read_manifest_images.py manifest.json)" >> $GITHUB_OUTPUT
 
   build-and-push-image:

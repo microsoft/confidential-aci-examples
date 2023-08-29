@@ -69,3 +69,5 @@ jobs:
       id: ${{ needs.prepare.outputs.workflow-id }}
       test: encrypted_filesystem
       manifest-modifiers: ${{ needs.prepare.outputs.manifest-modifiers }}
+      skip-cleanup: true
+      debug: true

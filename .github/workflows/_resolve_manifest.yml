@@ -43,30 +43,9 @@ jobs:
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
-        run: |
-          manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }})
-          echo $manifest
-          manifest=$(echo $manifest | sed 's/"/\\"/g')
-          echo $manifest
-          manifest=$(echo $manifest | sed 's/{/\\{/g')
-          echo $manifest
-          manifest=$(echo $manifest | sed 's/}/\\}/g')
-          echo $manifest
-          manifest=$(echo $manifest | sed 's/,/\\,/g')
-          echo $manifest
-          manifest=$(echo $manifest | sed 's/:/\\:/g')
-          echo $manifest
-          echo "manifest_raw=manifest" >> GITHUB_OUTPUT
-          echo "manifest=$manifest" >> GITHUB_OUTPUT
-          echo "manifest_raw_env=manifest" >> GITHUB_ENV
-          echo "manifest_env=$manifest" >> GITHUB_ENV
+        run: echo "manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }})" >> $GITHUB_OUTPUT
           
       - name: Print Manifest
         run: |
           echo ${{ steps.resolve.outputs.manifest}}
-          echo ${{ steps.resolve.outputs.manifest_raw}}
-          echo $manifest
-          echo $manifest_raw
-          echo $manifest_env
-          echo $manifest_raw_env
           

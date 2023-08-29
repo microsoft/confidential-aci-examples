@@ -48,7 +48,7 @@ on:
 jobs:
 
   resolve-manifest:
-    name: Resolve Manifest Variables
+    name: Generate Security Policy / Resolve Manifest Variables
     uses: ./.github/workflows/_resolve_manifest.yml
     secrets: inherit
     with:

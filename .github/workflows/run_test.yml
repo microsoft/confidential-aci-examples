@@ -55,13 +55,13 @@ on:
         type: boolean
 
 jobs:
-
   build-and-push-images:
     name: "Build and Push Images"
     uses: ./.github/workflows/build_and_push_images.yml
     secrets: inherit
     with:
       id: ${{ inputs.id }}
+      test: ${{ inputs.test }}
 
   generate-security-policy:
     name: "Generate Security Policy"

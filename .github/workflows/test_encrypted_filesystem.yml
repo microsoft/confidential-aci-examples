@@ -54,7 +54,24 @@ jobs:
     name: Encrypted Filesystem
     uses: ./.github/workflows/run_test.yml
     needs: prepare
-    secrets: inherit
+    secrets: 
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      AZURE_HSM_NAME: ${{ secrets.AZURE_HSM_NAME }}
+      AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
+      AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
+      KEY_RELEASE_IMAGE: ${{ secrets.KEY_RELEASE_IMAGE }}
+      ENCRYPTED_FILESYSTEM_IMAGE: ${{ secrets.ENCRYPTED_FILESYSTEM_IMAGE }}
+      ATTESTATION_SIDECAR_IMAGE: ${{ secrets.ATTESTATION_SIDECAR_IMAGE }}
+      SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
+      SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
+      SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}
+      AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
+      AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+      AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+      AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+      AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
+      AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
     with:
       id: ${{ needs.prepare.outputs.workflow-id }}
       test: encrypted_filesystem

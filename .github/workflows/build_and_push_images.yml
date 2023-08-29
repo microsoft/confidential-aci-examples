@@ -7,8 +7,8 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
-      manifest:
-        description: "Manifest of Example to Build Images for:"
+      test:
+        description: "Test to build and push images for"
         required: true
         type: string
   workflow_call:
@@ -17,18 +17,26 @@ on:
         description: "Unique Identifier for this run"
         required: true
         type: string
-      manifest:
-        description: "Manifest of Example to Build Images for:"
+      test:
+        description: "Test to build and push images for"
         required: true
         type: string
 
 jobs:
   
+  resolve-manifest:
+    name: Resolve Manifest Variables
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      id: ${{ inputs.id }}
+      manifest: examples/${{ inputs.test }}/manifest.json
+  
   get-images-to-build:
     name: Get Images to Build
     runs-on: ubuntu-latest
+    needs: resolve-manifest
     outputs:
-      test-name: ${{ steps.get-images-to-build.outputs.test-name }}
       images: ${{ steps.get-images-to-build.outputs.images }}
     steps:
       - name: Checkout
@@ -37,12 +45,11 @@ jobs:
       - name: Decrypt Manifest
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          echo -e "${{ inputs.manifest }}" | gpg --decrypt > manifest.json
+          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
 
       - name: Get Images to Build
         id: get-images-to-build
         run: |
-          echo "test-name=$(cat manifest.json | jq -r '.testName')" >> $GITHUB_OUTPUT
           echo "images=$(python infra/read_manifest_images.py manifest.json)" >> $GITHUB_OUTPUT
 
   build-and-push-image:
@@ -73,10 +80,10 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v3
         env:
-          DOCKERFILE_CONTEXT: examples/${{ needs.get-images-to-build.outputs.test-name }}
+          DOCKERFILE_CONTEXT: examples/${{ inputs.test }}
         with:
           context: examples
           file: examples/${{ steps.docker-info.outputs.file }}
           push: true
           tags: |
-            ${{ secrets.AZURE_REGISTRY_URL }}/${{ needs.get-images-to-build.outputs.test-name }}/${{ steps.docker-info.outputs.repository }}:${{ inputs.id }}
+            ${{ secrets.AZURE_REGISTRY_URL }}/${{ inputs.test }}/${{ steps.docker-info.outputs.repository }}:${{ inputs.id }}

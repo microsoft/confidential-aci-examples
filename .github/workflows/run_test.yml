@@ -56,22 +56,12 @@ on:
 
 jobs:
 
-  resolve-manifest:
-    name: Resolve Manifest Variables
-    uses: ./.github/workflows/_resolve_manifest.yml
-    secrets: inherit
-    with:
-      id: ${{ inputs.id }}
-      manifest: examples/${{ inputs.test }}/manifest.json
-  
   build-and-push-images:
     name: "Build and Push Images"
     uses: ./.github/workflows/build_and_push_images.yml
-    needs: resolve-manifest
     secrets: inherit
     with:
       id: ${{ inputs.id }}
-      manifest: ${{ needs.resolve-manifest.outputs.manifest }}
 
   generate-security-policy:
     name: "Generate Security Policy"

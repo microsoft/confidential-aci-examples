@@ -3,10 +3,6 @@ name: Resolve Manifest Variables
 on:
   workflow_call:
     inputs:
-      id:
-        required: true
-        type: string
-        description: A Unique Identifier for this Run
       manifest:
         required: true
         type: string
@@ -55,7 +51,6 @@ jobs:
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
-          UNIQUE_ID: ${{ inputs.id }}
         run: |
           IFS=";" read -ra modifiers <<< "${{ inputs.modifiers }}"
           for modifier in "${modifiers[@]}"; do

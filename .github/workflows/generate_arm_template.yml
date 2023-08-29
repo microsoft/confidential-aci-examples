@@ -55,7 +55,6 @@ jobs:
     uses: ./.github/workflows/_resolve_manifest.yml
     secrets: inherit
     with:
-      id: ${{ inputs.id }}
       manifest: examples/${{ inputs.test }}/manifest.json
       modifiers: ${{ inputs.manifest-modifiers }}
       

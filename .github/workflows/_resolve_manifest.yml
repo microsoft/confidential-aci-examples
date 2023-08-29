@@ -44,7 +44,7 @@ jobs:
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
         run: |
-          echo -r "${{ secrets.ENCRYPTION_KEY }}" | gpg --import
+          echo -e "${{ secrets.ENCRYPTION_KEY }}" | gpg --import
           echo "manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }} | sed 's/"/\\"/g' | gpg --armor --encyrpt -r "Github Actions")" >> $GITHUB_OUTPUT
           
       - name: Print Manifest

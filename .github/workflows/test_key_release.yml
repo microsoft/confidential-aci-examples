@@ -58,7 +58,7 @@ jobs:
           if [ -z "$KEY_RELEASE_IMAGE" ]; then
             KEY_RELEASE_IMAGE="http://mcr.microsoft.com/aci/skr:2.3"
           fi
-          echo "manifest-modifiers=KEY_RELEASE_IMAGE=$KEY_RELEASE_IMAGE;UNIQUE_ID=${{ steps.workflow-id.outputs.workflow-id }}" >> $GITHUB_OUTPUT
+          echo "manifest-modifiers=KEY_RELEASE_IMAGE=$KEY_RELEASE_IMAGE" >> $GITHUB_OUTPUT
 
   key-release:
     name: Key Release

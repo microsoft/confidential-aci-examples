@@ -3,6 +3,10 @@ name: Resolve Manifest Variables
 on:
   workflow_call:
     inputs:
+      id:
+        required: true
+        type: string
+        description: A Unique Identifier for this Run
       manifest:
         required: true
         type: string
@@ -47,6 +51,7 @@ jobs:
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
+          UNIQUE_ID: ${{ inputs.id }}
         run: 
           echo "manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }} |
               gpg --armor --encrypt --no-tty --batch --trust-model always -r "Github Actions <\" \">" | 

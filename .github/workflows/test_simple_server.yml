@@ -49,11 +49,11 @@ jobs:
 
       - name: Import Decryption Key
         run: |
-          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo "${{ secrets.DECRYPTION_KEY }}" | gpg --import
           
       - name: Resolve Variables
         id: resolve-variables
-        run: echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
+        run: echo "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

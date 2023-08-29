@@ -49,6 +49,17 @@ jobs:
           WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
           echo $WORKFLOW_ID
           echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
+          
+      - name: Define Image to Use
+        id: resolve-image
+        env: 
+          KEY_RELEASE_IMAGE: ${{ inputs.key_release_image }}
+        run: |
+          if [ -z "$KEY_RELEASE_IMAGE" ]; then
+            KEY_RELEASE_IMAGE="http://mcr.microsoft.com/aci/skr:2.3"
+          fi
+          manifest-modifiers="KEY_RELEASE_IMAGE=$KEY_RELEASE_IMAGE"
+          echo "manifest-modifiers=$manifest-modifiers;UNIQUE_ID=${{ steps.workflow-id.outputs.workflow-id }}" >> $GITHUB_OUTPUT
 
   key-release:
     name: Key Release

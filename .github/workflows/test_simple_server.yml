@@ -23,17 +23,9 @@ on:
 
 jobs:
   
-  resolve-manifest:
-    name: Resolve Manifest Variables
-    uses: ./.github/workflows/_resolve_manifest.yml
-    secrets: inherit
-    with:
-      manifest: examples/simple_server/manifest.json
-  
   prepare:
     name: Prepare Test
     runs-on: ubuntu-latest
-    needs: resolve-manifest
     outputs:
       workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
     steps:
@@ -43,23 +35,6 @@ jobs:
           WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
           echo $WORKFLOW_ID
           echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Import Decryption Key
-        run: |
-          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          
-      - name: Resolve Variables
-        id: resolve-variables
-        run: echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
-
-      - name: Upload Manifest
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id }}_manifest
-          path: manifest.json
 
   simple-server:
     name: Simple Server

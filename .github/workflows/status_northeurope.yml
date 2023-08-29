@@ -21,27 +21,6 @@ jobs:
             echo "workflow-id-$idx=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
           done
 
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Upload Manifest 0
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id-0 }}_manifest
-          path: examples/simple_server/manifest.json
-
-      - name: Upload Manifest 1
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id-1 }}_manifest
-          path: examples/simple_server/manifest.json
-
-      - name: Upload Manifest 2
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id-2 }}_manifest
-          path: examples/simple_server/manifest.json
-
   simple-server-northeurope-0:
     name: Simple Server on North Europe
     uses: ./.github/workflows/run_test.yml

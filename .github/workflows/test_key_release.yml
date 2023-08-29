@@ -50,34 +50,6 @@ jobs:
           echo $WORKFLOW_ID
           echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
 
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Resolve Variables
-        id: resolve-variables
-        env:
-          KEY_RELEASE_IMAGE: "${{ inputs.key_release_image }}"
-          SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
-          SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
-          SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}
-          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
-          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
-          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
-          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-          UNIQUE_ID: ${{ steps.workflow-id.outputs.workflow-id }}
-        run: |
-          if [ -z "$KEY_RELEASE_IMAGE" ]; then
-            KEY_RELEASE_IMAGE="http://mcr.microsoft.com/aci/skr:2.3"
-          fi
-          python infra/resolve_manifest_variables.py examples/key_release/manifest.json > manifest.json
-
-      - name: Upload Manifest
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id }}_manifest
-          path: manifest.json
-
   key-release:
     name: Key Release
     uses: ./.github/workflows/run_test.yml

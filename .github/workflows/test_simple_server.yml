@@ -49,7 +49,7 @@ jobs:
 
       - name: Import Decryption Key
         run: |
-          echo "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
           
       - name: Resolve Variables
         id: resolve-variables

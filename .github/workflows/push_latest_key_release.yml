@@ -10,23 +10,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  prepare:
-    name: Prepare Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Upload Manifest
-        uses: actions/upload-artifact@v3
-        with:
-          name: latest_manifest
-          path: examples/key_release/manifest.json
-
   push-latest-key-release:
     name: "Push Latest Key Release Image"
     uses: ./.github/workflows/build_and_push_images.yml
-    needs: prepare
     secrets: inherit
     with:
       id: latest

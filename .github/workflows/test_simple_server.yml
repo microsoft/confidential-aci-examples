@@ -49,7 +49,9 @@ jobs:
 
       - name: Resolve Variables
         id: resolve-variables
-        run: echo ${{ needs.resolve-manifest.outputs.manifest }} > manifest.json
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo ${{ needs.resolve-manifest.outputs.manifest }} | gpg --decrypt  > manifest.json
 
       - name: Upload Manifest
         uses: actions/upload-artifact@v3

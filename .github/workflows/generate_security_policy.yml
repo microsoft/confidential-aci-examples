@@ -83,7 +83,7 @@ jobs:
       - name: Decrypt Manifest
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          manifest=${{ inputs.manifest }}${{ needs.resolve-manifest.outputs.manifest }}
+          manifest="${{ inputs.manifest }}${{ needs.resolve-manifest.outputs.manifest }}"
           echo -e "$manifest" | gpg --decrypt > manifest.json
 
       - name: Generate Matrix Cell Name

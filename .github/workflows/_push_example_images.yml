@@ -43,13 +43,16 @@ jobs:
     needs: process-manifest
     if: ${{ needs.process-manifest.outputs.images != '[]' }}
     outputs:
-      image-urls: ${{ steps.parse-image-info.outputs.image-url }}
+      image-urls: ${{ steps.parse-image-info.outputs.encrypted-image-url }}
     strategy:
       matrix:
         images: ${{ fromJson(needs.process-manifest.outputs.images) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Import GPG Key
+        run: echo -e "${{ secrets.ENCRYPTION_KEY }}" | gpg --import
 
       - name: Log in to Azure Container Registry
         uses: azure/docker-login@v1
@@ -63,6 +66,7 @@ jobs:
         run: |
           repository=$(echo ${{ matrix.images }} | cut -d':' -f1)
           echo "image-url=${{ secrets.AZURE_REGISTRY_URL }}/${{ needs.process-manifest.outputs.test-name }}/$repository:${{ inputs.tag }}" >> $GITHUB_OUTPUT
+          echo "encrypted-image-url=$(echo $image-url | gpg --armor --encrypt --no-tty --batch --trust-model always -r "Github Actions <\" \">" | sed ':a;N;$!ba;s/\n/\\n/g')" >> $GITHUB_OUTPUT
           echo "docker-file=$(echo ${{ matrix.images }} | cut -d':' -f2)" >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker Image

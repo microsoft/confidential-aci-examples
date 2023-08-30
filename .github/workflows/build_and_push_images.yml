@@ -11,8 +11,8 @@ on:
         description: "Test to build and push images for"
         required: true
         type: string
-      manifest-modifiers:
-        description: "Key value pairs of any environment variables to modify separated by semi colons"
+      manifest:
+        description: "The Manifest to push Images for"
         type: string
         default: ""
         required: false
@@ -26,8 +26,8 @@ on:
         description: "Test to build and push images for"
         required: true
         type: string
-      manifest-modifiers:
-        description: "Key value pairs of any environment variables to modify separated by semi colons"
+      manifest:
+        description: "The Manifest to push Images for"
         type: string
         default: ""
         required: false
@@ -36,10 +36,10 @@ jobs:
   resolve-manifest:
     name: Resolve Manifest Variables
     uses: ./.github/workflows/_resolve_manifest.yml
+    if: ${{ inputs.manifest != '' }}
     secrets: inherit
     with:
       manifest: examples/${{ inputs.test }}/manifest.json
-      modifiers: ${{ inputs.manifest-modifiers }}
 
   get-images-to-build:
     name: Get Images to Build
@@ -54,7 +54,8 @@ jobs:
       - name: Decrypt Manifest
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
+          manifest=${${{ inputs.manifest }}:-${{ needs.resolve-manifest.outputs.manifest }}}
+          echo -e "$manifest" | gpg --decrypt > manifest.json
 
       - name: Get Images to Build
         id: get-images-to-build

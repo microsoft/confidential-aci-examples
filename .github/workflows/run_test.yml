@@ -65,19 +65,28 @@ on:
         required: false
 
 jobs:
+  resolve-manifest:
+    name: Resolve Manifest Variables
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      manifest: examples/${{ inputs.test }}/manifest.json
+      modifiers: ${{ inputs.manifest-modifiers }}
+
   build-and-push-images:
     name: "Build and Push Images"
     uses: ./.github/workflows/build_and_push_images.yml
+    needs: resolve-manifest
     secrets: inherit
     with:
       id: ${{ inputs.id }}
       test: ${{ inputs.test }}
-      manifest-modifiers: ${{ inputs.manifest-modifiers }}
+      manifest: ${{ needs.resolve-manifest.outputs.manifest }}
 
   generate-security-policy:
     name: "Generate Security Policy"
     uses: ./.github/workflows/generate_security_policy.yml
-    needs: [build-and-push-images]
+    needs: [build-and-push-images, resolve-manifest]
     secrets: inherit
     strategy:
       matrix:
@@ -87,12 +96,12 @@ jobs:
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       debug: ${{ inputs.debug }}
-      manifest-modifiers: ${{ inputs.manifest-modifiers }}
+      manifest: ${{ needs.resolve-manifest.outputs.manifest }}
 
   generate-arm-templates:
     name: "Generate ARM Templates"
     uses: ./.github/workflows/generate_arm_template.yml
-    needs: [generate-security-policy]
+    needs: [generate-security-policy, resolve-manifest]
     secrets: inherit
     strategy:
       matrix:
@@ -103,12 +112,12 @@ jobs:
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}
-      manifest-modifiers: ${{ inputs.manifest-modifiers }}
+      manifest: ${{ needs.resolve-manifest.outputs.manifest }}
 
   deploy-containers:
     name: "Deploy Containers"
     uses: ./.github/workflows/deploy_arm_template.yml
-    needs: [generate-security-policy, generate-arm-templates]
+    needs: [generate-security-policy, generate-arm-templates, resolve-manifest]
     secrets: inherit
     strategy:
       fail-fast: false
@@ -120,7 +129,7 @@ jobs:
       test: ${{ inputs.test }}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}
-      manifest-modifiers: ${{ inputs.manifest-modifiers }}
+      manifest: ${{ needs.resolve-manifest.outputs.manifest }}
 
   client-side-tests:
     name: "Run Client Side Tests"

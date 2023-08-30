@@ -22,8 +22,8 @@ on:
         default: false
         required: false
         type: boolean
-      manifest-modifiers:
-        description: "Key value pairs of any environment variables to modify separated by semi colons"
+      manifest:
+        description: "The Manifest generate Security Policy for"
         type: string
         default: ""
         required: false
@@ -46,8 +46,8 @@ on:
         default: false
         required: false
         type: boolean
-      manifest-modifiers:
-        description: "Key value pairs of any environment variables to modify separated by semi colons"
+      manifest:
+        description: "The Manifest generate Security Policy for"
         type: string
         default: ""
         required: false
@@ -59,10 +59,10 @@ jobs:
   resolve-manifest:
     name: Resolve Manifest Variables
     uses: ./.github/workflows/_resolve_manifest.yml
+    if: ${{ inputs.manifest != '' }}
     secrets: inherit
     with:
       manifest: examples/${{ inputs.test }}/manifest.json
-      modifiers: ${{ inputs.manifest-modifiers }}
 
   generate-security-policy:
     name: Generate Security Policy
@@ -82,7 +82,8 @@ jobs:
       - name: Decrypt Manifest
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
+          manifest=${${{ inputs.manifest }}:-${{ needs.resolve-manifest.outputs.manifest }}}
+          echo -e "$manifest" | gpg --decrypt > manifest.json
 
       - name: Generate Matrix Cell Name
         id: generate-name

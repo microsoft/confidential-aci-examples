@@ -79,4 +79,6 @@ jobs:
       - name: Decrypt ARM Templates
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          echo -e "${{ needs.generate-arm-templates.outputs.arm-templates }}" | gpg --decrypt
+          for template in ${{ toJson(needs.generate-arm-templates.outputs.arm-templates) }}; do
+            echo -e $template | gpg --decrypt
+          done

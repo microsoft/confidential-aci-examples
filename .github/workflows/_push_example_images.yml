@@ -65,7 +65,7 @@ jobs:
         id: parse-image-info
         run: |
           repository=$(echo ${{ matrix.images }} | cut -d':' -f1)
-          image-url=${{ secrets.AZURE_REGISTRY_URL }}/${{ needs.process-manifest.outputs.test-name }}/$repository:${{ inputs.tag }}"
+          image-url=${{ secrets.AZURE_REGISTRY_URL }}/${{ needs.process-manifest.outputs.test-name }}/$repository:${{ inputs.tag }}
           echo "image-url=$image-url" >> $GITHUB_OUTPUT
           echo "encrypted-image-url=$(echo $image-url | gpg --armor --encrypt --no-tty --batch --trust-model always -r "Github Actions <\" \">" | sed ':a;N;$!ba;s/\n/\\n/g')" >> $GITHUB_OUTPUT
           echo "docker-file=$(echo ${{ matrix.images }} | cut -d':' -f2)" >> $GITHUB_OUTPUT

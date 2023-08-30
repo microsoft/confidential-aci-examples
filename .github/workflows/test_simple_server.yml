@@ -22,24 +22,10 @@ on:
       - main
 
 jobs:
-  prepare:
-    name: Prepare Test
-    runs-on: ubuntu-latest
-    outputs:
-      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
-    steps:
-      - name: "Get Workflow ID"
-        id: workflow-id
-        run: |
-          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
-          echo $WORKFLOW_ID
-          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
 
-  simple-server:
-    name: Simple Server
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+  deploy-aci:
+    name: Deploy ACI
+    uses: ./.github/workflows/deploy_aci.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id }}
-      test: simple_server
+      test-name: simple_server

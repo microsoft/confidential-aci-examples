@@ -1,0 +1,106 @@
+on:
+  workflow_dispatch:
+    inputs:
+      test-name:
+        type: string
+        required: true
+      locations:
+        type: string
+        required: false
+        default: '["westeurope"]'
+      debug:
+        type: boolean
+        required: false
+        default: false
+      env:
+        type: string
+        required: false
+        default: ""
+  workflow_call:
+    inputs:
+      test-name:
+        type: string
+        required: true
+      locations:
+        type: string
+        required: false
+        default: '["westeurope"]'
+      debug:
+        type: boolean
+        required: false
+        default: false
+      env:
+        type: string
+        required: false
+        default: ""
+        
+jobs:
+  
+  generate-uid:
+    name: Generate Unique ID
+    runs-on: ubuntu-latest
+    outputs:
+      uid: ${{ steps.workflow-id.outputs.workflow-id }}
+    steps:
+      - name: Generate Unique ID
+        id: workflow-id
+        run: echo "workflow-id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
+  
+  build-and-push-images:
+    name: "Build and Push Images"
+    uses: ./.github/workflows/build_and_push_images.yml
+    needs: generate-uid
+    secrets: inherit
+    with:
+      id: ${{ needs.generate-uid.outputs.uid }}
+      test: ${{ inputs.test-name }}
+      manifest-modifiers: ${{ inputs.env }}
+
+  generate-security-policy:
+    name: "Generate Security Policy"
+    uses: ./.github/workflows/generate_security_policy.yml
+    needs: build-and-push-images
+    secrets: inherit
+    strategy:
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+    with:
+      id: ${{ needs.generate-uid.outputs.uid }}
+      test: ${{ inputs.test-name }}
+      location: ${{ matrix.location }}
+      debug: ${{ inputs.debug }}
+      manifest-modifiers: ${{ inputs.env }}
+
+  generate-arm-templates:
+    name: "Generate ARM Templates"
+    uses: ./.github/workflows/generate_arm_template.yml
+    needs: [generate-security-policy]
+    secrets: inherit
+    strategy:
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+    with:
+      id: ${{ needs.generate-uid.outputs.uid }}
+      test: ${{ inputs.test-name }}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
+      manifest-modifiers: ${{ inputs.env }}
+
+  deploy-containers:
+    name: "Deploy Containers"
+    uses: ./.github/workflows/deploy_arm_template.yml
+    needs: [generate-security-policy, generate-arm-templates]
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+    with:
+      id: ${{ needs.generate-uid.outputs.uid }}
+      test: ${{ inputs.test-name }}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
+      manifest-modifiers: ${{ inputs.env }}
+    

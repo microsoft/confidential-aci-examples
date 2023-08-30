@@ -36,7 +36,7 @@ jobs:
   resolve-manifest:
     name: Resolve Manifest Variables
     uses: ./.github/workflows/_resolve_manifest.yml
-    if: ${{ inputs.manifest != '' }}
+    if: ${{ inputs.manifest == '' }}
     secrets: inherit
     with:
       manifest: examples/${{ inputs.test }}/manifest.json

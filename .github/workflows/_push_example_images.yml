@@ -15,7 +15,7 @@ on:
 
 jobs:
   process-manifest:
-    name: Get Images to Build
+    name: Process Manifest
     runs-on: ubuntu-latest
     outputs:
       test-name: ${{ steps.get-test-name.outputs.test-name }}

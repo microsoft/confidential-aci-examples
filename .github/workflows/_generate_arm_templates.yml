@@ -1,0 +1,60 @@
+name: Generate Security Policy
+
+on:
+  workflow_call:
+    inputs:
+      manifest:
+        type: string
+        required: true
+      locations:
+        type: string
+        required: true
+      image-tag:
+        type: string
+        required: true
+    outputs:
+      arm-templates:
+        value: ${{ jobs.generate-arm-templates.outputs.arm-templates }}
+
+jobs:
+  process-manifest:
+    name: Process Manifest
+    runs-on: ubuntu-latest
+    outputs:
+      security-policies: ${{ steps.get-security-policies.outputs.security-policies }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Decrypt Manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ inputs.manifest }}" | gpg --decrypt > manifest.json
+
+      - name: Get Security Policies
+        id: get-security-policies
+        run: echo "security-policies=$(python infra/read_manifest_security_policies.py manifest.json)" >> $GITHUB_OUTPUT
+
+  generate-arm-templates:
+    name: Generate ARM Templates
+    runs-on: ubuntu-latest
+    needs: process-manifest
+    outputs:
+      arm-templates: ${{ steps.generate.outputs.arm-templates }}
+    strategy:
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.process-manifest.outputs.security-policies) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Generate ARM Template
+        id: generate
+        run: |
+          arm_template="python infra/container/generate_arm_template.py \
+            --image-tag ${{ inputs.image-tag }} \
+            --manifest-path manifest.json \
+            --location ${{ matrix.location }} \
+            --security-policy \"$(cat security_policies/${{ matrix.security-policy }} | base64)\""
+          echo $arm_template

@@ -62,11 +62,12 @@ jobs:
       tag: ${{ needs.generate-uid.outputs.uid }}
       manifest: ${{ needs.resolve-manifest.outputs.manifest }}
 
-  test-push:
-    runs-on: ubuntu-latest
-    needs: push-example-images
-    steps:
-      - name: Decrypt Images
-        run: |
-          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
-          echo -e "${{ needs.push-example-images.outputs.image-urls }}" | gpg --decrypt
+  generate-arm-templates:
+    name: Generate ARM Templates
+    uses: ./.github/workflows/_generate_arm_templates.yml
+    needs: [generate-uid, resolve-manifest]
+    secrets: inherit
+    with:
+      manifest: ${{ needs.resolve-manifest.outputs.manifest }}
+      locations: ${{ inputs.locations }}
+      image-tag: ${{ needs.generate-uid.outputs.uid }}

@@ -61,6 +61,8 @@ jobs:
 
       - name: Generate ARM Template
         id: generate
+        env:
+          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
         run: |
           securityPolicy=""
           if test -f "${{matrix.security-policy}}"; then

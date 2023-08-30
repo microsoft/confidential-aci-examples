@@ -71,3 +71,12 @@ jobs:
       manifest: ${{ needs.resolve-manifest.outputs.manifest }}
       locations: ${{ inputs.locations }}
       image-tag: ${{ needs.generate-uid.outputs.uid }}
+
+  test-generate:
+    runs-on: ubuntu-latest
+    needs: generate-arm-templates
+    steps:
+      - name: Decrypt ARM Templates
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ needs.generate-arm-templates.outputs.arm-templates }}" | gpg --decrypt

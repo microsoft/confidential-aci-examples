@@ -33,7 +33,9 @@ jobs:
 
       - name: Get Security Policies
         id: get-security-policies
-        run: echo "security-policies=$(python infra/read_manifest_security_policies.py manifest.json)" >> $GITHUB_OUTPUT
+        run: |
+          securityPolicies=$(python infra/read_manifest_security_policies.py manifest.json)
+          echo "security-policies=${securityPolicies:0:1}\'_generated.rego\',${securityPolicies:1}" >> $GITHUB_OUTPUT
 
   generate-arm-templates:
     name: Generate ARM Templates
@@ -52,9 +54,13 @@ jobs:
       - name: Generate ARM Template
         id: generate
         run: |
-          arm_template="python infra/container/generate_arm_template.py \
+          securityPolicy=""
+          if test -f "${{matrix.security-policy}}"; then
+            securityPolicy=$(cat ${{ matrix.security-policy }} | base64)
+          fi          
+          arm_template=$(python infra/container/generate_arm_template.py \
             --image-tag ${{ inputs.image-tag }} \
             --manifest-path manifest.json \
             --location ${{ matrix.location }} \
-            --security-policy \"$(cat security_policies/${{ matrix.security-policy }} | base64)\""
+            --security-policy "$securityPolicy")
           echo $arm_template

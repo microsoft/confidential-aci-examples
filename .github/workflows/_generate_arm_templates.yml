@@ -35,7 +35,10 @@ jobs:
         id: get-security-policies
         run: |
           securityPolicies=$(python infra/read_manifest_security_policies.py manifest.json)
-          echo "security-policies=${securityPolicies:0:1}\'_generated.rego\',${securityPolicies:1}" >> $GITHUB_OUTPUT
+          echo $securityPolicies
+          securityPolicies=${securityPolicies:0:1}\'_generated.rego\',${securityPolicies:1}
+          echo $securityPolicies
+          echo "security-policies=$securityPolicies" >> $GITHUB_OUTPUT
 
   generate-arm-templates:
     name: Generate ARM Templates

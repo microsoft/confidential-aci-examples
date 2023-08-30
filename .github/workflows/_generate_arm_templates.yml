@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: process-manifest
     outputs:
-      arm-templates: ${{ steps.generate.outputs.arm-templates }}
+      arm-templates: ${{ steps.generate.outputs.arm-template }}
     strategy:
       matrix:
         location: ${{ fromJson(inputs.locations) }}
@@ -74,4 +74,4 @@ jobs:
             --location ${{ matrix.location }} \
             --security-policy "$securityPolicy" \
             --out arm_template.json
-          cat arm_template.json
+          echo "arm-template=$(cat arm_template.json | gpg --armor --encrypt --no-tty --batch --trust-model always -r "Github Actions <\" \">" | sed ':a;N;$!ba;s/\n/\\n/g')" >> $GITHUB_OUTPUT

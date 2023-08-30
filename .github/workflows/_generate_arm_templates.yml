@@ -54,6 +54,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Decrypt Manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ inputs.manifest }}" | gpg --decrypt > manifest.json
+
       - name: Generate ARM Template
         id: generate
         run: |

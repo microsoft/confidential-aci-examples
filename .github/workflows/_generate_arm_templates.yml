@@ -68,9 +68,10 @@ jobs:
           if test -f "${{matrix.security-policy}}"; then
             securityPolicy=$(cat ${{ matrix.security-policy }} | base64)
           fi          
-          arm_template=$(python infra/container/generate_arm_template.py \
+          python infra/container/generate_arm_template.py \
             --image-tag ${{ inputs.image-tag }} \
             --manifest-path manifest.json \
             --location ${{ matrix.location }} \
-            --security-policy "$securityPolicy")
-          echo $arm_template
+            --security-policy "$securityPolicy" \
+            --out arm_template.json
+          cat arm_template.json

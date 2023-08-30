@@ -14,7 +14,6 @@ on:
         value: ${{ jobs.build-and-push-image.outputs.image-urls }}
 
 jobs:
-
   process-manifest:
     name: Get Images to Build
     runs-on: ubuntu-latest
@@ -63,7 +62,7 @@ jobs:
         id: parse-image-info
         run: |
           repository=$(echo ${{ matrix.images }} | cut -d':' -f1)
-          echo "image-url=${{ secrets.AZURE_REGISTRY_URL }}/${{ needs.process-manifest.outputs.test-name }}/$repository:${{ inputs.tag }}"
+          echo "image-url=${{ secrets.AZURE_REGISTRY_URL }}/${{ needs.process-manifest.outputs.test-name }}/$repository:${{ inputs.tag }}" >> $GITHUB_OUTPUT
           echo "docker-file=$(echo ${{ matrix.images }} | cut -d':' -f2)" >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker Image

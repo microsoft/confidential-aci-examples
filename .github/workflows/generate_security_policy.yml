@@ -68,6 +68,7 @@ jobs:
     name: Generate Security Policy
     runs-on: ubuntu-latest
     needs: resolve-manifest
+    if: always()
     outputs:
       security-policies: ${{ steps.find-policies.outputs.security-policies }}
     steps:

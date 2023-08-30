@@ -45,6 +45,7 @@ jobs:
     name: Get Images to Build
     runs-on: ubuntu-latest
     needs: resolve-manifest
+    if: always()
     outputs:
       images: ${{ steps.get-images-to-build.outputs.images }}
     steps:

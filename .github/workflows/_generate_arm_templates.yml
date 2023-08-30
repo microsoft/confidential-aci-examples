@@ -74,4 +74,5 @@ jobs:
             --location ${{ matrix.location }} \
             --security-policy "$securityPolicy" \
             --out arm_template.json
+          cat arm_template.json
           echo "arm-template=$(cat arm_template.json | gpg --armor --encrypt --no-tty --batch --trust-model always -r "Github Actions <\" \">" | sed ':a;N;$!ba;s/\n/\\n/g')" >> $GITHUB_OUTPUT

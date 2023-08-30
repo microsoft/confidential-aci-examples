@@ -99,6 +99,7 @@ jobs:
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
         run: |
+          cat arm_template | gpg --decrypt > arm_template.json
           python infra/deploy_arm_template.py \
             --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
             --manifest-path manifest.json \

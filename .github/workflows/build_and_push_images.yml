@@ -61,7 +61,10 @@ jobs:
       - name: Get Images to Build
         id: get-images-to-build
         run: |
-          echo "images=$(python infra/read_manifest_images.py manifest.json)" >> $GITHUB_OUTPUT
+          images=$(python infra/read_manifest_images.py manifest.json)
+          cat manifest.json
+          echo $images
+          echo "images=$images" >> $GITHUB_OUTPUT
 
   build-and-push-image:
     name: Build and Push Images

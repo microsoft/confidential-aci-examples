@@ -1,0 +1,159 @@
+name: Cleanup Azure Resources
+
+on:
+  workflow_dispatch:
+    inputs:
+      cleanup_acis:
+        type: choice
+        options:
+          - all
+          - failed
+          - none
+        default: none
+      cleanup_hsm:
+        type: boolean
+        default: false
+      cleanup_registry:
+        type: boolean
+        default: false
+      cleanup_storage_account:
+        type: boolean
+        default: false
+      cleanup_vms:
+        type: boolean
+        default: false
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  cleanup-running-acis:
+    name: Cleanup Running Container Groups
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || inputs.cleanup_acis == 'all' }}
+    steps:
+      - name: Log into Azure
+        run: az login --service-principal \
+          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+
+      - name: Delete All Container Groups
+        run: |
+          RUNNING_CONTAINERS=$(az container list \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --query "[?!starts_with(name, 'uptime-')]")
+
+          for container in $(echo $RUNNING_CONTAINERS | jq -r '.[].id'); do
+              echo "Deleting container group: ${container}"
+              az resource delete --ids ${container}
+          done
+
+  cleanup-failed-acis:
+    name: Cleanup Failed Container Groups
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || inputs.cleanup_acis == 'all' || inputs.cleanup_acis == 'failed' }}
+    steps:
+      - name: Log into Azure
+        run: az login --service-principal \
+          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+
+      - name: Delete Failed Container Groups
+        run: |
+          NON_RUNNING_CONTAINERS=$(az container list \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --query "[?provisioningState=='Failed' || provisioningState=='Unhealthy']")
+
+          for container in $(echo $NON_RUNNING_CONTAINERS | jq -r '.[].id'); do
+          echo "Deleting container group: ${container}"
+          az resource delete --ids ${container}
+          done
+
+  cleanup-hsm:
+    name: Cleanup HSM Keys
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || inputs.cleanup_hsm }}
+    steps:
+      - name: Log into Azure
+        run: az login --service-principal \
+          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+
+      - name: Delete HSM Keys
+        run: az keyvault key list --hsm-name ${{ secrets.AZURE_HSM_NAME }} \
+          --query "[].kid" -o tsv | \
+          xargs -I{} az keyvault key delete --id {}
+
+  cleanup_registry:
+    name: Cleanup Container Registry
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || inputs.cleanup_registry }}
+    steps:
+      - name: Log into Azure
+        run: az login --service-principal \
+          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.AZURE_REGISTRY_URL }}
+          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+
+      - name: Cleanup Registry
+        run: |
+          # The filter looks for at least one digit as a proxy for auto
+          # generated tags
+          az acr run \
+            --cmd "acr purge --filter '.*:.*\d+.*' --ago 1d" \
+            --registry ${{ secrets.AZURE_REGISTRY_URL }} \
+            /dev/null
+
+  cleanup-storage-account:
+    name: Cleanup Storage Account Blobs
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || inputs.cleanup_storage_account }}
+    steps:
+      - name: Log into Azure
+        run: az login --service-principal \
+          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+
+      - name: Delete Blobs
+        run: az storage blob list \
+          --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} \
+          --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} \
+          --query "[].name" -o tsv | \
+          xargs -I{} az storage blob delete \
+          --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {}
+
+  cleanup-vms:
+    name: Cleanup VMs
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || inputs.cleanup_vms }}
+    steps:
+      - name: Log into Azure
+        run: az login --service-principal \
+          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+
+      - name: Delete VMs and Associated Resources
+        run: |
+          RESOURCES=$(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Compute/virtualMachines'].id" --output tsv)
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Compute/disks'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/networkInterfaces'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/publicIPAddresses'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.DevTestLab/schedules'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/virtualNetworks'].id" --output tsv)"
+          RESOURCES="$RESOURCES $(az resource list --resource-group c-aci-examples --query "[?type=='Microsoft.Network/networkSecurityGroups'].id" --output tsv)"
+
+          if [[ -n $(echo "$RESOURCES" | sed 's/[[:space:]]*$//') ]]; then
+            echo -e "Deleting: \n$(echo $RESOURCES | tr ' ' '\n')"
+            az resource delete --verbose --ids $RESOURCES
+          fi

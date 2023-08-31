@@ -56,7 +56,6 @@ jobs:
             IFS="=" read -ra key_value <<< "$modifier"
             export "${key_value[0]}"="${key_value[1]}"
           done
-          manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }})
-          echo "manifest=$(echo $manifest | \
+          echo "manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }} | \
             gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
             sed ':a;N;$!ba;s/\n/\\n/g')" >> $GITHUB_OUTPUT

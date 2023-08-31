@@ -21,3 +21,7 @@ az login --service-principal \
 
 # Login into Container Registry
 az acr login --name $AZURE_REGISTRY_URL
+
+# Import Keys
+echo -e "$ENCRYPTION_KEY" | gpg --import
+echo -e "$DECRYPTION_KEY" | gpg --import

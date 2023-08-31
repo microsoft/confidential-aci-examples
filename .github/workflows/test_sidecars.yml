@@ -12,14 +12,16 @@ jobs:
     name: Prepare Test
     runs-on: ubuntu-latest
     outputs:
-      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
+      attestation-id: ${{ steps.generate-ids.outputs.attestation-id }}
+      key-release-id: ${{ steps.generate-ids.outputs.key-release-id }}
+      encrypted-filesystem-id: ${{ steps.generate-ids.outputs.encrypted-filesystem-id }}
     steps:
-      - name: "Get Workflow ID"
-        id: workflow-id
+      - name: Generate IDs
+        id: generate-ids
         run: |
-          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
-          echo $WORKFLOW_ID
-          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
+          echo "attestation-id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
+          echo "key-release-id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
+          echo "encrypted-filesystem-id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
 
   attestation:
     name: Attestation
@@ -27,7 +29,7 @@ jobs:
     needs: prepare
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id }}
+      id: ${{ needs.prepare.outputs.attestation-id }}
       test: attestation
       manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecar.azurecr.io/attestation:${{ inputs.sidecar-tag }}"
 
@@ -37,7 +39,7 @@ jobs:
     needs: prepare
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id }}
+      id: ${{ needs.prepare.outputs.key-release-id }}
       test: key_release
       manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecar.azurecr.io/skr:${{ inputs.sidecar-tag }}"
 
@@ -47,6 +49,6 @@ jobs:
     needs: prepare
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id }}
+      id: ${{ needs.prepare.outputs.encrypted-filesystem-id }}
       test: encrypted_filesystem
       manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecar.azurecr.io/encfs:${{ inputs.sidecar-tag }}"

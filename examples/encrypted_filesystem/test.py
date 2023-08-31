@@ -13,7 +13,6 @@ class EncryptedFilesystemTestRW(TestCase):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/read1")
-        print(response.content.decode("utf-8"))
         assert response.status_code == 200, response.content.decode("utf-8")
         assert (
             response.content.decode("utf-8").strip("\n")
@@ -24,7 +23,6 @@ class EncryptedFilesystemTestRW(TestCase):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/write1")
-        print(response.content.decode("utf-8"))
         assert response.status_code == 200, response.content.decode("utf-8")
         assert response.content.decode("utf-8").strip("\n") == "This is a new file in the encrypted filesystem!"
 
@@ -33,7 +31,6 @@ class EncryptedFilesystemTestRO(TestCase):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/read2")
-        print(response.content.decode("utf-8"))
         assert response.status_code == 200, response.content.decode("utf-8")
         assert (
             response.content.decode("utf-8").strip("\n")
@@ -44,7 +41,6 @@ class EncryptedFilesystemTestRO(TestCase):
         assert self.container_ip is not None
 
         response = request(f"http://{self.container_ip}:8000/write2")
-        print(response.content.decode("utf-8"))
         assert response.status_code == 400, response.content.decode("utf-8")
         assert response.content.decode("utf-8").strip("\n") == "[Errno 30] Read-only file system: '/mnt/remote/share2/new_file.txt'"
 

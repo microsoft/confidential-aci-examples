@@ -31,4 +31,24 @@ jobs:
     with:
       id: ${{ needs.prepare.outputs.attestation-id }}
       test: attestation
-      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecar.azurecr.io/attestation:${{ inputs.sidecar-tag }}"
+      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:${{ inputs.sidecar-tag }}"
+
+  key-release:
+    name: Key Release
+    uses: ./.github/workflows/run_test.yml
+    needs: prepare
+    secrets: inherit
+    with:
+      id: ${{ needs.prepare.outputs.key-release-id }}
+      test: key_release
+      manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:${{ inputs.sidecar-tag }}"
+
+  encrypted-filesystem:
+    name: Encrypted Filesystem
+    uses: ./.github/workflows/run_test.yml
+    needs: prepare
+    secrets: inherit
+    with:
+      id: ${{ needs.prepare.outputs.encrypted-filesystem-id }}
+      test: encrypted_filesystem
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecars.azurecr.io/encfs:${{ inputs.sidecar-tag }}"

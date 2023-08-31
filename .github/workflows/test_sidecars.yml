@@ -29,7 +29,7 @@ jobs:
     with:
       id: ${{ needs.prepare.outputs.workflow-id }}
       test: attestation
-      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://${{ secrets.SIDECARS_REGISTRY_URL }}/attestation:${{ inputs.sidecar-tag }}"
+      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecar.azurecr.io/attestation:${{ inputs.sidecar-tag }}"
 
   key-release:
     name: Key Release
@@ -39,7 +39,7 @@ jobs:
     with:
       id: ${{ needs.prepare.outputs.workflow-id }}
       test: key_release
-      manifest-modifiers: "KEY_RELEASE_IMAGE=http://${{ secrets.SIDECARS_REGISTRY_URL }}/skr:${{ inputs.sidecar-tag }}"
+      manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecar.azurecr.io/skr:${{ inputs.sidecar-tag }}"
 
   encrypted-filesystem:
     name: Encrypted Filesystem
@@ -49,4 +49,4 @@ jobs:
     with:
       id: ${{ needs.prepare.outputs.workflow-id }}
       test: encrypted_filesystem
-      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://${{ secrets.SIDECARS_REGISTRY_URL }}/encfs:${{ inputs.sidecar-tag }}"
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecar.azurecr.io/encfs:${{ inputs.sidecar-tag }}"

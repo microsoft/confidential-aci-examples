@@ -85,9 +85,10 @@ jobs:
             --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Delete HSM Keys
-        run: az keyvault key list --hsm-name ${{ secrets.AZURE_HSM_NAME }} \
-          --query "[].kid" -o tsv | \
-          xargs -I{} az keyvault key delete --id {}
+        run: |
+          az keyvault key list --hsm-name ${{ secrets.AZURE_HSM_NAME }} \
+            --query "[].kid" -o tsv | \
+            xargs -I{} az keyvault key delete --id {}
 
   cleanup_registry:
     name: Cleanup Container Registry
@@ -130,12 +131,13 @@ jobs:
             --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Delete Blobs
-        run: az storage blob list \
-          --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} \
-          --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} \
-          --query "[].name" -o tsv | \
-          xargs -I{} az storage blob delete \
-          --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {}
+        run: |
+          az storage blob list \
+            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} \
+            --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} \
+            --query "[].name" -o tsv | \
+            xargs -I{} az storage blob delete \
+            --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {}
 
   cleanup-vms:
     name: Cleanup VMs

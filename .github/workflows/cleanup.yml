@@ -32,10 +32,11 @@ jobs:
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_acis == 'all' }}
     steps:
       - name: Log into Azure
-        run: az login --service-principal \
-          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Delete All Container Groups
         run: |
@@ -54,10 +55,11 @@ jobs:
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_acis == 'all' || inputs.cleanup_acis == 'failed' }}
     steps:
       - name: Log into Azure
-        run: az login --service-principal \
-          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Delete Failed Container Groups
         run: |
@@ -76,10 +78,11 @@ jobs:
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_hsm }}
     steps:
       - name: Log into Azure
-        run: az login --service-principal \
-          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Delete HSM Keys
         run: az keyvault key list --hsm-name ${{ secrets.AZURE_HSM_NAME }} \
@@ -92,10 +95,11 @@ jobs:
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_registry }}
     steps:
       - name: Log into Azure
-        run: az login --service-principal \
-          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
@@ -119,10 +123,11 @@ jobs:
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_storage_account }}
     steps:
       - name: Log into Azure
-        run: az login --service-principal \
-          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Delete Blobs
         run: az storage blob list \
@@ -138,10 +143,11 @@ jobs:
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_vms }}
     steps:
       - name: Log into Azure
-        run: az login --service-principal \
-          --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-          --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-          --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Delete VMs and Associated Resources
         run: |

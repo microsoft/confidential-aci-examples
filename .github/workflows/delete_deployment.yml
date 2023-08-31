@@ -69,6 +69,8 @@ jobs:
 
       - name: Remove Container on ACI
         run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e $(cat arm_template) | gpg --decrypt > arm_template.json
           python infra/delete_deployment.py \
             --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \

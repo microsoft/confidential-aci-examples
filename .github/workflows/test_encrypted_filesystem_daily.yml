@@ -4,21 +4,30 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 7 * * *"
+  pull_request:
+    paths:
+      - .github/workflows/test_encrypted_filesystem_daily.yml
 
 jobs:
   prepare:
     name: Prepare Test
     runs-on: ubuntu-latest
     outputs:
-      encrypted_filesystem_image: http://${{ secrets.SIDECARS_REGISTRY_URL }}/encfs:main
+      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: "Get Workflow ID"
+        id: workflow-id
+        run: |
+          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
+          echo $WORKFLOW_ID
+          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
 
   encrypted-filesystem:
     name: Encrypted Filesystem
-    uses: ./.github/workflows/test_encrypted_filesystem.yml
+    uses: ./.github/workflows/run_test.yml
     needs: prepare
     secrets: inherit
     with:
-      encrypted_filesystem_image: ${{ needs.prepare.outputs.encrypted_filesystem_image }}
+      id: ${{ needs.prepare.outputs.workflow-id }}
+      test: encrypted_filesystem
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecars.azurecr.io/encfs:main"

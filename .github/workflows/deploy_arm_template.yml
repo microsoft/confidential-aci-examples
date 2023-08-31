@@ -21,6 +21,11 @@ on:
         description: "Security policy to use for ACI"
         required: true
         type: string
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
   workflow_call:
     inputs:
       id:
@@ -39,11 +44,25 @@ on:
         description: "Security policy to use for ACI"
         required: true
         type: string
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
 
 jobs:
+  resolve-manifest:
+    name: Resolve Manifest Variables
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      manifest: examples/${{ inputs.test }}/manifest.json
+      modifiers: ${{ inputs.manifest-modifiers }}
+
   deploy-container:
     name: Deploy Container (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
+    needs: resolve-manifest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -52,10 +71,10 @@ jobs:
         id: generate-name
         run: echo "name=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
-      - name: Download Manifest
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ inputs.id }}_manifest
+      - name: Decrypt Manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
 
       - name: Download ARM Template Artifact
         uses: actions/download-artifact@v3
@@ -80,6 +99,7 @@ jobs:
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
         run: |
+          echo -e $(cat arm_template) | gpg --decrypt > arm_template.json
           python infra/deploy_arm_template.py \
             --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
             --manifest-path manifest.json \

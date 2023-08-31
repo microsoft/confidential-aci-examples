@@ -1,4 +1,5 @@
 import argparse
+from base64 import b64encode, b64decode
 import json
 import os
 import sys
@@ -22,6 +23,18 @@ def generate_arm_template(
         os.environ["UNIQUE_ID"] = name
     manifest = resolve_manifest_variables(manifest)
 
+    if security_policy:
+        raw_policy = b64decode(security_policy)
+        security_policy = [
+            b64encode(f"package{policy}".encode()).decode()
+            for policy in raw_policy.decode().split("package")[1:]
+        ]
+        assert len(manifest["containerGroups"]) == len(
+            security_policy
+        ), f"{security_policy=} doesn't match {manifest['containerGroups']=}"
+    else:
+        security_policy = [None for _ in range(len(manifest["containerGroups"]))]
+
     print(f"Generating ARM template for {name}")
     arm_template = {
         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -34,7 +47,7 @@ def generate_arm_template(
             {
                 "type": "Microsoft.ContainerInstance/containerGroups",
                 "apiVersion": "2023-05-01",
-                "name": f"{name}-group".replace("_", "-"),
+                "name": f"{name}-group-{group_idx}".replace("_", "-"),
                 "location": location,
                 "tags": {
                     "Owner": "c-aci-examples",
@@ -58,7 +71,9 @@ def generate_arm_template(
                                 "ports": [
                                     {"protocol": "TCP", "port": port}
                                     for port in container["ports"]
-                                ],
+                                ]
+                                if "ports" in container
+                                else [],
                                 "securityContext": {
                                     "privileged": container.get("privileged", False)
                                 },
@@ -108,7 +123,7 @@ def generate_arm_template(
                         for volume in container_group.get("volumes", [])
                     ],
                     "confidentialComputeProperties": {
-                        "ccePolicy": security_policy,
+                        "ccePolicy": security_policy[group_idx],
                     },
                     "imageRegistryCredentials": [
                         {
@@ -122,7 +137,7 @@ def generate_arm_template(
                     ],
                 },
             }
-            for container_group in manifest["containerGroups"]
+            for group_idx, container_group in enumerate(manifest["containerGroups"])
         ],
     }
     print("Done")
@@ -156,7 +171,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--location",
         help="The location of the container to deploy",
-        default="eastus2euap",
+        default="westeurope",
     )
     parser.add_argument(
         "--security-policy",

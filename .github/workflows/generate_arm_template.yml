@@ -25,6 +25,11 @@ on:
         description: "Security policy to use for ACI"
         required: true
         type: string
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
   workflow_call:
     inputs:
       id:
@@ -43,11 +48,25 @@ on:
         description: "Security policy to use for ACI"
         required: true
         type: string
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
 
 jobs:
+  resolve-manifest:
+    name: Resolve Manifest Variables
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      manifest: examples/${{ inputs.test }}/manifest.json
+      modifiers: ${{ inputs.manifest-modifiers }}
+
   generate-arm-template:
     name: Generate ARM Template (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
+    needs: resolve-manifest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -61,10 +80,10 @@ jobs:
           echo "security-policy-name=$(echo ${{ inputs.test }}-${{ inputs.location }}-_generated.rego-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
           echo "arm-template-name=$(echo ${{ inputs.test }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
 
-      - name: Download Manifest
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ inputs.id }}_manifest
+      - name: Decrypt Manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
 
       - name: Download Security Policy Artifact
         uses: actions/download-artifact@v3
@@ -79,19 +98,20 @@ jobs:
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
+          securityPolicy=$(cat security_policies/${{ inputs.security-policy }})
           python infra/container/generate_arm_template.py \
             --image-tag ${{ inputs.id }} \
             --name ${{ steps.generate-names.outputs.arm-template-name }} \
             --manifest-path manifest.json \
             --location ${{ inputs.location }} \
-            --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
+            --security-policy "$(echo -e $securityPolicy | gpg --decrypt | base64)" \
             --out arm_template.json
-
-      - name: Print ARM Template
-        run: cat arm_template.json
+          cat arm_template.json | \
+            gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
+            sed ':a;N;$!ba;s/\n/\\n/g' > arm_template
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.generate-names.outputs.arm-template-name }}_arm_template
-          path: arm_template.json
+          path: arm_template

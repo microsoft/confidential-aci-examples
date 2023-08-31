@@ -22,6 +22,11 @@ on:
         default: false
         required: false
         type: boolean
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
   workflow_call:
     inputs:
       id:
@@ -41,14 +46,28 @@ on:
         default: false
         required: false
         type: boolean
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
     outputs:
       security-policies:
         value: ${{ jobs.generate-security-policy.outputs.security-policies }}
 
 jobs:
+  resolve-manifest:
+    name: Resolve Manifest Variables
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      manifest: examples/${{ inputs.test }}/manifest.json
+      modifiers: ${{ inputs.manifest-modifiers }}
+
   generate-security-policy:
     name: Generate Security Policy
     runs-on: ubuntu-latest
+    needs: resolve-manifest
     outputs:
       security-policies: ${{ steps.find-policies.outputs.security-policies }}
     steps:
@@ -60,10 +79,10 @@ jobs:
           az extension add --name confcom
           pip install -r requirements.txt
 
-      - name: Download Manifest
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ inputs.id }}_manifest
+      - name: Decrypt Manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
 
       - name: Generate Matrix Cell Name
         id: generate-name
@@ -91,7 +110,9 @@ jobs:
           mkdir -p security_policies
           POLICIES=($(python infra/read_manifest_security_policies.py manifest.json | tr -d '[],'"'"))
           for POLICY in "${POLICIES[@]}"; do
-            cp examples/$POLICY security_policies/
+            cat examples/$POLICY | \
+              gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
+              sed ':a;N;$!ba;s/\n/\\n/g' > security_policies/$(basename $POLICY)
           done
 
       - name: Generate Security Policy
@@ -100,12 +121,13 @@ jobs:
           python infra/login_arm_template_registries.py --arm-template-path arm_template.json
           command="az confcom acipolicygen \
               -a arm_template.json \
-              --outraw \
-              --save-to-file security_policies/_generated.rego"
+              --outraw"
             if [ "${{ inputs.debug }}" = "true" ]; then
               command="$command --debug-mode"
             fi
-            $command
+            echo $($command) | \
+              gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
+              sed ':a;N;$!ba;s/\n/\\n/g' > security_policies/_generated.rego
 
       - name: Print Security Policy
         run: cat security_policies/_generated.rego

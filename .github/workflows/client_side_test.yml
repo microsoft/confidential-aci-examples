@@ -66,7 +66,7 @@ jobs:
       - name: Check Container is Running
         run: |
           CONTAINER_STATE=$(az container show \
-              --name ${{ steps.generate-name.outputs.name }}-group \
+              --name ${{ steps.generate-name.outputs.name }}-group-0 \
               --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             )
           echo $CONTAINER_STATE | jq
@@ -81,7 +81,7 @@ jobs:
           AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
           AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
           CLEANUP_ACI: 0
-          UNIQUE_ID: ${{ inputs.id }}
+          UNIQUE_ID: ${{ steps.generate-name.outputs.name }}
         run: |
           python -m unittest discover \
             -s examples/${{ inputs.test }} \

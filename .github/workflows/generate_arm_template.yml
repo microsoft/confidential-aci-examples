@@ -98,19 +98,20 @@ jobs:
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
+          securityPolicy=$(cat security_policies/${{ inputs.security-policy }})
           python infra/container/generate_arm_template.py \
             --image-tag ${{ inputs.id }} \
             --name ${{ steps.generate-names.outputs.arm-template-name }} \
             --manifest-path manifest.json \
             --location ${{ inputs.location }} \
-            --security-policy "$(cat security_policies/${{ inputs.security-policy }} | base64)" \
+            --security-policy "$(echo -e $securityPolicy | gpg --decrypt | base64)" \
             --out arm_template.json
-
-      - name: Print ARM Template
-        run: cat arm_template.json
+          cat arm_template.json | \
+            gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
+            sed ':a;N;$!ba;s/\n/\\n/g' > arm_template
 
       - name: Upload ARM Template Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.generate-names.outputs.arm-template-name }}_arm_template
-          path: arm_template.json
+          path: arm_template

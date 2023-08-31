@@ -110,7 +110,9 @@ jobs:
           mkdir -p security_policies
           POLICIES=($(python infra/read_manifest_security_policies.py manifest.json | tr -d '[],'"'"))
           for POLICY in "${POLICIES[@]}"; do
-            cp examples/$POLICY security_policies/
+            cat examples/$POLICY | \
+              gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
+              sed ':a;N;$!ba;s/\n/\\n/g' > security_policies/$(basename $POLICY)
           done
 
       - name: Generate Security Policy
@@ -123,7 +125,9 @@ jobs:
             if [ "${{ inputs.debug }}" = "true" ]; then
               command="$command --debug-mode"
             fi
-            $command > security_policies/_generated.rego
+            echo $($command) | \
+              gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
+              sed ':a;N;$!ba;s/\n/\\n/g' > security_policies/_generated.rego
 
       - name: Print Security Policy
         run: cat security_policies/_generated.rego

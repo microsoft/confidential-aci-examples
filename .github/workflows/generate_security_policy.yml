@@ -119,17 +119,16 @@ jobs:
         id: generate-security-policy
         run: |
           python infra/login_arm_template_registries.py --arm-template-path arm_template.json
-          command="az confcom acipolicygen \
-              -a arm_template.json \
-              --outraw"
-            if [ "${{ inputs.debug }}" = "true" ]; then
-              command="$command --debug-mode"
-            fi
-            securityPolicy=$command
-            echo $securityPolicy
-            echo -e $securityPolicy | \
-              gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
-              sed ':a;N;$!ba;s/\n/\\n/g' > security_policies/_generated.rego
+          command="az confcom acipolicygen -a arm_template.json --outraw"
+          if [ "${{ inputs.debug }}" = "true" ]; then
+            command="$command --debug-mode"
+          fi
+          echo $command
+          securityPolicy=$command
+          echo $securityPolicy
+          echo -e $securityPolicy | \
+            gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
+            sed ':a;N;$!ba;s/\n/\\n/g' > security_policies/_generated.rego
 
       - name: Print Security Policy
         run: cat security_policies/_generated.rego

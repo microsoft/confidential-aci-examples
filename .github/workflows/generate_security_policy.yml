@@ -123,7 +123,9 @@ jobs:
           if [ "${{ inputs.debug }}" = "true" ]; then
             command="$command --debug-mode"
           fi
+          echo $command
           $command > security_policies/_generated.rego
+          cat security_policies/_generated.rego
           echo -e $(cat security_policies/_generated.rego) | \
             gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
             sed ':a;N;$!ba;s/\n/\\n/g' > security_policies/_generated.rego

@@ -124,7 +124,7 @@ jobs:
             command="$command --debug-mode"
           fi
           echo $command
-          securityPolicy=$command
+          securityPolicy=$($command)
           echo $securityPolicy
           echo -e $securityPolicy | \
             gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \

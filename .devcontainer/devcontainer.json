@@ -2,25 +2,44 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-in-docker
 {
 	"name": "Confidential ACI Dev",
-	"dockerFile": "Dockerfile",
-	"context": "..",
+	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
 	"hostRequirements": {
 		"memory": "8gb"
 	},
 	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"configureZshAsDefaultShell": true
+		},
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/sshd:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"version": "latest"
+		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest",
 			"enableNonRootDocker": "true",
 			"moby": "true"
 		},
-		"ghcr.io/devcontainers/features/python:1": {
-			"installTools": true,
+		"ghcr.io/devcontainers/features/go:1": {
 			"version": "latest"
 		},
 		"ghcr.io/devcontainers-contrib/features/protoc:1": {
 			"version": "latest"
 		}
 	},
+	"overrideFeatureInstallOrder": [
+		"ghcr.io/devcontainers/features/common-utils",
+		"ghcr.io/devcontainers/features/python",
+		"ghcr.io/devcontainers/features/sshd",
+		"ghcr.io/devcontainers/features/github-cli",
+		"ghcr.io/devcontainers/features/docker-in-docker",
+		"ghcr.io/devcontainers/features/go",
+		"ghcr.io/devcontainers-contrib/features/protoc:1"
+	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -32,6 +51,9 @@
 				"tsandall.opa"
 			],
 			"settings": {
+				"files.associations": {
+					"env": "shellscript"
+				},
 				"python.testing.unittestArgs": [
 					"-v",
 					"-s",
@@ -43,7 +65,7 @@
 				"python.testing.unittestEnabled": true,
 				"python.envFile": "${workspaceFolder}/env",
 				"python.defaultInterpreterPath": "/usr/local/python/current/bin/python",
-				"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+				"editor.defaultFormatter": "ms-python.black-formatter",
 				"files.exclude": {
 					"**/__pycache__": true
 				},

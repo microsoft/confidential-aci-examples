@@ -1,8 +1,9 @@
-# Setup the SSH_KEY
-mkdir ~/.ssh
-echo "$SSH_KEY" > ~/.ssh/id_rsa
-chmod 600 ~/.ssh/id_rsa
-ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+# Install Linux dependencies
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cryptsetup
+
+# Install Azure CLI
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
 # Install python dependencies
 pip install -r requirements.txt
@@ -21,6 +22,12 @@ az login --service-principal \
 
 # Login into Container Registry
 az acr login --name $AZURE_REGISTRY_URL
+
+# Setup the SSH_KEY
+mkdir ~/.ssh
+echo "$SSH_KEY" > ~/.ssh/id_rsa
+chmod 600 ~/.ssh/id_rsa
+ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
 
 # Import Keys
 echo -e "$ENCRYPTION_KEY" | gpg --import

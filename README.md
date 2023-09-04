@@ -63,7 +63,7 @@ This will set up a full development environment with everything needed to run ex
 
 > **CREDENTIALS:** If you do not have write permissions on this project or you checkout manually i.e. without using Codespaces, you will need to provide your own credentials by modifying the [Environment file](env) and re-running [setup.sh](setup.sh)
 
-> **MANUAL SETUP:** To checkout and setup manually, please refer to the [Dockerfile](.devcontainer/Dockerfile) and [.devcontainer](.devcontainer/devcontainer.json) to follow the setup process.
+> **MANUAL SETUP:** To checkout and setup manually, please refer to the [Dev Container](.devcontainer/devcontainer.json) to follow the setup process.
 
 Then you can open VS Code's testing view, where examples can be run with or without a debugger.
 

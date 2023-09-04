@@ -120,6 +120,7 @@ jobs:
             --location ${{ inputs.location }} \
             --security-policy "$(cat examples/simple_server/security_policies/allow_all.rego | base64)" \
             --out arm_template.json
+          echo -e "${{ secrets.ENCRYPTION_KEY }}" | gpg --import
           cat arm_template.json | \
             gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
             sed ':a;N;$!ba;s/\n/\\n/g' > arm_template

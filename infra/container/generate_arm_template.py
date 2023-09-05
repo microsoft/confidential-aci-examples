@@ -187,7 +187,7 @@ if __name__ == "__main__":
     with open(args.manifest_path, "r") as manifest_file:
         manifest = json.load(manifest_file)
         generate_arm_template(
-            name=args.name or f"{uuid.uuid4()}-group",
+            name=args.name or uuid.uuid4(),
             image_tag=args.image_tag,
             location=args.location,
             manifest=manifest,

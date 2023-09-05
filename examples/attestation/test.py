@@ -54,7 +54,7 @@ class AttestationTest(TestCase):
         )
         assert response.status_code == 200
         assert certificate_chain_response.status_code == 200
-        assert validate_attestation(
+        validate_attestation(
             response.content,
             certificate_chain_response.content,
             input_report_data,
@@ -65,7 +65,7 @@ class AttestationTest(TestCase):
         )
         assert response.status_code == 200
         assert certificate_chain_response.status_code == 200
-        assert validate_attestation(
+        validate_attestation(
             response.content,
             certificate_chain_response.content,
             input_report_data,

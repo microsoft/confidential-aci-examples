@@ -32,7 +32,7 @@ on:
 
 jobs:
   push-example-image:
-    name: Push Example Image
+    name: Push Example Image (${{ inputs.image }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -51,11 +51,17 @@ jobs:
         
       - name: Get Images
         id: get-images
-        run: echo "images=[$(cat manifest.json | jq -r ".images" | tr -d '{}\n')]" >> $GITHUB_OUTPUT
+        run: |
+          images="[$(cat manifest.json | jq -r ".images" | tr -d '{}\n')]"
+          echo $images
+          echo "images=$images" >> $GITHUB_OUTPUT
 
       - name: Get Security Policies
         id: get-security-policies
-        run: echo "security-policies=[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '{}\n'), \"_generated.rego\"]" >> $GITHUB_OUTPUT
+        run: |
+          securityPolicies="[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '{}\n'), \"_generated.rego\"]"
+          echo $securityPolicies
+          echo "security-policies=$securityPolicies" >> $GITHUB_OUTPUT
           
   build-and-push-images:
     name: Build and Push Images

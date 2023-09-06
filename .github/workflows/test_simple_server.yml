@@ -63,12 +63,27 @@ jobs:
       manifest: ${{ needs.resolve-manifest.outputs.manifest}}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}
+      
+  test-deployment:
+    name: Test Deployment
+    uses: ./.github/workflows/_test_deployment.yml
+    needs: [generate-id, resolve-manifest, deploy-aci]
+    strategy:
+      matrix:
+        location: ["westeurope"]
+        security-policy: ["_generated.rego"]
+    with:
+      id: ${{ needs.generate-id.outputs.id }}
+      manifest: ${{ needs.resolve-manifest.outputs.manifest}}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
 
   remove-aci:
     name: Remove Containers
     uses: ./.github/workflows/aci_remove.yml
-    needs: [generate-id, resolve-manifest, deploy-aci]
+    needs: [generate-id, resolve-manifest, test-deployment]
     secrets: inherit
+    if: ${{ always() }}
     strategy:
       fail-fast: false
       matrix:

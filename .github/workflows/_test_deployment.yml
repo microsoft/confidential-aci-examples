@@ -47,7 +47,7 @@ jobs:
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
           echo -e "${{ inputs.manifest }}" | gpg --decrypt > manifest.json
-          echo "test-name=$(echo $(cat manifest.json | jq -r '.testName')" >> $GITHUB_OUTPUT
+          echo "test-name=$(cat manifest.json | jq -r '.testName')" >> $GITHUB_OUTPUT
 
       - name: Generate Per Location & Policy ID
         id: generate-id

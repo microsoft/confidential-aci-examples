@@ -52,14 +52,14 @@ jobs:
       - name: Get Images
         id: get-images
         run: |
-          images="[$(cat manifest.json | jq -r ".images" | tr -d '{}\n')]"
+          images="[$(cat manifest.json | jq -r '.images | to_entries[] | "\"\(.key):\(.value)\","' | tr -d '\n')]"
           echo $images
           echo "images=$images" >> $GITHUB_OUTPUT
 
       - name: Get Security Policies
         id: get-security-policies
         run: |
-          securityPolicies="[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '{}\n'), \"_generated.rego\"]"
+          securityPolicies="[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '[]\n'), \"_generated.rego\"]"
           echo $securityPolicies
           echo "security-policies=$securityPolicies" >> $GITHUB_OUTPUT
           

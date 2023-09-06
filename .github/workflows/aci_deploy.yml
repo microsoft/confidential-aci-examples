@@ -48,7 +48,9 @@ jobs:
 
       - name: Generate Per Location & Policy ID
         id: generate-id
-        run: echo "cell-id=$(echo $(cat manifest.json | jq -r '.testName')-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+        run: |
+          testName=$(cat manifest.json | jq -r '.testName')
+          echo "cell-id=$(echo $testName-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
         
       - name: Generate ARM Template
         env:

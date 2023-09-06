@@ -68,6 +68,7 @@ jobs:
     name: Test Deployment
     uses: ./.github/workflows/_test_deployment.yml
     needs: [generate-id, resolve-manifest, deploy-aci]
+    secrets: inherit
     strategy:
       matrix:
         location: ["westeurope"]

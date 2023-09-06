@@ -55,7 +55,8 @@ jobs:
   attestation:
     name: Attestation
     uses: ./.github/workflows/test_example.yml
+    needs: resolve-image
     secrets: inherit
     with:
       example-name: attestation
-      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=${{ inputs.attestation-image }}"
+      manifest-modifiers: ${{ needs.resolve-image.outputs.manifest-modifiers }}

@@ -55,7 +55,8 @@ jobs:
   key-release:
     name: Key Release
     uses: ./.github/workflows/test_example.yml
+    needs: resolve-image
     secrets: inherit
     with:
       example-name: key_release
-      manifest-modifiers: "KEY_RELEASE_IMAGE=${{ inputs.key-release-image }}"
+      manifest-modifiers: ${{ needs.resolve-image.outputs.manifest-modifiers }}

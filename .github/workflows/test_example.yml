@@ -6,6 +6,10 @@ on:
       example-name:
         description: Name of example to test
         type: string
+      locations:
+        description: Locations to deploy containers to
+        default: '["northeurope", "westeurope"]'
+        type: string
       manifest-modifiers:
         description: Modifications to environment for the manifest
         type: string
@@ -13,6 +17,10 @@ on:
     inputs:
       example-name:
         description: Name of example to test
+        type: string
+      locations:
+        description: Locations to deploy containers to
+        default: '["northeurope", "westeurope"]'
         type: string
       manifest-modifiers:
         description: Modifications to environment for the manifest
@@ -86,7 +94,7 @@ jobs:
     needs: [prepare, resolve-manifest, push-example-images]
     strategy:
       matrix:
-        location: ["westeurope"]
+        location: ${{ fromJson(inputs.locations) }}
         security-policy: ${{ fromJson(needs.prepare.outputs.security-policies) }}
     with:
       id: ${{ needs.prepare.outputs.id }}
@@ -101,7 +109,7 @@ jobs:
     secrets: inherit
     strategy:
       matrix:
-        location: ["westeurope"]
+        location: ${{ fromJson(inputs.locations) }}
         security-policy: ${{ fromJson(needs.prepare.outputs.security-policies) }}
     with:
       id: ${{ needs.prepare.outputs.id }}
@@ -118,7 +126,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        location: ["westeurope"]
+        location: ${{ fromJson(inputs.locations) }}
         security-policy: ${{ fromJson(needs.prepare.outputs.security-policies) }}
     with:
       id: ${{ needs.prepare.outputs.id }}

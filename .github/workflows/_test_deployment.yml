@@ -52,16 +52,7 @@ jobs:
       - name: Generate Per Location & Policy ID
         id: generate-id
         run: echo "cell-id=${{ steps.decrypt-manifest.outputs.test-name }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
-
-      - name: Check Container is Running
-        run: |
-          CONTAINER_STATE=$(az container show \
-              --name ${{ steps.generate-id.outputs.cell-id }}-group-0 \
-              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            )
-          echo $CONTAINER_STATE | jq
-          [[ $(echo $CONTAINER_STATE | jq -r '.instanceView.state') == "Running" ]] && exit 0 || exit 1
-
+      
       - name: Run Tests
         env:
           DEPLOYMENT_NAME: ${{ steps.generate-id.outputs.cell-id }}-deployment

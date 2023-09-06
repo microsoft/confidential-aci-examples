@@ -37,27 +37,38 @@ jobs:
     needs: resolve-manifest
     outputs:
       id: ${{ steps.generate-id.outputs.id }}
+      images: ${{ steps.get-images.outputs.images }}
       security-policies: ${{ steps.get-security-policies.outputs.security_policies }}
     steps:
       - name: Get Workflow ID
         id: generate-id
         run: echo "id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
-      
-      - name: Get Security Policies
-        id: get-security-policies
+
+      - name: Decrypt Manifest
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
           echo -e "${{ needs.resolve-manifest.outputs.manifest }}" | gpg --decrypt > manifest.json
-          echo "security-policies=[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '[]\n'"'"), \"_generated.rego\"]" >> $GITHUB_OUTPUT
+        
+      - name: Get Images
+        id: get-images
+        run: echo "images=[$(cat manifest.json | jq -r ".images" | tr -d '{}\n')]" >> $GITHUB_OUTPUT
+
+      - name: Get Security Policies
+        id: get-security-policies
+        run: echo "security-policies=[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '{}\n'), \"_generated.rego\"]" >> $GITHUB_OUTPUT
           
   build-and-push-images:
     name: Build and Push Images
-    uses: ./.github/workflows/_push_example_images.yml
+    uses: ./.github/workflows/_push_example_image.yml
     secrets: inherit
     needs: [prepare, resolve-manifest]
+    strategy:
+      matrix:
+        image: ${{ fromJson(needs.prepare.outputs.images) }}
     with:
-      id: ${{ needs.prepare.outputs.id }}
-      manifest: ${{ needs.resolve-manifest.outputs.manifest}}
+      tag: ${{ needs.prepare.outputs.id }}
+      test-name: simple_server
+      image: ${{ matrix.image }}
 
   deploy-aci:
     name: Deploy Containers

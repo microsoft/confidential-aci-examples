@@ -61,7 +61,7 @@ jobs:
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
-          if [[ ${{ inputs.image-tag }} == "" ]]; then
+          if [[ "${{ inputs.image-tag }}" == "" ]]; then
             imageTag=${{ inputs.id }}
           else
             imageTag=${{ inputs.image-tag }}

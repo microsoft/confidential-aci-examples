@@ -40,11 +40,13 @@ jobs:
           echo -e "${{ inputs.manifest }}" | gpg --decrypt > manifest.json
           echo "test-name=$()" >> $GITHUB_OUTPUT
 
-      - name: Generate Matrix Cell ID
+      - name: Generate Per Location & Policy ID
         id: generate-id
         run: |
           testName=$(cat manifest.json | jq -r '.testName')
-          echo "cell-id=$(echo $testName-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+          cellId=$(echo $testName-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')
+          echo $cellId
+          echo "cell-id=$cellId" >> $GITHUB_OUTPUT
         
       - name: Generate ARM Template
         env:
@@ -82,6 +84,13 @@ jobs:
           python infra/add_security_policy_to_arm_template.py \
             --arm-template-path arm_template.json \
             --security-policy-path security_policy.rego
+
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
             
       - name: Deploy ARM Template
         run: |

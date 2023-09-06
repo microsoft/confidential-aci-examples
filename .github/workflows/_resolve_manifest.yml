@@ -1,4 +1,4 @@
-name: Resolve Manifest Variables
+name: ⚙️ Resolve Manifest Variables
 
 on:
   workflow_call:

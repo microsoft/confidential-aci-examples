@@ -1,4 +1,4 @@
-name: Push Container Image
+name: ⚙️ Push Example Image
 
 on:
   workflow_call:

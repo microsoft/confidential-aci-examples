@@ -78,7 +78,7 @@ jobs:
 
   deploy-aci:
     name: Deploy Containers
-    uses: ./.github/workflows/aci_deploy.yml
+    uses: ./.github/workflows/_aci_deploy.yml
     secrets: inherit
     needs: [prepare, resolve-manifest, build-and-push-images]
     strategy:
@@ -108,7 +108,7 @@ jobs:
 
   remove-aci:
     name: Remove Containers
-    uses: ./.github/workflows/aci_remove.yml
+    uses: ./.github/workflows/_aci_remove.yml
     needs: [prepare, resolve-manifest, test-deployment]
     secrets: inherit
     if: ${{ always() }}

@@ -50,7 +50,7 @@ jobs:
       test: simple_server
 
   deploy-aci:
-    name: Deploy Container Instances
+    name: Deploy Containers
     uses: ./.github/workflows/aci_deploy.yml
     secrets: inherit
     needs: [generate-id, resolve-manifest, build-and-push-images]
@@ -65,7 +65,7 @@ jobs:
       security-policy: ${{ matrix.security-policy }}
 
   remove-aci:
-    name: Remove Container Instances
+    name: Remove Containers
     uses: ./.github/workflows/aci_remove.yml
     needs: [generate-id, resolve-manifest, deploy-aci]
     secrets: inherit

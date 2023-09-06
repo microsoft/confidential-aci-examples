@@ -1,4 +1,4 @@
-name: Deploy ACI
+name: Deploy Containers
 
 on:
   workflow_call:

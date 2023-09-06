@@ -1,4 +1,4 @@
-name: Remove ACI
+name: Remove Containers
 
 on:
   workflow_call:

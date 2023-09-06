@@ -42,12 +42,12 @@ jobs:
           
   build-and-push-images:
     name: Build and Push Images
-    uses: ./.github/workflows/build_and_push_images.yml
+    uses: ./.github/workflows/_push_example_images.yml
     secrets: inherit
-    needs: generate-id
+    needs: [generate-id, resolve-manifest]
     with:
       id: ${{ needs.generate-id.outputs.id }}
-      test: simple_server
+      manifest: ${{ needs.resolve-manifest.outputs.manifest}}
 
   deploy-aci:
     name: Deploy Containers

@@ -53,7 +53,7 @@ jobs:
     name: Deploy Container Instance
     uses: ./.github/workflows/deploy_aci.yml
     secrets: inherit
-    needs: [resolve-manifest, build-and-push-images]
+    needs: [generate-id, resolve-manifest, build-and-push-images]
     strategy:
       matrix:
         location: ["westeurope"]

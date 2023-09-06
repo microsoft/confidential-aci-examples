@@ -56,12 +56,12 @@ jobs:
       - name: Get Security Policies
         id: get-security-policies
         run: |
-          securityPolicies="[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '[]\n'), \"_generated.rego\"]"
+          securityPolicies="[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '[]\n') \"_generated.rego\"]"
           echo $securityPolicies
           echo "security-policies=$securityPolicies" >> $GITHUB_OUTPUT
           
-  build-and-push-images:
-    name: Build and Push Images
+  push-example-images:
+    name: Push Example Images
     uses: ./.github/workflows/push_example_image.yml
     secrets: inherit
     needs: [prepare, resolve-manifest]

@@ -79,7 +79,7 @@ jobs:
               fi
             $command > security_policy.rego
           else
-            cp examples/${{ inputs.security-policy }} security_policy.rego
+            cp ${{ inputs.security-policy }} security_policy.rego
           fi
           cat security_policy.rego
           

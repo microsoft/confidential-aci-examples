@@ -90,6 +90,12 @@ jobs:
             --security-policy-path security_policy.rego
             
       - name: Deploy ARM Template
+        env:
+          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
+          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
+          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+          AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
+          AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
         run: |
           python infra/deploy_arm_template.py \
             --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \

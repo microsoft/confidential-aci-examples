@@ -1,0 +1,102 @@
+name: Deploy ACI
+
+on:
+  workflow_call:
+    inputs:
+      id:
+        description: Unique Identifier for this run
+        required: true
+        type: string
+      manifest:
+        description: Manifest to deploy
+        required: true
+        type: string
+      location:
+        description: The location to deploy to
+        required: true
+        type: string
+      security-policy:
+        description: Name of the security policy to use
+        type: string
+      debug:
+        description: Debuggable Security Policy
+        default: false
+        type: boolean
+
+jobs:
+  deploy-aci:
+    name: Deploy ACI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Decrypt Manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ inputs.manifest }}" | gpg --decrypt > manifest.json
+          echo "test-name=$()" >> $GITHUB_OUTPUT
+
+      - name: Generate Matrix Cell ID
+        id: generate-id
+        run: |
+          testName=$(cat manifest.json | jq -r '.testName')
+          echo "cell-id=$(echo $testName-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+        
+      - name: Generate ARM Template
+        env:
+          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
+          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+        run: |
+          python infra/container/generate_arm_template.py \
+            --name "${{ steps.generate-id.outputs.cell-id }}" \
+            --image-tag ${{ inputs.id }} \
+            --manifest-path manifest.json \
+            --location "${{ inputs.location }}" \
+            --out arm_template.json
+          cat arm_template.json
+
+      - name: Get Security Policy
+        run: |
+          if [[ ${{ inputs.security-policy }} == "_generated.rego" ]]; then
+            python infra/login_arm_template_registries.py --arm-template-path arm_template.json
+            command="az confcom acipolicygen \
+                -a arm_template.json \
+                --outraw"
+              if [ "${{ inputs.debug }}" == "true" ]; then
+                command="$command --debug-mode"
+              fi
+            $command > security_policy.rego
+          else
+            cp examples/${{ inputs.security-policy }} security_policy.rego
+          fi
+          cat security_policy.rego
+          
+      - name: Add Security Policy to ARM Template
+        run: |
+          python infra/add_security_policy_to_arm_template.py \
+            --arm-template-path arm_template.json \
+            --security-policy-path security_policy.rego
+            
+      - name: Deploy ARM Template
+        run: |
+          python infra/deploy_arm_template.py \
+            --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
+            --manifest-path manifest.json \
+            --arm-template-path arm_template.json \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --deployment-name ${{ steps.generate-id.outputs.cell-id }}-deployment
+
+      - name: Check Container is Running
+        run: |
+          sleep 10 # Give the container a chance to stabilise
+          CONTAINER_STATE=$(az container show \
+              --name $(cat arm_template.json | jq -r '.resources[0].name') \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            )
+          echo $CONTAINER_STATE | jq
+          [[ $(echo $CONTAINER_STATE | jq -r '.instanceView.state') == "Running" ]] && exit 0 || exit 1

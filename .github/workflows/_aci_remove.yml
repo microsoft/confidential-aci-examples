@@ -21,7 +21,7 @@ on:
 
 jobs:
   remove-aci:
-    name: Remove ACI
+    name: Remove ACI (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -25,7 +25,7 @@ on:
 
 jobs:
   test-deployment:
-    name: Test Deployment
+    name: Test Deployment (${{ inputs.location }}/${{ inputs.security-policy }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

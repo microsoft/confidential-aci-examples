@@ -1,0 +1,156 @@
+name: Run Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      id:
+        description: "Unique Identifier for this run"
+        required: true
+        type: string
+      test:
+        description: "Test to run"
+        required: true
+        type: choice
+        options:
+          - simple_server
+      location:
+        description: "Locations to deploy ACIs to"
+        default: '["northeurope", "westeurope"]'
+        required: false
+        type: string
+      skip-cleanup:
+        description: "Skip cleanup"
+        default: false
+        required: false
+        type: boolean
+      debug:
+        description: "Debuggable Security Policy"
+        default: false
+        required: false
+        type: boolean
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
+  workflow_call:
+    inputs:
+      id:
+        description: "Unique Identifier for this run"
+        required: true
+        type: string
+      test:
+        description: "Test to run"
+        required: true
+        type: string
+      locations:
+        description: "Locations to deploy ACIs to"
+        default: '["northeurope", "westeurope"]'
+        required: false
+        type: string
+      skip-cleanup:
+        description: "Skip cleanup"
+        default: false
+        required: false
+        type: boolean
+      debug:
+        description: "Debuggable Security Policy"
+        default: false
+        required: false
+        type: boolean
+      manifest-modifiers:
+        description: "Key value pairs of any environment variables to modify separated by semi colons"
+        type: string
+        default: ""
+        required: false
+
+jobs:
+  build-and-push-images:
+    name: "Build and Push Images"
+    uses: ./.github/workflows/build_and_push_images.yml
+    secrets: inherit
+    with:
+      id: ${{ inputs.id }}
+      test: ${{ inputs.test }}
+      manifest-modifiers: ${{ inputs.manifest-modifiers }}
+
+  generate-security-policy:
+    name: "Generate Security Policy"
+    uses: ./.github/workflows/generate_security_policy.yml
+    needs: [build-and-push-images]
+    secrets: inherit
+    strategy:
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+    with:
+      id: ${{ inputs.id }}
+      test: ${{ inputs.test }}
+      location: ${{ matrix.location }}
+      debug: ${{ inputs.debug }}
+      manifest-modifiers: ${{ inputs.manifest-modifiers }}
+
+  generate-arm-templates:
+    name: "Generate ARM Templates"
+    uses: ./.github/workflows/generate_arm_template.yml
+    needs: [generate-security-policy]
+    secrets: inherit
+    strategy:
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+    with:
+      id: ${{ inputs.id }}
+      test: ${{ inputs.test }}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
+      manifest-modifiers: ${{ inputs.manifest-modifiers }}
+
+  deploy-containers:
+    name: "Deploy Containers"
+    uses: ./.github/workflows/deploy_arm_template.yml
+    needs: [generate-security-policy, generate-arm-templates]
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+    with:
+      id: ${{ inputs.id }}
+      test: ${{ inputs.test }}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
+      manifest-modifiers: ${{ inputs.manifest-modifiers }}
+
+  client-side-tests:
+    name: "Run Client Side Tests"
+    uses: ./.github/workflows/client_side_test.yml
+    needs: [generate-security-policy, deploy-containers]
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+    with:
+      id: ${{ inputs.id }}
+      test: ${{ inputs.test }}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
+
+  remove-containers:
+    name: "Remove Containers"
+    uses: ./.github/workflows/delete_deployment.yml
+    needs: [generate-security-policy, client-side-tests]
+    secrets: inherit
+    if: ${{ always() && (inputs.skip-cleanup != true && inputs.debug != true) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        location: ${{ fromJson(inputs.locations) }}
+        security-policy: ${{ fromJson(needs.generate-security-policy.outputs.security-policies) }}
+    with:
+      id: ${{ inputs.id }}
+      test: ${{ inputs.test }}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}

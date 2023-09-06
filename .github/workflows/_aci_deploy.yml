@@ -7,6 +7,9 @@ on:
         description: Unique Identifier for this run
         required: true
         type: string
+      image-tag:
+        description: The image tag to deploy
+        type: string
       manifest:
         description: Manifest to deploy
         required: true
@@ -58,9 +61,14 @@ jobs:
           AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
         run: |
+          if [[ ${{ inputs.image-tag }} == "" ]]; then
+            imageTag=${{ inputs.id }}
+          else
+            imageTag=${{ inputs.image-tag }}
+          fi
           python infra/container/generate_arm_template.py \
             --name "${{ steps.generate-id.outputs.cell-id }}" \
-            --image-tag ${{ inputs.id }} \
+            --image-tag $imageTag \
             --manifest-path manifest.json \
             --location "${{ inputs.location }}" \
             --out arm_template.json

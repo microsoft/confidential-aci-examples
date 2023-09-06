@@ -92,6 +92,7 @@ jobs:
     uses: ./.github/workflows/_aci_deploy.yml
     secrets: inherit
     needs: [prepare, resolve-manifest, push-example-images]
+    if: ${{ always() && needs.push-example-images.result != 'failure' }}
     strategy:
       matrix:
         location: ${{ fromJson(inputs.locations) }}

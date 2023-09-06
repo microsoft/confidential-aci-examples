@@ -8,11 +8,11 @@ on:
         required: true
         type: string
       manifest:
-        description: Manifest to deploy
+        description: Manifest to test
         required: true
         type: string
       location:
-        description: The location to deploy to
+        description: The location to test
         required: true
         type: string
       security-policy:

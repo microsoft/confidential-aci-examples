@@ -10,9 +10,7 @@ on:
       test:
         description: "Test to deploy ACI for"
         required: true
-        type: choice
-        options:
-          - simple_server
+        type: string
       location:
         description: "Location to deploy to"
         required: true

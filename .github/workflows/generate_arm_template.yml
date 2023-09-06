@@ -14,9 +14,7 @@ on:
       test:
         description: "Test to generate the ARM template for"
         required: true
-        type: choice
-        options:
-          - simple_server
+        type: string
       location:
         description: "Location to deploy to"
         required: true

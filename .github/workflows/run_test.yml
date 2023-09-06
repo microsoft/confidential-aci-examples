@@ -10,9 +10,7 @@ on:
       test:
         description: "Test to run"
         required: true
-        type: choice
-        options:
-          - simple_server
+        type: string
       location:
         description: "Locations to deploy ACIs to"
         default: '["northeurope", "westeurope"]'

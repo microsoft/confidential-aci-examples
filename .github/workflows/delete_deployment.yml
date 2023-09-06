@@ -10,9 +10,7 @@ on:
       test:
         description: "Test to remove the ACI for"
         required: true
-        type: choice
-        options:
-          - simple_server
+        type: string
       location:
         description: "Location to deploy ACI to"
         required: true

@@ -36,6 +36,22 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
+  resolve-image:
+    name: Resolve Sidecar Image
+    runs-on: ubuntu-latest
+    outputs:
+      manifest-modifiers: ${{ steps.resolve-image.outputs.manifest-modifiers }}
+    steps:
+      - name: Define Image to Use
+        id: resolve-image
+        env:
+          ATTESTATION_SIDECAR_IMAGE: ${{ inputs.attestation-image }}
+        run: |
+          if [ -z "$ATTESTATION_SIDECAR_IMAGE" ]; then
+            ATTESTATION_SIDECAR_IMAGE="http://confidentialsidecars.azurecr.io/attestation:main"
+          fi
+          echo "manifest-modifiers=ATTESTATION_SIDECAR_IMAGE=$ATTESTATION_SIDECAR_IMAGE" >> $GITHUB_OUTPUT
+
   attestation:
     name: Attestation
     uses: ./.github/workflows/test_example.yml

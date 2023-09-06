@@ -36,6 +36,22 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
+  resolve-image:
+    name: Resolve Sidecar Image
+    runs-on: ubuntu-latest
+    outputs:
+      manifest-modifiers: ${{ steps.resolve-image.outputs.manifest-modifiers }}
+    steps:
+      - name: Define Image to Use
+        id: resolve-image
+        env:
+          KEY_RELEASE_IMAGE: ${{ inputs.key-release-image }}
+        run: |
+          if [ -z "$KEY_RELEASE_IMAGE" ]; then
+            KEY_RELEASE_IMAGE="http://mcr.microsoft.com/aci/skr:2.3"
+          fi
+          echo "manifest-modifiers=KEY_RELEASE_IMAGE=$KEY_RELEASE_IMAGE" >> $GITHUB_OUTPUT
+
   key-release:
     name: Key Release
     uses: ./.github/workflows/test_example.yml

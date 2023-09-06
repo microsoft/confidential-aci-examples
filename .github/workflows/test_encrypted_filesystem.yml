@@ -36,6 +36,22 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
+  resolve-image:
+    name: Resolve Sidecar Image
+    runs-on: ubuntu-latest
+    outputs:
+      manifest-modifiers: ${{ steps.resolve-image.outputs.manifest-modifiers }}
+    steps:
+      - name: Define Image to Use
+        id: resolve-image
+        env:
+          ENCRYPTED_FILESYSTEM_IMAGE: ${{ inputs.encrypted_filesystem_image }}
+        run: |
+          if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
+            ENCRYPTED_FILESYSTEM_IMAGE="http://mcr.microsoft.com/aci/encfs:2.3"
+          fi
+          echo "manifest-modifiers=ENCRYPTED_FILESYSTEM_IMAGE=$ENCRYPTED_FILESYSTEM_IMAGE" >> $GITHUB_OUTPUT
+
   encrypted-filesystem:
     name: Encrypted Filesystem
     uses: ./.github/workflows/test_example.yml

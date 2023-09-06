@@ -66,8 +66,8 @@ jobs:
 
   remove-aci:
     name: Remove Container Instances
-    uses: ./.github/workflows/delete_deployment.yml
-    needs: [generate-id, deploy-aci]
+    uses: ./.github/workflows/aci_remove.yml
+    needs: [generate-id, resolve-manifest, deploy-aci]
     secrets: inherit
     strategy:
       fail-fast: false
@@ -76,6 +76,6 @@ jobs:
         security-policy: ["_generated.rego"]
     with:
       id: ${{ needs.generate-id.outputs.id }}
-      test: simple_server
+      manifest: ${{ needs.resolve-manifest.outputs.manifest}}
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}

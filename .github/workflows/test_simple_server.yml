@@ -65,7 +65,7 @@ jobs:
           
   build-and-push-images:
     name: Build and Push Images
-    uses: ./.github/workflows/_push_example_image.yml
+    uses: ./.github/workflows/push_example_image.yml
     secrets: inherit
     needs: [prepare, resolve-manifest]
     strategy:

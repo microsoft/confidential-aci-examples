@@ -38,7 +38,7 @@ jobs:
     outputs:
       id: ${{ steps.generate-id.outputs.id }}
       images: ${{ steps.get-images.outputs.images }}
-      security-policies: ${{ steps.get-security-policies.outputs.security_policies }}
+      security-policies: ${{ steps.get-security-policies.outputs.security-policies }}
     steps:
       - name: Get Workflow ID
         id: generate-id

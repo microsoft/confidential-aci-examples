@@ -56,7 +56,12 @@ jobs:
       - name: Get Security Policies
         id: get-security-policies
         run: |
-          securityPolicies="[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '[]\n') \"_generated.rego\"]"
+          securityPolicies="[$(cat manifest.json | jq -r '.securityPolicies' | tr -d '[]\n ')]"
+          if [[ $securityPolicies == "[]" ]]; then
+            securityPolicies="[\"_generated.rego\"]"
+          else
+            securityPolicies="[\"_generated.rego\", ${securityPolicies:1}"
+          fi
           echo $securityPolicies
           echo "security-policies=$securityPolicies" >> $GITHUB_OUTPUT
           

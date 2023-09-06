@@ -1,8 +1,20 @@
-name: Attestation
+name: Test Attestation
 
 on:
   workflow_call:
+    inputs:
+      attestation-image:
+        description: "The image of the Attestation sidecar to use"
+        required: false
+        default: "http://confidentialsidecars.azurecr.io/attestation:main"
+        type: string
   workflow_dispatch:
+    inputs:
+      attestation-image:
+        description: "The image of the Attestation sidecar to use"
+        required: false
+        default: "http://confidentialsidecars.azurecr.io/attestation:main"
+        type: string
   push:
     branches:
       - main
@@ -24,24 +36,10 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
-  prepare:
-    name: Prepare Test
-    runs-on: ubuntu-latest
-    outputs:
-      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
-    steps:
-      - name: "Get Workflow ID"
-        id: workflow-id
-        run: |
-          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
-          echo $WORKFLOW_ID
-          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
-
   attestation:
     name: Attestation
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id }}
-      test: attestation
+      example-name: attestation
+      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=${{ inputs.attestation-image }}"

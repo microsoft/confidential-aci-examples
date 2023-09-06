@@ -1,0 +1,18 @@
+name: Test Encrypted Filesystem (Latest)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"
+  pull_request:
+    paths:
+      - .github/workflows/test_encrypted_filesystem_daily.yml
+
+jobs:
+  encrypted-filesystem:
+    name: Encrypted Filesystem
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: encrypted_filesystem
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecars.azurecr.io/encfs:main"

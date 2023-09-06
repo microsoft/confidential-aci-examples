@@ -1,4 +1,4 @@
-name: Encrypted Filesystem
+name: Test Encrypted Filesystem
 
 on:
   workflow_call:
@@ -36,36 +36,10 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
-  prepare:
-    name: Prepare Test
-    runs-on: ubuntu-latest
-    outputs:
-      manifest-modifiers: ${{ steps.resolve-image.outputs.manifest-modifiers }}
-      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
-    steps:
-      - name: "Get Workflow ID"
-        id: workflow-id
-        run: |
-          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
-          echo $WORKFLOW_ID
-          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
-
-      - name: Define Image to Use
-        id: resolve-image
-        env:
-          ENCRYPTED_FILESYSTEM_IMAGE: ${{ inputs.encrypted_filesystem_image }}
-        run: |
-          if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
-            ENCRYPTED_FILESYSTEM_IMAGE="http://mcr.microsoft.com/aci/encfs:2.3"
-          fi
-          echo "manifest-modifiers=ENCRYPTED_FILESYSTEM_IMAGE=$ENCRYPTED_FILESYSTEM_IMAGE" >> $GITHUB_OUTPUT
-
   encrypted-filesystem:
     name: Encrypted Filesystem
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id }}
-      test: encrypted_filesystem
-      manifest-modifiers: ${{ needs.prepare.outputs.manifest-modifiers }}
+      example-name: encrypted_filesystem
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=${{ inputs.encrypted_filesystem_image }}"

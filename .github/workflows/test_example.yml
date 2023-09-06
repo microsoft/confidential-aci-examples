@@ -6,12 +6,18 @@ on:
       example-name:
         description: Name of example to test
         type: string
+      manifest-modifiers:
+        description: Modifications to environment for the manifest
+        type: string
   workflow_dispatch:
     inputs:
       example-name:
         description: Name of example to test
         type: string
-        
+      manifest-modifiers:
+        description: Modifications to environment for the manifest
+        type: string
+
 jobs:
 
   resolve-manifest:
@@ -20,7 +26,7 @@ jobs:
     secrets: inherit
     with:
       manifest: examples/${{ inputs.example-name }}/manifest.json
-      modifiers: ""
+      modifiers: ${{ inputs.manifest-modifiers }}
 
   prepare:
     name: Prepare Test

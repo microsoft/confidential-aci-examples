@@ -22,8 +22,8 @@ on:
       - main
 
 jobs:
-  
-  test-simple-server:
+  simple-server:
+    name: Simple Server
     uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:

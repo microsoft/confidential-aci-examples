@@ -8,47 +8,26 @@ on:
         default: main
 
 jobs:
-  prepare:
-    name: Prepare Test
-    runs-on: ubuntu-latest
-    outputs:
-      attestation-id: ${{ steps.generate-ids.outputs.attestation-id }}
-      key-release-id: ${{ steps.generate-ids.outputs.key-release-id }}
-      encrypted-filesystem-id: ${{ steps.generate-ids.outputs.encrypted-filesystem-id }}
-    steps:
-      - name: Generate IDs
-        id: generate-ids
-        run: |
-          echo "attestation-id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
-          echo "key-release-id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
-          echo "encrypted-filesystem-id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
-
   attestation:
     name: Attestation
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.attestation-id }}
-      test: attestation
+      example-name: attestation
       manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:${{ inputs.sidecar-tag }}"
 
   key-release:
     name: Key Release
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.key-release-id }}
-      test: key_release
+      example-name: key_release
       manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:${{ inputs.sidecar-tag }}"
 
   encrypted-filesystem:
     name: Encrypted Filesystem
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.encrypted-filesystem-id }}
-      test: encrypted_filesystem
+      example-name: encrypted_filesystem
       manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecars.azurecr.io/encfs:${{ inputs.sidecar-tag }}"

@@ -1,4 +1,4 @@
-name: ⚙️ Remove Containers
+name: Remove Containers
 
 on:
   workflow_call:

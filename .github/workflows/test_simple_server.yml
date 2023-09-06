@@ -48,10 +48,10 @@ jobs:
     with:
       id: ${{ needs.generate-id.outputs.id }}
       test: simple_server
-      
-  deploy_aci:
-    name: Deploy Container Instance
-    uses: ./.github/workflows/deploy_aci.yml
+
+  deploy-aci:
+    name: Deploy Container Instances
+    uses: ./.github/workflows/aci_deploy.yml
     secrets: inherit
     needs: [generate-id, resolve-manifest, build-and-push-images]
     strategy:
@@ -61,5 +61,21 @@ jobs:
     with:
       id: ${{ needs.generate-id.outputs.id }}
       manifest: ${{ needs.resolve-manifest.outputs.manifest}}
+      location: ${{ matrix.location }}
+      security-policy: ${{ matrix.security-policy }}
+
+  remove-aci:
+    name: Remove Container Instances
+    uses: ./.github/workflows/delete_deployment.yml
+    needs: [generate-id, deploy-aci]
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        location: ["westeurope"]
+        security-policy: ["_generated.rego"]
+    with:
+      id: ${{ needs.generate-id.outputs.id }}
+      test: simple_server
       location: ${{ matrix.location }}
       security-policy: ${{ matrix.security-policy }}

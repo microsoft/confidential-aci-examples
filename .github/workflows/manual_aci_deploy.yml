@@ -37,7 +37,7 @@ jobs:
     name: Deploy Containers
     uses: ./.github/workflows/_aci_deploy.yml
     secrets: inherit
-    needs: [resolve-manifest]
+    needs: resolve-manifest
     with:
       id: ${{ inputs.id }}
       manifest: ${{ needs.resolve-manifest.outputs.manifest}}

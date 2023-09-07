@@ -33,6 +33,7 @@ jobs:
     name: Test Deployment
     uses: ./.github/workflows/_test_deployment.yml
     secrets: inherit
+    needs: resolve-manifest
     with:
       id: ${{ inputs.id }}
       manifest: ${{ needs.resolve-manifest.outputs.manifest }}

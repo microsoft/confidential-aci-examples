@@ -12,6 +12,14 @@ env:
   UPTIME_HRS: 48
 
 jobs:
+  resolve-manifest:
+    name: Resolve Manifest Variables
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      manifest: examples/simple_server/manifest.json
+      modifiers: ""
+      
   check-current-containers:
     name: Check Containers Uptime
     runs-on: ubuntu-latest
@@ -88,61 +96,28 @@ jobs:
               fi
           done
 
-  prep-deployment:
-    name: Prepare Deployment
+  generate-id:
+    name: Generate ID
     runs-on: ubuntu-latest
     needs: check-current-containers
     outputs:
       datetime: ${{ steps.get-datetime.outputs.datetime }}
-      deployment-needed: ${{ needs.check-current-containers.outputs.deployment-needed }}
     if: ${{ needs.check-current-containers.outputs.deployment-needed == 1 }}
     steps:
       - name: Get Datetime
         id: get-datetime
         run: echo "datetime=$(date -u +"%s")" >> $GITHUB_OUTPUT
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Generate ARM Template
-        env:
-          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
-          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-        run: |
-          python infra/container/generate_arm_template.py \
-            --name uptime-${{ steps.get-datetime.outputs.datetime }} \
-            --image-tag latest \
-            --manifest-path examples/simple_server/manifest.json \
-            --location ${{ inputs.location }} \
-            --security-policy "$(cat examples/simple_server/security_policies/allow_all.rego | base64)" \
-            --out arm_template.json
-          echo -e "${{ secrets.ENCRYPTION_KEY }}" | gpg --import
-          cat arm_template.json | \
-            gpg -aeq --trust-mode always -r "Github Actions <\" \">" | \
-            sed ':a;N;$!ba;s/\n/\\n/g' > arm_template
-
-      - name: Generate Matrix Cell Name
-        id: generate-name
-        run: echo "name=$(echo simple_server-${{ inputs.location }}-allow_all.rego-${{ steps.get-datetime.outputs.datetime }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
-
-      - name: Upload ARM Template Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.generate-name.outputs.name }}_arm_template
-          path: arm_template
-
+          
+      
   deploy-new-container:
-    name: Deploy New Container
-    uses: ./.github/workflows/deploy_arm_template.yml
-    needs: prep-deployment
+    name: Deploy New Containers
+    uses: ./.github/workflows/_aci_deploy.yml
     secrets: inherit
-    if: ${{ needs.prep-deployment.outputs.deployment-needed == 1 }}
+    needs: [resolve-manifest, generate-id, check-current-containers]
+    if: ${{ needs.check-current-containers.outputs.deployment-needed == 1 }}
     with:
-      id: ${{ needs.prep-deployment.outputs.datetime }}
-      test: simple_server
+      id: ${{ needs.generate-id.outputs.datetime }}
+      image-tag: latest
+      manifest: ${{ needs.resolve-manifest.outputs.manifest}}
       location: ${{ inputs.location }}
-      security-policy: allow_all.rego
+      security-policy: "policies/allow_all.rego"

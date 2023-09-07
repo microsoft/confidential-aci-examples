@@ -11,9 +11,9 @@ on:
 
 jobs:
   push-latest-attestation:
-    name: "Push Latest Attestation Image"
-    uses: ./.github/workflows/build_and_push_images.yml
+    name: Push Latest Attestation Image
+    uses: ./.github/workflows/push_all_example_images.yml
     secrets: inherit
     with:
-      id: latest
-      test: attestation
+      example-name: attestation
+      tag: latest

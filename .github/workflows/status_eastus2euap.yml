@@ -6,47 +6,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  prepare:
-    name: Prepare Test
-    runs-on: ubuntu-latest
-    outputs:
-      workflow-id-0: ${{ steps.workflow-id.outputs.workflow-id-0 }}
-      workflow-id-1: ${{ steps.workflow-id.outputs.workflow-id-1 }}
-      workflow-id-2: ${{ steps.workflow-id.outputs.workflow-id-2 }}
-    steps:
-      - name: "Get Workflow ID"
-        id: workflow-id
-        run: |
-          for idx in {0..2}; do 
-            echo "workflow-id-$idx=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
-          done
-
-  simple-server-eastus2euap-0:
-    name: Simple Server on East US 2 EUAP
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+  simple-server-0:
+    name: Simple Server
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id-0 }}
-      test: simple_server
+      example-name: simple_server
       locations: '["eastus2euap"]'
 
-  simple-server-eastus2euap-1:
-    name: Simple Server on East US 2 EUAP
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+  simple-server-1:
+    name: Simple Server
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id-1 }}
-      test: simple_server
+      example-name: simple_server
       locations: '["eastus2euap"]'
 
-  simple-server-eastus2euap-2:
-    name: Simple Server on East US 2 EUAP
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+  simple-server-2:
+    name: Simple Server
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id-2 }}
-      test: simple_server
+      example-name: simple_server
       locations: '["eastus2euap"]'

@@ -11,9 +11,9 @@ on:
 
 jobs:
   push-latest-encrypted-filesystem:
-    name: "Push Latest Encrypted Filesystem Image"
-    uses: ./.github/workflows/build_and_push_images.yml
+    name: Push Latest Encrypted Filesystem Image
+    uses: ./.github/workflows/push_all_example_images.yml
     secrets: inherit
     with:
-      id: latest
-      test: encrypted_filesystem
+      example-name: encrypted_filesystem
+      tag: latest

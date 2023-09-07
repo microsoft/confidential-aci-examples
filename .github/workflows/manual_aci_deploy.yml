@@ -17,6 +17,7 @@ on:
         type: string
       security-policy:
         description: Name of the security policy to use
+        default: "_generated.rego"
         type: string
       debug:
         description: Debuggable Security Policy
@@ -31,7 +32,6 @@ jobs:
     secrets: inherit
     with:
       manifest: examples/${{ inputs.example-name }}/manifest.json
-      modifiers: ""
 
   deploy-aci:
     name: Deploy Containers

@@ -18,7 +18,6 @@ jobs:
     secrets: inherit
     with:
       manifest: examples/simple_server/manifest.json
-      modifiers: ""
       
   check-current-containers:
     name: Check Containers Uptime

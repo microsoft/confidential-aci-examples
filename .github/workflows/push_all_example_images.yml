@@ -27,7 +27,6 @@ jobs:
     secrets: inherit
     with:
       manifest: examples/${{ inputs.example-name }}/manifest.json
-      modifiers: ""
 
   prepare:
     name: Prepare Test

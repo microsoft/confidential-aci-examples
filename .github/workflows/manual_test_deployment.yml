@@ -17,6 +17,7 @@ on:
         type: string
       security-policy:
         description: Name of the security policy to use
+        default: _generated.rego
         type: string
 
 jobs:
@@ -27,13 +28,13 @@ jobs:
     secrets: inherit
     with:
       manifest: examples/${{ inputs.example-name }}/manifest.json
-      modifiers: ""
       
   test-deployment:
     name: Test Deployment
     uses: ./.github/workflows/_test_deployment.yml
+    secrets: inherit
     with:
       id: ${{ inputs.id }}
-      manifest: ${{ needs.resolve-manifest.outputs.manifest}}
+      manifest: ${{ needs.resolve-manifest.outputs.manifest }}
       location: ${{ inputs.location }}
       security-policy: ${{ inputs.security-policy }}

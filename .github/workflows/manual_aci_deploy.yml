@@ -1,0 +1,52 @@
+name: Manually Deploy Containers
+
+on:
+  workflow_dispatch:
+    inputs:
+      example-name:
+        description: Name of the example
+        required: true
+        type: string
+      location:
+        description: The location to deploy to
+        required: true
+        type: string
+      security-policy:
+        description: Name of the security policy to use
+        type: string
+      debug:
+        description: Debuggable Security Policy
+        default: false
+        type: boolean
+
+jobs:
+  
+  resolve-manifest:
+    name: Resolve Manifest Variables
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      manifest: examples/${{ inputs.example-name }}/manifest.json
+      modifiers: ""
+
+  generate-id:
+    name: Generate ID
+    runs-on: ubuntu-latest
+    outputs:
+      id: ${{ steps.generate-id.outputs.id }}
+    steps:
+      - name: Generate ID
+        id: generate-id
+        run: echo "id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
+
+  deploy-aci:
+    name: Deploy Containers
+    uses: ./.github/workflows/_aci_deploy.yml
+    secrets: inherit
+    needs: [resolve-manifest, generate-id]
+    with:
+      id: ${{ needs.generate-id.outputs.id }}
+      manifest: ${{ needs.resolve-manifest.outputs.manifest}}
+      location: ${{ inputs.location }}
+      security-policy: ${{ inputs.security-policy }}
+      debug: ${{ inputs.debug }}

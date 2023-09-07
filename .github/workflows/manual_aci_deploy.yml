@@ -3,6 +3,10 @@ name: Manually Deploy Containers
 on:
   workflow_dispatch:
     inputs:
+      id:
+        description: ID of the deployment
+        required: true
+        type: string
       example-name:
         description: Name of the example
         required: true
@@ -29,23 +33,13 @@ jobs:
       manifest: examples/${{ inputs.example-name }}/manifest.json
       modifiers: ""
 
-  generate-id:
-    name: Generate ID
-    runs-on: ubuntu-latest
-    outputs:
-      id: ${{ steps.generate-id.outputs.id }}
-    steps:
-      - name: Generate ID
-        id: generate-id
-        run: echo "id=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
-
   deploy-aci:
     name: Deploy Containers
     uses: ./.github/workflows/_aci_deploy.yml
     secrets: inherit
-    needs: [resolve-manifest, generate-id]
+    needs: [resolve-manifest]
     with:
-      id: ${{ needs.generate-id.outputs.id }}
+      id: ${{ inputs.id }}
       manifest: ${{ needs.resolve-manifest.outputs.manifest}}
       location: ${{ inputs.location }}
       security-policy: ${{ inputs.security-policy }}

@@ -14,9 +14,12 @@ on:
       location:
         description: The location which the deployment belonged to
         required: true
+        default: "westeurope"
         type: string
       security-policy:
         description: Name of the security policy which was used
+        required: true
+        default: _generated.rego
         type: string
 
 jobs:

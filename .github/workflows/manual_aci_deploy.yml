@@ -14,9 +14,11 @@ on:
       location:
         description: The location to deploy to
         required: true
+        default: "westeurope"
         type: string
       security-policy:
         description: Name of the security policy to use
+        required: true
         default: "_generated.rego"
         type: string
       debug:

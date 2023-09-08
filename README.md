@@ -53,6 +53,13 @@ Every example has a corresponding github action which runs against all security 
 
 See all workflows [here](https://github.com/microsoft/confidential-aci-examples/actions).
 
+It is also possible to manually run steps in the example testing process with the following workflows:
+
+- [Push Example Images](https://github.com/microsoft/confidential-aci-examples/actions/workflows/push_all_example_images.yml)
+- [Deploy ACI](https://github.com/microsoft/confidential-aci-examples/actions/workflows/manual_aci_deploy.yml)
+- [Test Example](https://github.com/microsoft/confidential-aci-examples/actions/workflows/manual_test_deployment.yml)
+- [Remove ACI](https://github.com/microsoft/confidential-aci-examples/actions/workflows/manual_aci_remove.yml)
+
 ### 2. Whole Tests Locally
 
 The simplest way to run the tests locally is to use Github Codespaces.
@@ -115,14 +122,8 @@ To do so, log into Azure with an account which has access to both the Azure DevO
 
 ### 4. Add Github Actions workflows
 
-- Must contain two jobs
-  - One which generates a unique ID for the run and uploads a version of the test manifest which has been run through [resolve_manifest_variables.py](infra/resolve_manifest_variables.py)
-  - One which depends on the first and calls [run_test.yml](.github/workflows/run_test.yml) with your unique ID and the test name
+- Contains a single job which uses the `test_example.yml` workflow
 - Add a workflow for pushing the latest image to the registry
-
-### 5. Update existing workflows
-
-- Update [run_all.yml](.github/workflows/run_all.yml) to include your new example
 - If the example requires new repository secrets, they need to be added to [local_workflow.yml](.github/workflows/local_workflow.yml) and [_resolve_manifest.yml](.github/workflows/_resolve_manifest.yml). Adding new secrets requires Administrative access on this repository.
 
 ---

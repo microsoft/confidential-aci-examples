@@ -1,5 +1,7 @@
 # Simple Server
 
+#### [`Run in Github Actions`](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_simple_server.yml)
+
 This example demonstrates how to run a simple HTTP server from a confidential container. It's main purpose is to be a 'Hello World' type example which makes the deployment steps as clear as possible.
 
 The [manifest](manifest.json) describes the key information for the example.

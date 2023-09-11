@@ -20,7 +20,6 @@ def generate_arm_template(
     with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as ssh_key_file:
         ssh_key = ssh_key_file.read().rstrip("\n")
 
-    print(f"Generating ARM template for {name} and password '{password}'")
     ports = read_manifest_ports(manifest)
     arm_template = {
         "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",

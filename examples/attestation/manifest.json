@@ -10,7 +10,8 @@
                     "image": "primary",
                     "ports": [22, 8000],
                     "mounts": {
-                        "uds": "/mnt/uds"
+                        "name": "uds", 
+                        "mountPath": "/mnt/uds"
                     },
                     "cores": 1,
                     "ram": 2
@@ -23,7 +24,8 @@
                     },
                     "ports": [8080],
                     "mounts": {
-                        "uds": "/mnt/uds"
+                        "name": "uds", 
+                        "mountPath": "/mnt/uds"
                     },
                     "cores": 1,
                     "ram": 2
@@ -36,14 +38,16 @@
         }
     ],
     "securityPolicies": [],
-    "registryCredentials": {
-        "$AZURE_REGISTRY_URL": {
+    "registryCredentials": [
+        {
+            "server": "$AZURE_REGISTRY_URL",
             "username": "$AZURE_REGISTRY_USERNAME",
             "password": "$AZURE_REGISTRY_PASSWORD"
         },
-        "$SIDECARS_REGISTRY_URL": {
+        {
+            "server": "$SIDECARS_REGISTRY_URL",
             "username": "$SIDECARS_REGISTRY_USERNAME",
             "password": "$SIDECARS_REGISTRY_PASSWORD"
         }
-    }
+    ]
 }

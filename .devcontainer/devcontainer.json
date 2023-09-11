@@ -107,11 +107,14 @@
 															}
 														},
 														"mounts": {
-															"type": "object",
-															"additionalProperties": {
-																"type": [
-																	"string"
-																]
+															"type": "array",
+															"properties": {
+																"name" : {
+																	"type": "string"
+																},
+																"mountPath": {
+																	"type": "string"
+																}
 															}
 														},
 														"cores": {
@@ -172,10 +175,13 @@
 									}
 								},
 								"registryCredentials": {
-									"type": "object",
-									"additionalProperties": {
+									"type": "array",
+									"items": {
 										"type": "object",
 										"properties": {
+											"server": {
+												"type": "string"
+											},
 											"username": {
 												"type": "string"
 											},
@@ -184,6 +190,7 @@
 											}
 										},
 										"required": [
+											"server",
 											"username",
 											"password"
 										]

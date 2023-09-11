@@ -133,11 +133,14 @@ jobs:
       - name: Delete Blobs
         run: |
           az storage blob list \
-            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} \
-            --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} \
+            --auth-mode login \
+            --account-name $AZURE_STORAGE_ACCOUNT_NAME \
+            --container-name $AZURE_STORAGE_CONTAINER_NAME \
             --query "[].name" -o tsv | \
             xargs -I{} az storage blob delete \
-            --container-name ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }} --name {}
+              --auth-mode login \
+              --account-name $AZURE_STORAGE_ACCOUNT_NAME \
+              --container-name $AZURE_STORAGE_CONTAINER_NAME --name {}
 
   cleanup-vms:
     name: Cleanup VMs

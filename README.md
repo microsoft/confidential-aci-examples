@@ -12,10 +12,10 @@ Example code and end to end test cases for confidential ACI. Contains infrastruc
 [![Test Attestation](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml)
 
 [![Test Key Release](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml)
-[![Test Key Release (Latest)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_daily.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_latest.yml)
+[![Test Key Release (Latest)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_latest.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_latest.yml)
 
 [![Test Encrypted Filesystem](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem.yml)
-[![Test Encrypted Filesystem (Latest)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem_daily.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem_latest.yml)
+[![Test Encrypted Filesystem (Latest)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem_latest.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem_latest.yml)
 
 ## Examples
 

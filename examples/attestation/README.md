@@ -1,5 +1,7 @@
 # Attestation
 
+#### [`Run in Github Actions`](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml)
+
 This example demonstrates how to fetch and validate attestations from a confidential container instance. Attestations are needed to provide verification that a container is running in a genuine SEV-SNP environment. In the case of container instances, this is the Utility VM (UVM) which runs the containers.
 
 ### Fetching Attestation Reports

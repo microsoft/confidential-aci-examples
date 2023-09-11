@@ -1,5 +1,7 @@
 # Key Release
 
+#### [`Run in Github Actions`](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml)
+
 This example builds on the the [Attestation](../attestation/README.md) example by using the report as evidence to release a key from a Hardware Security Module (HSM) in Azure.
 
 It uses the SKR (Secure Key Release) sidecar from the [Confidential Sidecars Repository](https://github.com/microsoft/confidential-sidecar-containers). This means that the primary container simply makes a request to the sidecar with inputs and it gets a key in return.

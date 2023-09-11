@@ -17,7 +17,7 @@
         }
     ],
     "securityPolicies": [
-        "simple_server/security_policies/allow_all.rego"
+        "policies/allow_all.rego"
     ],
     "registryCredentials": {
         "$AZURE_REGISTRY_URL": {

@@ -26,7 +26,7 @@
 # Skips deployment and uses existing with the given name
 # DEPLOYMENT_NAME=your-deployment-name
 # Uses the given policy file instead of generating one (relative to examples/)
-# SECURITY_POLICY=simple_server/security_policies/allow_all.rego
+# SECURITY_POLICY=policies/allow_all.rego
 #
 # Sidecar Images ---------------------------------------------------------------
 # ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:main

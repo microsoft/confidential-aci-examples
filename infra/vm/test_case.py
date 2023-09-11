@@ -61,9 +61,7 @@ def setUpVm(cls):
         assert len(container_group["containers"]) == 1
 
         # TODO: User generated security policy
-        with open(
-            "examples/simple_server/security_policies/allow_all.rego"
-        ) as policy_file:
+        with open("policies/allow_all.rego") as policy_file:
             security_policy = policy_file.read()
 
         for container in container_group["containers"]:

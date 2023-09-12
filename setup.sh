@@ -24,7 +24,7 @@ az login --service-principal \
 az acr login --name $AZURE_REGISTRY_URL
 
 # Setup the SSH_KEY
-mkdir ~/.ssh
+mkdir -p ~/.ssh
 echo "$SSH_KEY" > ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub

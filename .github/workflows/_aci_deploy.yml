@@ -9,6 +9,7 @@ on:
         type: string
       group-name:
         description: Override for the name for the deployed container group
+        type: string
         required: false
       image-tag:
         description: The image tag to deploy

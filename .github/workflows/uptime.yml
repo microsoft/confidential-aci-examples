@@ -116,6 +116,7 @@ jobs:
     if: ${{ needs.check-current-containers.outputs.deployment-needed == 1 }}
     with:
       id: ${{ needs.generate-id.outputs.datetime }}
+      group-name: uptime-${{ needs.generate-id.outputs.datetime }}
       image-tag: latest
       manifest: ${{ needs.resolve-manifest.outputs.manifest}}
       location: ${{ inputs.location }}

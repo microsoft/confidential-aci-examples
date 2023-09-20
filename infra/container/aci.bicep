@@ -25,19 +25,19 @@ resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01
       type: 'Public'
       ports: map(group.ports, port => {
         protocol: 'TCP'
-        ports: port
+        port: port
       })
     }
-    volumes: map(group.volumes, volume => {
+    volumes: contains(group, 'volumes') ? map(group.volumes, volume => {
       name: volume
       emptyDir: {}
-    })
+    }) : []
     confidentialComputeProperties: {
-      ccePolicy: base64('package${split(securityPolicies, 'package')[groupIdx]}')
+      ccePolicy: base64('package${split(securityPolicies, 'package')[groupIdx + 1]}')
     }
     imageRegistryCredentials: manifest.registryCredentials
     containers: [for (container, containerIdx) in group.containers: {
-      name: '${deployment().name}-container-${containerIdx}'
+      name: '${deployment().name}-container-${container.image}'
       properties: {
         image: startsWith(container.image, 'http') ? split(container.image, '://')[1] : '${registryUrl}/${manifest.testName}/${container.image}:${tag}'
         ports: map(container.ports, port => {
@@ -45,20 +45,20 @@ resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01
           port: port
         })
         securityContext: {
-          privileged: container.privileged ?? false
+          privileged: contains(container, 'privileged') ? container.privileged : false
         }
-        volumeMounts: map(container.mounts, mount => {
+        volumeMounts: contains(container, 'mounts') ? map(container.mounts, mount => {
           name: mount.name
           mountPath: mount.mountPath
-        })
-        environmentVariables: container.env
+        }) : []
+        environmentVariables: contains(container, 'env') ? container.env : []
         resources: {
           requests: {
             cpu: container.cores
             memoryInGB: container.ram
           }
         }
-        command: container.command
+        command: contains(container, 'command') ? container.command : []
       }
     }]
   }

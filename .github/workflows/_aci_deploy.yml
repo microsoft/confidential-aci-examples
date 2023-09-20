@@ -7,6 +7,10 @@ on:
         description: Unique Identifier for this run
         required: true
         type: string
+      group-name:
+        description: Override for the name for the deployed container group
+        type: string
+        required: false
       image-tag:
         description: The image tag to deploy
         type: string
@@ -66,8 +70,13 @@ jobs:
           else
             imageTag=${{ inputs.image-tag }}
           fi
+          if [[ "${{ inputs.group-name }}" != "" ]]; then
+            groupName=${{ inputs.group-name }}
+          else
+            groupName=${{ steps.generate-id.outputs.cell-id }}
+          fi
           python infra/container/generate_arm_template.py \
-            --name "${{ steps.generate-id.outputs.cell-id }}" \
+            --name "$groupName" \
             --image-tag $imageTag \
             --manifest-path manifest.json \
             --location "${{ inputs.location }}" \

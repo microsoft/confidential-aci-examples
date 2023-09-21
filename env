@@ -27,6 +27,9 @@
 # DEPLOYMENT_NAME=your-deployment-name
 # Uses the given policy file instead of generating one (relative to examples/)
 # SECURITY_POLICY=policies/allow_all.rego
+# Resource requirements for the simple server example
+# SIMPLE_SERVER_CORES=4
+# SIMPLE_SERVER_RAM=16
 #
 # Sidecar Images ---------------------------------------------------------------
 # ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:main

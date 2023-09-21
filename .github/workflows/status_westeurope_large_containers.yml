@@ -1,0 +1,25 @@
+name: Status of West Europe
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  simple-server-0:
+    name: Simple Server
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: simple_server
+      locations: '["westeurope"]'
+      manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=8"
+
+  simple-server-1:
+    name: Simple Server
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: simple_server
+      locations: '["westeurope"]'
+      manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=16"

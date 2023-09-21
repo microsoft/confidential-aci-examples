@@ -115,10 +115,16 @@
 															}
 														},
 														"cores": {
-															"type": "number"
+															"type": [
+																"number",
+																"string"
+															]
 														},
 														"ram": {
-															"type": "number"
+															"type": [
+																"number",
+																"string"
+															]
 														},
 														"env": {
 															"type": "object",

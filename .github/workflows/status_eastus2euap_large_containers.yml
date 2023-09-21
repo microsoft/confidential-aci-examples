@@ -1,4 +1,4 @@
-name: Status of East US 2 EUAP
+name: Status of East US 2 EUAP (Large Containers)
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   simple-server-8gb:
-    name: Simple Server
+    name: Simple Server 8GB
     uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
@@ -16,7 +16,7 @@ jobs:
       manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=8"
 
   simple-server-16gb:
-    name: Simple Server
+    name: Simple Server 16GB
     uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:

@@ -1,4 +1,4 @@
-name: Status of North Europe
+name: Status of North Europe (Large Containers)
 
 on:
   schedule:
@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  simple-server-0:
-    name: Simple Server
+  simple-server-8gb:
+    name: Simple Server 8GB
     uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
@@ -15,8 +15,8 @@ jobs:
       locations: '["northeurope"]'
       manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=8"
 
-  simple-server-1:
-    name: Simple Server
+  simple-server-16gb:
+    name: Simple Server 16GB
     uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:

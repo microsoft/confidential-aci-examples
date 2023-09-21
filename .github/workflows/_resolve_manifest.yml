@@ -50,6 +50,8 @@ jobs:
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
+          SIMPLE_SERVER_CORES: ${{ secrets.SIMPLE_SERVER_CORES }}
+          SIMPLE_SERVER_RAM: ${{ secrets.SIMPLE_SERVER_RAM }}
         run: |
           IFS=";" read -ra modifiers <<< "${{ inputs.modifiers }}"
           for modifier in "${modifiers[@]}"; do

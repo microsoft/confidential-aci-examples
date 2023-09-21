@@ -11,6 +11,7 @@ on:
         type: string
         required: false
         default: ""
+        description: Semi colon separated key value pairs of environment variables to override
     outputs:
       manifest:
         description: The manifest whith values resolved

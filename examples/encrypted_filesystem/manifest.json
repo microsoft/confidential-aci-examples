@@ -16,7 +16,7 @@
                                   "mount_point": "/mnt/remote/share",
                                   "azure_url": "$AZURE_STORAGE_CONTAINER_URL/$UNIQUE_ID-blob",
                                   "azure_url_private": true,
-                                  "read_write": true,
+                                  "read_write": false,
                                   "key": {
                                      "kid": "$UNIQUE_ID-key",
                                      "authority": {

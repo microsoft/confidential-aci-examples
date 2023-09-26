@@ -23,3 +23,21 @@ jobs:
       example-name: simple_server
       locations: '["eastus2euap"]'
       manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=16"
+
+  simple-server-16core:
+    name: Simple Server 16 Cores
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: simple_server
+      locations: '["eastus2euap"]'
+      manifest-modifiers: "SIMPLE_SERVER_CORES=16;SIMPLE_SERVER_RAM=16"
+      
+  simple-server-32core:
+    name: Simple Server 32 Cores
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: simple_server
+      locations: '["eastus2euap"]'
+      manifest-modifiers: "SIMPLE_SERVER_CORES=32;SIMPLE_SERVER_RAM=32"

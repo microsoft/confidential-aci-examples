@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import argparse
 import json
 import os
@@ -14,7 +17,9 @@ from infra.deploy_arm_template import deploy_arm_template
 
 def populate_hsm_cert_files(out_path: str) -> Iterable[str]:
     key_paths = [os.path.join(out_path, f"key-{i}.cer") for i in range(3)]
-    keys = os.environ["AZURE_HSM_PUBLIC_KEYS"].split("\n\n")
+    keys = os.environ["AZURE_HSM_PUBLIC_KEYS"].split("
+
+")
     for key_path in key_paths:
         with open(key_path, "w") as f:
             f.write(keys.pop(0))

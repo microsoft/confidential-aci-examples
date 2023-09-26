@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import requests
@@ -9,7 +12,8 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             request_to_sidecar = requests.get("http://localhost:8001/connect")
             connection_successful = (
                 request_to_sidecar.status_code == 200
-                and request_to_sidecar.content == b"Connection successful\n"
+                and request_to_sidecar.content == b"Connection successful
+"
             )
             self.send_response(200)
             self.send_header("Content-type", "text/plain")

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import unittest
 import sys
 import os
@@ -14,7 +17,8 @@ class EncryptedFilesystemTest(TestCase):
         response = request(f"http://{self.container_ip}:8000/read")
         assert response.status_code == 200, response.content.decode("utf-8")
         assert (
-            response.content.decode("utf-8").strip("\n")
+            response.content.decode("utf-8").strip("
+")
             == "This is a file in the encrypted filesystem!"
         )
 
@@ -24,7 +28,8 @@ class EncryptedFilesystemTest(TestCase):
 
     #     response = request(f"http://{self.container_ip}:8000/write")
     #     assert response.status_code == 200
-    #     assert response.content.decode("utf-8").strip("\n") == "This is a new file in the encrypted filesystem!"
+    #     assert response.content.decode("utf-8").strip("
+") == "This is a new file in the encrypted filesystem!"
 
 
 if __name__ == "__main__":

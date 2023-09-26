@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import argparse
 import json
 import os
@@ -67,7 +70,7 @@ def deploy_containerplat(
     # Deploy Containerplat
     run_on_vm(
         vm_name,
-        "C:\\container_plat_build\\deploy.exe",
+        "C:\container_plat_build\deploy.exe",
     )
 
 

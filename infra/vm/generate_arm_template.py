@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import argparse
 import json
 import os
@@ -18,7 +21,8 @@ def generate_arm_template(
     out: Optional[str] = None,
 ):
     with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as ssh_key_file:
-        ssh_key = ssh_key_file.read().rstrip("\n")
+        ssh_key = ssh_key_file.read().rstrip("
+")
 
     ports = read_manifest_ports(manifest)
     arm_template = {
@@ -235,7 +239,7 @@ def generate_arm_template(
                             [
                                 "Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0",
                                 "Start-Service sshd",
-                                f'{ssh_key} | Add-Content "C:\\ProgramData\\ssh\\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"',
+                                f'{ssh_key} | Add-Content "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"',
                                 "Enable-WindowsOptionalFeature -Online -All -FeatureName Microsoft-Hyper-V, Containers",
                                 f'New-NetFirewallRule -DisplayName "Allow Payload Ports" -Direction Inbound -LocalPort {",".join([str(p) for p in ports])} -Protocol TCP -Action Allow',
                             ]

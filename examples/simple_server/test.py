@@ -17,8 +17,7 @@ class SimpleServerTest(TestCase):
 
         response = request(f"http://{self.container_ip}:8000/hello")
         assert response.status_code == 200
-        assert response.content.decode("utf-8").strip("
-") == "Hello world!"
+        assert response.content.decode("utf-8").strip("\n") == "Hello world!"
 
 
 if __name__ == "__main__":

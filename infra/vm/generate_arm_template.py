@@ -21,8 +21,7 @@ def generate_arm_template(
     out: Optional[str] = None,
 ):
     with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as ssh_key_file:
-        ssh_key = ssh_key_file.read().rstrip("
-")
+        ssh_key = ssh_key_file.read().rstrip("\n")
 
     ports = read_manifest_ports(manifest)
     arm_template = {

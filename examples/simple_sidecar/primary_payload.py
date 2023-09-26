@@ -12,8 +12,7 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             request_to_sidecar = requests.get("http://localhost:8001/connect")
             connection_successful = (
                 request_to_sidecar.status_code == 200
-                and request_to_sidecar.content == b"Connection successful
-"
+                and request_to_sidecar.content == b"Connection successful\n"
             )
             self.send_response(200)
             self.send_header("Content-type", "text/plain")

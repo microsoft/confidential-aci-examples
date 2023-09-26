@@ -10,8 +10,7 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "text/plain")
             self.end_headers()
-            self.wfile.write("Connection successful
-".encode("utf-8"))
+            self.wfile.write("Connection successful\n".encode("utf-8"))
         else:
             self.send_response(404)
             self.end_headers()

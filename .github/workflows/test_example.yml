@@ -94,6 +94,7 @@ jobs:
     needs: [prepare, resolve-manifest, push-example-images]
     if: ${{ always() && needs.push-example-images.result != 'failure' }}
     strategy:
+      fail-fast: false
       matrix:
         location: ${{ fromJson(inputs.locations) }}
         security-policy: ${{ fromJson(needs.prepare.outputs.security-policies) }}
@@ -109,6 +110,7 @@ jobs:
     needs: [prepare, resolve-manifest, deploy-aci]
     secrets: inherit
     strategy:
+      fail-fast: false
       matrix:
         location: ${{ fromJson(inputs.locations) }}
         security-policy: ${{ fromJson(needs.prepare.outputs.security-policies) }}

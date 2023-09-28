@@ -36,7 +36,7 @@ Every example has a corresponding github action which runs against all security 
 
 See all workflows [here](https://github.com/microsoft/confidential-aci-examples/actions).
 
-Certain workflows are run regularly as an indicator for the health of confidential ACI. You can find them [here](.github/workflows/statuses.md).
+Certain workflows are run regularly as an indicator for the health of confidential ACI. You can find them [here](.github/workflows/README.md).
 
 It is also possible to manually run steps in the example testing process with the following workflows:
 

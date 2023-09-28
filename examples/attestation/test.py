@@ -60,6 +60,10 @@ class AttestationTest(TestCase):
         )
         assert response.status_code == 200
         assert certificate_chain_response.status_code == 200
+        report = struct.unpack_from(f"<{SNP_REPORT_STRUCTURE}", response.content, 0)
+        print(f"Raw attestation report: {binascii.hexlify(response.content)}")
+        print(f"Parsed attestation report: {report}")
+        print(f"Certificate chain: {certificate_chain_response.content}")
         validate_attestation(
             response.content,
             certificate_chain_response.content,

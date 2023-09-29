@@ -180,7 +180,7 @@ def generate_arm_template(
                             "deleteOption": "Delete",
                         },
                         "imageReference": {
-                            "id": "/subscriptions/268b7184-1452-4a31-ac9f-6a408da360b5/resourceGroups/AtlasImageGallery/providers/Microsoft.Compute/galleries/AtlasImageGallery/images/AtlasSNPimage/versions/2023.03.20348"
+                            "id": "/subscriptions/268b7184-1452-4a31-ac9f-6a408da360b5/resourceGroups/AtlasImageGallery/providers/Microsoft.Compute/galleries/AtlasImageGallery/images/AtlasSNPimage/versions/2023.0921.1"
                         },
                     },
                     "networkProfile": {

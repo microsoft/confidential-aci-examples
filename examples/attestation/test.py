@@ -1,3 +1,7 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+import binascii
 import struct
 import unittest
 import sys
@@ -26,6 +30,8 @@ class AttestationTest(TestCase):
         )
         assert response.status_code == 200
         report = struct.unpack_from(f"<{SNP_REPORT_STRUCTURE}", response.content, 0)
+        print(f"Raw attestation report: {binascii.hexlify(response.content)}")
+        print(f"Parsed attestation report: {report}")
         assert report[10].rstrip(b"\x00").decode() == input_report_data
 
         sidecar_response = request(
@@ -54,6 +60,10 @@ class AttestationTest(TestCase):
         )
         assert response.status_code == 200
         assert certificate_chain_response.status_code == 200
+        report = struct.unpack_from(f"<{SNP_REPORT_STRUCTURE}", response.content, 0)
+        print(f"Raw attestation report: {binascii.hexlify(response.content)}")
+        print(f"Parsed attestation report: {report}")
+        print(f"Certificate chain: {certificate_chain_response.content}")
         validate_attestation(
             response.content,
             certificate_chain_response.content,

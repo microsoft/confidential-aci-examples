@@ -61,4 +61,6 @@ jobs:
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
           AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
+          SIMPLE_SERVER_CORES: "1"
+          SIMPLE_SERVER_RAM: "4"
         run: python -m unittest discover -s examples/ -p *.py

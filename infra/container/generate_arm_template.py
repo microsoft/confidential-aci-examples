@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import argparse
 from base64 import b64encode, b64decode
 import json
@@ -187,7 +190,7 @@ if __name__ == "__main__":
     with open(args.manifest_path, "r") as manifest_file:
         manifest = json.load(manifest_file)
         generate_arm_template(
-            name=args.name or uuid.uuid4(),
+            name=args.name or str(uuid.uuid4()),
             image_tag=args.image_tag,
             location=args.location,
             manifest=manifest,

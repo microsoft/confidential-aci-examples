@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import argparse
 import json
 import os
@@ -20,7 +23,6 @@ def generate_arm_template(
     with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as ssh_key_file:
         ssh_key = ssh_key_file.read().rstrip("\n")
 
-    print(f"Generating ARM template for {name} and password '{password}'")
     ports = read_manifest_ports(manifest)
     arm_template = {
         "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -178,7 +180,7 @@ def generate_arm_template(
                             "deleteOption": "Delete",
                         },
                         "imageReference": {
-                            "id": "/subscriptions/268b7184-1452-4a31-ac9f-6a408da360b5/resourceGroups/AtlasImageGallery/providers/Microsoft.Compute/galleries/AtlasImageGallery/images/AtlasSNPimage/versions/2023.03.20348"
+                            "id": "/subscriptions/268b7184-1452-4a31-ac9f-6a408da360b5/resourceGroups/AtlasImageGallery/providers/Microsoft.Compute/galleries/AtlasImageGallery/images/AtlasSNPimage/versions/2023.0921.1"
                         },
                     },
                     "networkProfile": {
@@ -236,7 +238,7 @@ def generate_arm_template(
                             [
                                 "Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0",
                                 "Start-Service sshd",
-                                f'{ssh_key} | Add-Content "C:\\ProgramData\\ssh\\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"',
+                                f'{ssh_key} | Add-Content "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"',
                                 "Enable-WindowsOptionalFeature -Online -All -FeatureName Microsoft-Hyper-V, Containers",
                                 f'New-NetFirewallRule -DisplayName "Allow Payload Ports" -Direction Inbound -LocalPort {",".join([str(p) for p in ports])} -Protocol TCP -Action Allow',
                             ]

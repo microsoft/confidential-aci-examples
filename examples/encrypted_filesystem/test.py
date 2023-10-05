@@ -27,7 +27,10 @@ class EncryptedFilesystemTestRW(TestCase):
 
         response = request(f"http://{self.container_ip}:8000/write1")
         assert response.status_code == 200, response.content.decode("utf-8")
-        assert response.content.decode("utf-8").strip("\n") == "This is a new file in the encrypted filesystem!"
+        assert (
+            response.content.decode("utf-8").strip("\n") 
+            == "This is a new file in the encrypted filesystem!"
+        )
 
 class EncryptedFilesystemTestRO(TestCase):
     def test_encfs_ro_read(self):
@@ -45,7 +48,10 @@ class EncryptedFilesystemTestRO(TestCase):
 
         response = request(f"http://{self.container_ip}:8000/write2")
         assert response.status_code == 400, response.content.decode("utf-8")
-        assert response.content.decode("utf-8").strip("\n") == "[Errno 30] Read-only file system: '/mnt/remote/share2/new_file.txt'"
+        assert (
+            response.content.decode("utf-8").strip("\n") 
+            == "[Errno 30] Read-only file system: '/mnt/remote/share2/new_file.txt'"
+        )
 
 
 if __name__ == "__main__":

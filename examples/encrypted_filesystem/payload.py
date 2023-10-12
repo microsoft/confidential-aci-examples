@@ -29,14 +29,14 @@ def write_file(path: str, content: str) -> str:
 
 
 ENDPOINTS = {
-    "/read1": lambda: read_file(os.path.join(MOUNT_DIR, "share1", "file.txt")),
-    "/write1": lambda: write_file(
+    "/read_rw_fs": lambda: read_file(os.path.join(MOUNT_DIR, "share1", "file.txt")),
+    "/write_rw_fs": lambda: write_file(
         os.path.join(MOUNT_DIR, "share1", "new_file.txt"),
         "This is a new file in the encrypted filesystem!",
     ),
-    "/read2": lambda: read_file(os.path.join(MOUNT_DIR, "share2", "file.txt")),
-    "/write2": lambda: write_file(
-        os.path.join(MOUNT_DIR, "share2" ,"new_file.txt"),
+    "/read_ro_fs": lambda: read_file(os.path.join(MOUNT_DIR, "share2", "file.txt")),
+    "/write_ro_fs": lambda: write_file(
+        os.path.join(MOUNT_DIR, "share2", "new_file.txt"),
         "This is a new file in the encrypted filesystem!",
     ),
 }

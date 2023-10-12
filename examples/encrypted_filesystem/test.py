@@ -15,7 +15,7 @@ class EncryptedFilesystemTestRW(TestCase):
     def test_encfs_rw_read(self):
         assert self.container_ip is not None
 
-        response = request(f"http://{self.container_ip}:8000/read1")
+        response = request(f"http://{self.container_ip}:8000/read_rw_fs")
         assert response.status_code == 200, response.content.decode("utf-8")
         assert (
             response.content.decode("utf-8").strip("\n")
@@ -25,18 +25,19 @@ class EncryptedFilesystemTestRW(TestCase):
     def test_encfs_rw_write(self):
         assert self.container_ip is not None
 
-        response = request(f"http://{self.container_ip}:8000/write1")
+        response = request(f"http://{self.container_ip}:8000/write_rw_fs")
         assert response.status_code == 200, response.content.decode("utf-8")
         assert (
-            response.content.decode("utf-8").strip("\n") 
+            response.content.decode("utf-8").strip("\n")
             == "This is a new file in the encrypted filesystem!"
         )
+
 
 class EncryptedFilesystemTestRO(TestCase):
     def test_encfs_ro_read(self):
         assert self.container_ip is not None
 
-        response = request(f"http://{self.container_ip}:8000/read2")
+        response = request(f"http://{self.container_ip}:8000/read_ro_fs")
         assert response.status_code == 200, response.content.decode("utf-8")
         assert (
             response.content.decode("utf-8").strip("\n")
@@ -46,10 +47,10 @@ class EncryptedFilesystemTestRO(TestCase):
     def test_encfs_ro_write(self):
         assert self.container_ip is not None
 
-        response = request(f"http://{self.container_ip}:8000/write2")
+        response = request(f"http://{self.container_ip}:8000/write_ro_fs")
         assert response.status_code == 400, response.content.decode("utf-8")
         assert (
-            response.content.decode("utf-8").strip("\n") 
+            response.content.decode("utf-8").strip("\n")
             == "[Errno 30] Read-only file system: '/mnt/remote/share2/new_file.txt'"
         )
 

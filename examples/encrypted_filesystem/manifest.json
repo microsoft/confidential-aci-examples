@@ -13,10 +13,10 @@
                         "EncfsSideCarArgs": {
                             "azure_filesystems": [
                                {
-                                  "mount_point": "/mnt/remote/share",
-                                  "azure_url": "$AZURE_STORAGE_CONTAINER_URL/$UNIQUE_ID-blob",
+                                  "mount_point": "/mnt/remote/share1",
+                                  "azure_url": "$AZURE_STORAGE_CONTAINER_URL/$UNIQUE_ID-blob1",
                                   "azure_url_private": true,
-                                  "read_write": false,
+                                  "read_write": true,
                                   "key": {
                                      "kid": "$UNIQUE_ID-key",
                                      "authority": {
@@ -26,7 +26,22 @@
                                         "endpoint": "$AZURE_HSM_ENDPOINT"
                                      }
                                   }
-                               }
+                               },
+                               {
+                                "mount_point": "/mnt/remote/share2",
+                                "azure_url": "$AZURE_STORAGE_CONTAINER_URL/$UNIQUE_ID-blob2",
+                                "azure_url_private": true,
+                                "read_write": false,
+                                "key": {
+                                   "kid": "$UNIQUE_ID-key",
+                                   "authority": {
+                                      "endpoint": "$AZURE_ATTESTATION_ENDPOINT"
+                                   },
+                                   "akv": {
+                                      "endpoint": "$AZURE_HSM_ENDPOINT"
+                                   }
+                                }
+                             }
                             ]
                         }
                     },

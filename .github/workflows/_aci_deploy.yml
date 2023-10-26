@@ -81,8 +81,7 @@ jobs:
             --manifest-path manifest.json \
             --location "${{ inputs.location }}" \
             --out arm_template.json
-          cat arm_template.json
-
+          cat examples/simple_server/arm_template.json | sed 's/password\": \".*\"/password\": \"***\"/g'
       - name: Get Security Policy
         run: |
           if [[ ${{ inputs.security-policy }} == "_generated.rego" ]]; then

@@ -6,14 +6,14 @@ on:
       key-release-image:
         description: "The image of the SKR sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/skr:2.5"
+        default: "http://mcr.microsoft.com/aci/skr:2.6"
         type: string
   workflow_dispatch:
     inputs:
       key-release-image:
         description: "The image of the SKR sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/skr:2.5"
+        default: "http://mcr.microsoft.com/aci/skr:2.6"
         type: string
   push:
     branches:
@@ -48,7 +48,7 @@ jobs:
           KEY_RELEASE_IMAGE: ${{ inputs.key-release-image }}
         run: |
           if [ -z "$KEY_RELEASE_IMAGE" ]; then
-            KEY_RELEASE_IMAGE="http://mcr.microsoft.com/aci/skr:2.5"
+            KEY_RELEASE_IMAGE="http://mcr.microsoft.com/aci/skr:2.6"
           fi
           echo "manifest-modifiers=KEY_RELEASE_IMAGE=$KEY_RELEASE_IMAGE" >> $GITHUB_OUTPUT
 

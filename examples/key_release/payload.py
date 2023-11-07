@@ -7,10 +7,10 @@ import subprocess
 import requests
 
 def grpc_ready_test():
-    return subprocess.run("grpcurl -v -plaintext -d '{{\"name\":\"Hello, This is a GRPC interface test!\"}}' 127.0.0.1:50000  keyprovider.KeyProviderService.SayHello", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True).stdout
+    return subprocess.run("grpcurl -v -plaintext -d '{\"name\":\"Hello, This is a GRPC interface test!\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.SayHello", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True).stdout
 
 def grpc_snp_report():
-    return subprocess.run("grpcurl -v -plaintext -d '{{\"reportDataHexString\":\"\"}}' 127.0.0.1:50000  keyprovider.KeyProviderService.GetReport", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True).stdout
+    return subprocess.run("grpcurl -v -plaintext -d '{\"reportDataHexString\":\"\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.GetReport", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True).stdout
 
 ENDPOINTS = {
     "/grpc_ready": lambda: grpc_ready_test(),

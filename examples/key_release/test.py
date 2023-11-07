@@ -130,6 +130,7 @@ class KeyReleaseGRPCTest(TestCase):
         response = request(f"http://{self.container_ip}:8000/grpc_ready")
 
         assert response.status_code == 200, response.content.decode("utf-8")
+        print(response.content.decode("utf-8"))
         assert (
             response.content.decode("utf-8").strip("\n")
             == "This is a GRPC interface test"

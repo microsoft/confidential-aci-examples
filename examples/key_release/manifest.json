@@ -9,7 +9,7 @@
                 {
                     "image": "$KEY_RELEASE_IMAGE",
                     "command": [ "/skr.sh" ],
-                    "ports": [ 8080 ],
+                    "ports": [ 8080, 50000 ],
                     "cores": 1,
                     "ram": 2
                 },
@@ -25,7 +25,7 @@
                     "ports": [ 8000 ]
                 }
             ],
-            "ports": [ 8000, 8080 ]
+            "ports": [ 8000, 50000, 8080 ]
         }
     ],
     "securityPolicies": [],

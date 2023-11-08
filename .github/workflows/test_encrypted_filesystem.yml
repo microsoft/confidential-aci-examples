@@ -6,14 +6,14 @@ on:
       encrypted_filesystem_image:
         description: "The image of the ENCFS sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/encfs:2.5"
+        default: "http://mcr.microsoft.com/aci/encfs:2.6"
         type: string
   workflow_dispatch:
     inputs:
       encrypted_filesystem_image:
         description: "The image of the ENCFS sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/encfs:2.5"
+        default: "http://mcr.microsoft.com/aci/encfs:2.6"
         type: string
   push:
     branches:
@@ -48,7 +48,7 @@ jobs:
           ENCRYPTED_FILESYSTEM_IMAGE: ${{ inputs.encrypted_filesystem_image }}
         run: |
           if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
-            ENCRYPTED_FILESYSTEM_IMAGE="http://mcr.microsoft.com/aci/encfs:2.5"
+            ENCRYPTED_FILESYSTEM_IMAGE="http://mcr.microsoft.com/aci/encfs:2.6"
           fi
           echo "manifest-modifiers=ENCRYPTED_FILESYSTEM_IMAGE=$ENCRYPTED_FILESYSTEM_IMAGE" >> $GITHUB_OUTPUT
 

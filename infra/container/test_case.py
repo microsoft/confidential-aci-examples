@@ -21,7 +21,6 @@ from infra.resolve_manifest_variables import resolve_manifest_variables
 def setUpAci(cls):
     if "UNIQUE_ID" not in os.environ:
         os.environ["UNIQUE_ID"] = cls.name
-    print(os.environ["UNIQUE_ID"])
     cls.manifest = resolve_manifest_variables(cls.manifest)
 
     # Check if the deployment already exists
@@ -83,7 +82,6 @@ def setUpAci(cls):
 
 
 def tearDownAci(cls):
-    del os.environ["UNIQUE_ID"]
     if os.getenv("CLEANUP_ACI") not in ["0", "false", "False"]:
         with open(f"examples/{cls.test_name}/arm_template.json", "r") as f:
             delete_deployment(

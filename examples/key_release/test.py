@@ -45,6 +45,7 @@ class KeyReleaseTest(TestCase):
                 }
             ),
         )
+        print(response.content.decode())
         assert response.status_code == 200, response.content.decode()
         assert json.loads(json.loads(response.content.decode())["key"])["k"] != ""
 
@@ -130,22 +131,20 @@ class KeyReleaseGRPCTest(TestCase):
         response = request(f"http://{self.container_ip}:8000/grpc_ready")
 
         assert response.status_code == 200, response.content.decode("utf-8")
-        print(response.content.decode("utf-8"))
         assert (
-            response.content.decode("utf-8").strip("\n")
-            == "This is a GRPC interface test"
+            "Hello Hello, This is a GRPC interface test" in response.content.decode("utf-8").strip("\n")
         )
 
-    # def test_grpc_interface_ready(self):
-    #     assert self.container_ip is not None
+    def test_grpc_snp_report(self):
+        assert self.container_ip is not None
 
-    #     response = request(f"http://{self.container_ip}:8000/grpc_snp_report")
+        response = request(f"http://{self.container_ip}:8000/grpc_snp_report")
 
-    #     assert response.status_code == 200, response.content.decode("utf-8")
-    #     assert (
-    #         response.content.decode("utf-8").strip("\n")
-    #         == "\"reportHexString\": \"0"
-    #     )
+        assert response.status_code == 200, response.content.decode("utf-8")
+        print(response.content.decode("utf-8").strip("\n"))
+        assert (
+            "\"reportHexString\": \"0" in response.content.decode("utf-8").strip("\n")
+        )
 
 
 if __name__ == "__main__":

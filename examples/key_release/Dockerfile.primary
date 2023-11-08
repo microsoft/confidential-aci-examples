@@ -1,6 +1,6 @@
 FROM alpine:3.18.4
 
-RUN apk update && apk upgrade --no-cache && apk --no-cache add wget curl jq
+RUN apk update && apk upgrade --no-cache && apk --no-cache add wget curl jq py-pip
 
 WORKDIR /app
 COPY key_release/payload.py key_release/unwrap.sh /app/
@@ -9,5 +9,5 @@ RUN wget -q https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grp
         chmod +x grpcurl &&\
         cp grpcurl /bin/ &&\
         rm -f grpcurl*
-RUN pip install requests
+RUN python -m pip install requests
 CMD ["python", "payload.py"]

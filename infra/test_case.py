@@ -21,6 +21,7 @@ class TestCase(unittest.TestCase):
 
         with open(f"examples/{self.test_name}/manifest.json", "r") as manifest_file:
             self.manifest = json.load(manifest_file)
+            
         self.deployment_name = os.getenv("DEPLOYMENT_NAME", f"{self.name}-deployment")
 
         self.backend = os.getenv("BACKEND", "ACI")

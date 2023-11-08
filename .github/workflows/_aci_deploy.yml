@@ -49,15 +49,15 @@ jobs:
             --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
       
       - name: Decrypt Manifest
+        id: decrypt-manifest
         run: |
           echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
           echo -e "${{ inputs.manifest }}" | gpg --decrypt > manifest.json
+          echo "test-name=$(cat manifest.json | jq -r '.testName')" >> $GITHUB_OUTPUT
 
       - name: Generate Per Location & Policy ID
         id: generate-id
-        run: |
-          testName=$(cat manifest.json | jq -r '.testName')
-          echo "cell-id=$(echo $testName-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+        run: echo "cell-id=$(echo ${{ steps.decrypt-manifest.outputs.test-name }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
         
       - name: Generate ARM Template
         env:

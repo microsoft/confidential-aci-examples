@@ -30,6 +30,8 @@ class KeyReleaseTest(TestCase):
 
     def test_key_release(self):
         assert self.container_ip is not None
+        for name, value in os.environ.items():
+            print("{0}: {1}".format(name, value))
 
         response = request(
             method="post",

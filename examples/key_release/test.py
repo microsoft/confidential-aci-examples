@@ -30,6 +30,7 @@ class KeyReleaseTest(TestCase):
 
     def test_key_release(self):
         assert self.container_ip is not None
+        print(os.getenv("UNIQUE_ID", "test"))
 
         response = request(
             method="post",
@@ -126,6 +127,7 @@ class KeyReleaseTest(TestCase):
 class KeyReleaseGRPCTest(TestCase):
     def test_grpc_interface_ready(self):
         assert self.container_ip is not None
+        print(os.getenv("UNIQUE_ID", "test"))
 
         response = request(f"http://{self.container_ip}:8000/grpc_ready")
 

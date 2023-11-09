@@ -33,8 +33,8 @@ def grpc_snp_report():
 
 def grpc_key_release():
     output = create_grpc_test_files()
-    if output is None or output.returncode == 0:
-        output = subprocess.run("cat reply.json", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
+    #if output is None or output.returncode == 0:
+        #output = subprocess.run("cat reply.json", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     return output
 
 ENDPOINTS = {

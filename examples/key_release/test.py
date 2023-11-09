@@ -144,6 +144,16 @@ class KeyReleaseGRPCTest(TestCase):
             "\"reportHexString\": \"0" in response.content.decode("utf-8").strip("\n")
         )
 
+    def test_grpc_key_release(self):
+        assert self.container_ip is not None
+
+        response = request(f"http://{self.container_ip}:8000/grpc_key_release")
+
+        assert response.status_code == 200, response.content.decode("utf-8")
+        assert (
+            "\"KeyProviderKeyWrapProtocolOutput\": \"eyJrZXl3cmFwcmVzdWx0cyI6eyJhbm5vdGF0aW9uIjpudWxsfSwia2V5dW53cmFwcmVzdWx0cyI6eyJvcHRzZGF0YSI6IlQyTmxZVzV6SUdGeVpTQm1kV3hzSUc5bUlIZGhkR1Z5RFFwSWIzSnpaWE1nYUdGMlpTQTBJR3hsWjNNTkNnPT0ifX0=\"" in response.content.decode("utf-8").strip("\n")
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -150,6 +150,7 @@ class KeyReleaseGRPCTest(TestCase):
         response = request(f"http://{self.container_ip}:8000/grpc_key_release")
 
         assert response.status_code == 200, response.content.decode("utf-8")
+        print(response.content.decode("utf-8"))
         assert (
             "\"KeyProviderKeyWrapProtocolOutput\": \"eyJrZXl3cmFwcmVzdWx0cyI6eyJhbm5vdGF0aW9uIjpudWxsfSwia2V5dW53cmFwcmVzdWx0cyI6eyJvcHRzZGF0YSI6IlQyTmxZVzV6SUdGeVpTQm1kV3hzSUc5bUlIZGhkR1Z5RFFwSWIzSnpaWE1nYUdGMlpTQTBJR3hsWjNNTkNnPT0ifX0=\"" in response.content.decode("utf-8").strip("\n")
         )

@@ -140,6 +140,7 @@ class KeyReleaseGRPCTest(TestCase):
         response = request(f"http://{self.container_ip}:8000/grpc_snp_report")
 
         assert response.status_code == 200, response.content.decode("utf-8")
+        print(response.content.decode("utf-8"))
         assert (
             "\"reportHexString\": \"0" in response.content.decode("utf-8").strip("\n")
         )

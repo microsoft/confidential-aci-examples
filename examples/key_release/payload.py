@@ -20,7 +20,8 @@ def grpc_ready_test():
 def grpc_snp_report():
     create_grpc_test_files()
     output = subprocess.run("./unwrap.sh wrapped plaintext", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
-    output = subprocess.run("grpcurl -v -plaintext -d '{\"reportDataHexString\":\"\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.GetReport", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True).stdout if output.returncode == 0 else output.stderr
+    if output.returncode == 0:
+        output = subprocess.run("grpcurl -v -plaintext -d '{\"reportDataHexString\":\"\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.GetReport", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     return output.stdout if output.returncode == 0 else output.stderr
 
 def grpc_key_release():

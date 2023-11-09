@@ -18,14 +18,13 @@ def grpc_ready_test():
     return output.stdout if output.returncode == 0 else output.stderr
 
 def grpc_snp_report():
-    create_grpc_test_files()
     output = subprocess.run("./unwrap.sh wrapped plaintext", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     if output.returncode == 0:
         output = subprocess.run("grpcurl -v -plaintext -d '{\"reportDataHexString\":\"\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.GetReport", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     return output.stdout if output.returncode == 0 else output.stderr
 
 def grpc_key_release():
-    cmd = "AAA=`printf skr | base64 -w0`; ANNO=`cat wrapped`; REQ=`echo '{\"op\":\"keyunwrap\",\"keywrapparams\":{},\"keyunwrapparams\":{\"dc\":{\"Parameters\":{\"attestation-agent\":[\"${AAA}\"]}},\"annotation\":\"${ANNO}\"}}' | base64 -w0`; grpcurl -plaintext -d '{\"KeyProviderKeyWrapProtocolInput\":\"${REQ}\"}' 127.0.0.1:50000 keyprovider.KeyProviderService.UnWrapKey"
+    cmd = "grpcurl -plaintext -d '{\"KeyProviderKeyWrapProtocolInput\":\"echo '{\"op\":\"keyunwrap\",\"keywrapparams\":{},\"keyunwrapparams\":{\"dc\":{\"Parameters\":{\"attestation-agent\":[\"printf skr | base64 -w0\"]}},\"annotation\":\"cat wrapped\"}}' | base64 -w0\"}' 127.0.0.1:50000 keyprovider.KeyProviderService.UnWrapKey"
     output = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     return output.stdout if output.returncode == 0 else output.stderr
 
@@ -85,4 +84,5 @@ def run():
 
 
 if __name__ == "__main__":
+    create_grpc_test_files()
     run()

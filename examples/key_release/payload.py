@@ -35,7 +35,7 @@ def grpc_key_release():
     output = create_grpc_test_files()
     if output is None or output.returncode == 0:
         output = subprocess.run("cat reply.json", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
-    return output.stdout if output.returncode == 0 else output.stderr
+    return output
 
 ENDPOINTS = {
     "/grpc_ready": lambda: grpc_ready_test(),

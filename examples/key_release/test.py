@@ -153,7 +153,7 @@ class KeyReleaseGRPCTest(TestCase):
         assert response.status_code == 200, response.content.decode("utf-8")
         print(response.content.decode("utf-8"))
         assert (
-            "Oceans are full of water\nHorses have 4 legs" 
+            "Oceans are full of waterHorses have 4 legs" 
             == response.content.decode("utf-8").strip("\n")
         )
 

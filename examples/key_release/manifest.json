@@ -9,7 +9,7 @@
                 {
                     "image": "$KEY_RELEASE_IMAGE",
                     "env": {
-                        "SkrSidecarArgs": "ewogICAgImNlcnRjYWNoZSI6IHsKCQkiZW5kcG9pbnRfdHlwZSI6ICJMb2NhbFRISU0iLAoJCSJlbmRwb2ludCI6ICIxNjkuMjU0LjE2OS4yNTQvbWV0YWRhdGEvVEhJTS9hbWQvY2VydGlmaWNhdGlvbiIKCX0gIAp9"
+                        "SkrSidecarArgs": "ew0KICAgICJjZXJ0Y2FjaGUiOiB7DQoJCSJlbmRwb2ludF90eXBlIjogIkF6Q2FjaGUiLA0KCQkiZW5kcG9pbnQiOiAiYW1lcmljYXMuYWNjY2FjaGUuYXp1cmUubmV0IiwNCgkJInRlZV90eXBlIjogIlNldlNucFZNIiwNCgkJImFwaV92ZXJzaW9uIjogImFwaS12ZXJzaW9uPTIwMjAtMTAtMTUtcHJldmlldyINCgl9ICANCn0="
                     },
                     "command": [ "/skr.sh" ],
                     "ports": [ 8080, 50000 ],

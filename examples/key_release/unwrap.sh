@@ -21,6 +21,7 @@ if [[ -z "${KEY_PROVIDER_PORT}" ]]; then
 fi
 
 AAA=`printf aasp | base64 -w0`
+echo ${infile}
 cat ${infile}
 ANNO=`cat ${infile}`
 echo ANNO=${ANNO}

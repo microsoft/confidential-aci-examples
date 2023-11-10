@@ -21,8 +21,9 @@ if [[ -z "${KEY_PROVIDER_PORT}" ]]; then
 fi
 
 AAA=`printf aasp | base64 -w0`
+cat ${infile}
 ANNO=`cat ${infile}`
-echo ${ANNO}
+echo ANNO=${ANNO}
 REQ=`echo "{\"op\":\"keyunwrap\",\"keywrapparams\":{},\"keyunwrapparams\":{\"dc\":{\"Parameters\":{\"attestation-agent\":[\"${AAA}\"]}},\"annotation\":\"${ANNO}\"}}" | base64 -w0`
 echo KeyProviderKeyWrapProtocolInput: ${REQ}
 grpcurl -plaintext -d "{\"KeyProviderKeyWrapProtocolInput\":\"${REQ}\"}" localhost:${KEY_PROVIDER_PORT} keyprovider.KeyProviderService.UnWrapKey > reply.json

@@ -21,14 +21,14 @@ def grpc_ready_test():
 
 def grpc_snp_report():
     output = create_grpc_test_files()
-    #if output.returncode == 0:
-        #output = subprocess.run("grpcurl -v -plaintext -d '{\"reportDataHexString\":\"\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.GetReport", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
+    if output.returncode == 0:
+        output = subprocess.run("grpcurl -v -plaintext -d '{\"reportDataHexString\":\"\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.GetReport", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     return output
 
 def grpc_key_release():
     output = create_grpc_test_files()
-    #if output.returncode == 0:
-        #output = subprocess.run("cat plaintext", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
+    if output.returncode == 0:
+        output = subprocess.run("cat plaintext", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     return output
 
 ENDPOINTS = {

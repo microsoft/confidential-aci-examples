@@ -28,7 +28,7 @@ def grpc_snp_report():
 def grpc_key_release():
     output = create_grpc_test_files()
     if output.returncode == 0:
-        output = subprocess.run("cat output", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
+        output = subprocess.run("cat plaintext", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     return output.stdout if output.returncode == 0 else output.stderr
 
 ENDPOINTS = {

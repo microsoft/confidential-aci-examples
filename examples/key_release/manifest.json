@@ -8,6 +8,9 @@
             "containers": [
                 {
                     "image": "$KEY_RELEASE_IMAGE",
+                    "env": {
+                        "SkrSidecarArgs": "ewogICAgImNlcnRjYWNoZSI6IHsKCQkiZW5kcG9pbnRfdHlwZSI6ICJMb2NhbFRISU0iLAoJCSJlbmRwb2ludCI6ICIxNjkuMjU0LjE2OS4yNTQvbWV0YWRhdGEvVEhJTS9hbWQvY2VydGlmaWNhdGlvbiIKCX0gIAp9"
+                    },
                     "command": [ "/skr.sh" ],
                     "ports": [ 8080, 50000 ],
                     "cores": 1,

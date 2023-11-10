@@ -27,4 +27,3 @@ echo KeyProviderKeyWrapProtocolInput: ${REQ}
 grpcurl -plaintext -d "{\"KeyProviderKeyWrapProtocolInput\":\"${REQ}\"}" localhost:${KEY_PROVIDER_PORT} keyprovider.KeyProviderService.UnWrapKey > reply.json
 cat reply.json | jq -r '.KeyProviderKeyWrapProtocolOutput'  | base64 -d | jq -r '.keyunwrapresults.optsdata' | base64 -d > ${outfile}
 echo "Unwrapped secret saved to ${outfile}"
-echo `cat ${outfile}`

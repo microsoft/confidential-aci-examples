@@ -8,4 +8,3 @@ pexpect
 protobuf
 grpcio
 grpcio-tools
-gitpython

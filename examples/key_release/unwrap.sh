@@ -22,7 +22,7 @@ fi
 
 AAA=`printf aasp | base64 -w0`
 echo ${infile}
-cat ${infile}
+echo `cat ${infile}`
 ANNO=`cat ${infile}`
 echo ANNO=${ANNO}
 REQ=`echo "{\"op\":\"keyunwrap\",\"keywrapparams\":{},\"keyunwrapparams\":{\"dc\":{\"Parameters\":{\"attestation-agent\":[\"${AAA}\"]}},\"annotation\":\"${ANNO}\"}}" | base64 -w0`

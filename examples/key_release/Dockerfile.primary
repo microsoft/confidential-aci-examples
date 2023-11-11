@@ -1,4 +1,4 @@
-FROM alpine:3.18.4
+FROM mcr.microsoft.com/azureml/minimal-ubuntu20.04-py38-cpu-inference:20231102.v2
 
 RUN apk update && apk upgrade --no-cache && apk --no-cache add wget curl jq py-pip
 

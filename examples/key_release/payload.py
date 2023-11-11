@@ -7,11 +7,6 @@ import subprocess
 
 import requests
 
-def create_grpc_test_files():
-    if not os.path.isfile("wrapped"):
-        with open("wrapped", "w") as f:
-            f.write("eyJraWQiOiJ0ZXN0a2V5MDAwIiwid3JhcHBlZF9kYXRhIjoiSVZuYzM2Smg3SXJUMkpzSkszaG0vNFdHcVdDblJtL0RteHNiWDZoTXJNc0RCbm5SWGhEbFAySElZMEpxejFxMUhMdjFFUHQ3cUg0Z0ZKN3VhOTdhZERjZnRrdDJJNlUrbnVIeGtWZnJLV1IxcnVBTUhzVTBJYVFsM1hUb1JUTzlEYzAvRHdXdVRZWUJCcUY5UDBlcXI0bVk0b0MrTzhXVWlrWjVBd01pcE5BMWFCWGZTNFc1dEtwS0YxVEhzcHpWNkNsamhic2NqaWN2UUxPT3FBdHNJUkpHZTJCN0hwTzBrdEtVRUxVZXBZcHNtR0NPRUZxQnBENkRsd2xqZXB0RW5GaXlvcmNqKzJDODVFMFQzcDNFRllEUktsMTNxWFVHaWRnL1k5bnNZdlJhSXdWWlQ3WTN2dEdVZy9jT0RzSFovS0Q5aXFxalJWVitiOWpTVEZMRmFyY0UybXpwTlFBT2lXL3FBSnB3TFlObmpFSzNkQzI2bEN5a1h1bkZvbjlGWVVHZi9rMEZUb0hGT0Qyd05XcWNSS0hLYXBvc1gycHd1SDQ4b1I3cEUvWS8rSDh4RGVqZ1VOTm14MjFWeXNjODVWR1M5M01ZNlozNm42VzlCenk5UktmbFJaQXpLRkZTYlYyYnhrRkhadURteUkyUDhtWnkzTWxqczFESnZjWWYiLCJ3cmFwX3R5cGUiOiJyc2FfMzA3MiIsImttc19lbmRwb2ludCI6ImFjY21oc20ubWFuYWdlZGhzbS5henVyZS5uZXQiLCJhdHRlc3Rlcl9lbmRwb2ludCI6InNoYXJlZGV1czIuZXVzMi5hdHRlc3QuYXp1cmUubmV0In0=")
-
 def grpc_ready_test():
     output = subprocess.run("grpcurl -v -plaintext -d '{\"name\":\"GRPC interface test!\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.SayHello", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     return output.stdout if output.returncode == 0 else output.stderr
@@ -21,7 +16,6 @@ def grpc_snp_report():
     return output.stdout if output.returncode == 0 else output.stderr
 
 def grpc_key_release():
-    #create_grpc_test_files()
     output = subprocess.run("./unwrap.sh wrapped plaintext && cat plaintext", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
     return output.stdout if output.returncode == 0 else output.stderr
 

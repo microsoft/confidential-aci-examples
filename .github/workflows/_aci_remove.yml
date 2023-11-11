@@ -61,10 +61,10 @@ jobs:
             --location "${{ inputs.location }}" \
             --out arm_template.json
 
-      - name: Remove Container on ACI
-        run: |
-          python infra/delete_deployment.py \
-            --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
-            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --deployment-name ${{ steps.generate-id.outputs.cell-id }}-deployment \
-            --arm-template-path arm_template.json
+      # - name: Remove Container on ACI
+      #   run: |
+      #     python infra/delete_deployment.py \
+      #       --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
+      #       --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+      #       --deployment-name ${{ steps.generate-id.outputs.cell-id }}-deployment \
+      #       --arm-template-path arm_template.json

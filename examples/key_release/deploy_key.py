@@ -11,6 +11,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from infra.keys import generate_key_file, deploy_key
 
+# def generate_wrapped_data(key):
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -23,3 +26,4 @@ if __name__ == "__main__":
         key = generate_key_file(tmp_key_file)
         arm_template = json.load(f)
         deploy_key(arm_template["variables"]["uniqueId"] + "-key", arm_template, key)
+        #generate_wrapped_data(key)

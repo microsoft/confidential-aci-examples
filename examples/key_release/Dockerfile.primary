@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/azureml/minimal-ubuntu20.04-py38-cpu-inference:20231102.v2
 
 USER root
-RUN apt-get update && apt-get upgrade -y && apt-get install -y wget curl jq py-pip
+RUN apt update && apt upgrade -y && apt install -y wget curl jq py-pip
 
 WORKDIR /app
 COPY key_release/payload.py key_release/unwrap.sh key_release/wrapped /app/

@@ -8,6 +8,9 @@
             "containers": [
                 {
                     "image": "$KEY_RELEASE_IMAGE",
+                    "env": {
+                        "KEYPROVIDER_SOCK": "127.0.0.1:50000"
+                    },
                     "command": [ "/skr.sh" ],
                     "ports": [ 8080, 50000 ],
                     "cores": 1,

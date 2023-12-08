@@ -64,7 +64,7 @@ jobs:
             SIDECAR_REGISTRY="http://mcr.microsoft.com"
           fi
           if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
-            ENCRYPTED_FILESYSTEM_IMAGE="encfs:2.7"
+            ENCRYPTED_FILESYSTEM_IMAGE="aci/encfs:2.7"
           fi
           echo "manifest-modifiers=ENCRYPTED_FILESYSTEM_IMAGE=$SIDECAR_REGISTRY/$ENCRYPTED_FILESYSTEM_IMAGE" >> $GITHUB_OUTPUT
 

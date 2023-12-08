@@ -65,7 +65,7 @@ jobs:
           if [ -z "$ATTESTATION_SIDECAR_IMAGE" ]; then
             ATTESTATION_SIDECAR_IMAGE="attestation:main"
           fi
-          echo "manifest-modifiers=ATTESTATION_SIDECAR_IMAGE=http://$SIDECAR_REGISTRY/$ATTESTATION_SIDECAR_IMAGE" >> $GITHUB_OUTPUT
+          echo "manifest-modifiers=ATTESTATION_SIDECAR_IMAGE=$SIDECAR_REGISTRY/$ATTESTATION_SIDECAR_IMAGE" >> $GITHUB_OUTPUT
 
   attestation:
     name: Attestation

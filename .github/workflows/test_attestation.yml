@@ -3,17 +3,28 @@ name: Test Attestation
 on:
   workflow_call:
     inputs:
+      sidecar_registry:
+        description: "The registry to get the image from"
+        required: true
+        default: http://confidentialsidecars.azurecr.io
+        type: string
       attestation-image:
         description: "The image of the Attestation sidecar to use"
         required: false
-        default: "http://confidentialsidecars.azurecr.io/attestation:main"
+        default: "attestation:main"
         type: string
   workflow_dispatch:
     inputs:
+      sidecar_registry:
+        description: "The registry to get the image from"
+        required: true
+        type: choice
+        options: 
+          - http://confidentialsidecars.azurecr.io
       attestation-image:
         description: "The image of the Attestation sidecar to use"
         required: false
-        default: "http://confidentialsidecars.azurecr.io/attestation:main"
+        default: "attestation:main"
         type: string
   push:
     branches:
@@ -45,12 +56,16 @@ jobs:
       - name: Define Image to Use
         id: resolve-image
         env:
+          SIDECAR_REGISTRY: ${{ inputs.sidecar_registry }}
           ATTESTATION_SIDECAR_IMAGE: ${{ inputs.attestation-image }}
         run: |
-          if [ -z "$ATTESTATION_SIDECAR_IMAGE" ]; then
-            ATTESTATION_SIDECAR_IMAGE="http://confidentialsidecars.azurecr.io/attestation:main"
+          if [ -z "$SIDECAR_REGISTRY" ]; then
+            SIDECAR_REGISTRY="http://confidentialsidecars.azurecr.io"
           fi
-          echo "manifest-modifiers=ATTESTATION_SIDECAR_IMAGE=$ATTESTATION_SIDECAR_IMAGE" >> $GITHUB_OUTPUT
+          if [ -z "$ATTESTATION_SIDECAR_IMAGE" ]; then
+            ATTESTATION_SIDECAR_IMAGE="attestation:main"
+          fi
+          echo "manifest-modifiers=ATTESTATION_SIDECAR_IMAGE=$SIDECAR_REGISTRY/$ATTESTATION_SIDECAR_IMAGE" >> $GITHUB_OUTPUT
 
   attestation:
     name: Attestation

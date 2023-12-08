@@ -57,6 +57,12 @@ jobs:
           IFS=";" read -ra modifiers <<< "${{ inputs.modifiers }}"
           for modifier in "${modifiers[@]}"; do
             IFS="=" read -ra key_value <<< "$modifier"
+            if [[ "${key_value[0]}" == *"IMAGE"* ]]; then
+              if [[ "${key_value[1]}" != "http://mcr.microsoft.com/"* && "${key_value[1]}" != "http://confidentialsidecars.azurecr.io/"* ]]; then
+                echo "Untrusted image repository ${key_value[1]}, exiting"
+                exit 1
+              fi
+            fi
             export "${key_value[0]}"="${key_value[1]}"
           done
           echo "manifest=$(python infra/resolve_manifest_variables.py ${{ inputs.manifest }} | \

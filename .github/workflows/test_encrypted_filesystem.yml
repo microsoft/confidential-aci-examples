@@ -11,7 +11,7 @@ on:
       encrypted_filesystem_image:
         description: "The image of the ENCFS sidecar to use"
         required: false
-        default: "aci/encfs:2.6"
+        default: "aci/encfs:2.7"
         type: string
   workflow_dispatch:
     inputs:
@@ -25,7 +25,7 @@ on:
       encrypted_filesystem_image:
         description: "The image of the ENCFS sidecar to use"
         required: false
-        default: "aci/encfs:2.6"
+        default: "aci/encfs:2.7"
         type: string
   push:
     branches:
@@ -64,7 +64,7 @@ jobs:
             SIDECAR_REGISTRY="http://mcr.microsoft.com"
           fi
           if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
-            ENCRYPTED_FILESYSTEM_IMAGE="encfs:2.6"
+            ENCRYPTED_FILESYSTEM_IMAGE="encfs:2.7"
           fi
           echo "manifest-modifiers=ENCRYPTED_FILESYSTEM_IMAGE=$SIDECAR_REGISTRY/$ENCRYPTED_FILESYSTEM_IMAGE" >> $GITHUB_OUTPUT
 

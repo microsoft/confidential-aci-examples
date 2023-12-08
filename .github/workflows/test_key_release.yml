@@ -11,7 +11,7 @@ on:
       key-release-image:
         description: "The image of the SKR sidecar to use"
         required: false
-        default: "aci/skr:2.6"
+        default: "aci/skr:2.7"
         type: string
   workflow_dispatch:
     inputs:
@@ -25,7 +25,7 @@ on:
       key-release-image:
         description: "The image of the SKR sidecar to use"
         required: false
-        default: "aci/skr:2.6"
+        default: "aci/skr:2.7"
         type: string
   push:
     branches:
@@ -64,7 +64,7 @@ jobs:
             SIDECAR_REGISTRY="http://mcr.microsoft.com"
           fi
           if [ -z "$KEY_RELEASE_IMAGE" ]; then
-            KEY_RELEASE_IMAGE="aci/skr:2.6"
+            KEY_RELEASE_IMAGE="aci/skr:2.7"
           fi
           echo "manifest-modifiers=KEY_RELEASE_IMAGE=$SIDECAR_REGISTRY/$KEY_RELEASE_IMAGE" >> $GITHUB_OUTPUT
 

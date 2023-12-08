@@ -16,7 +16,7 @@ jobs:
     with:
       example-name: encrypted_filesystem
       locations: '["eastus2euap"]'
-      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://mcr.microsoft.com/encfs:2.7"
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://mcr.microsoft.com/aci/encfs:2.7"
       
   encrypted-filesystem-canary-azurecr:
     name: Encrypted Filesystem (Azure CR)

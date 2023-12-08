@@ -9,14 +9,6 @@ on:
       - .github/workflows/test_attestation_canary.yml
 
 jobs:
-  attestation-canary-mcr:
-    name: Attestation Canary (MCR)
-    uses: ./.github/workflows/test_example.yml
-    secrets: inherit
-    with:
-      example-name: attestation
-      locations: '["eastus2euap"]'
-      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://mcr.microsoft.com/attestation:2.7"
       
   attestation-canary-azurecr:
     name: Attestation (Azure CR)

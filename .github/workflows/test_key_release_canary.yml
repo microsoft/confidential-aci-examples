@@ -16,7 +16,7 @@ jobs:
     with:
       example-name: key_release
       locations: '["eastus2euap"]'
-      manifest-modifiers: "KEY_RELEASE_IMAGE=http://mcr.microsoft.com/skr:2.7"
+      manifest-modifiers: "KEY_RELEASE_IMAGE=http://mcr.microsoft.com/aci/skr:2.7"
       
   key-release-canary-azurecr:
     name: Key Release (Azure CR)

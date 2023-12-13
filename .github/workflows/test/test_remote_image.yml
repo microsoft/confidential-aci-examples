@@ -24,7 +24,7 @@ on:
 jobs:
   remote-image:
     name: Remote Image
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: remote_image

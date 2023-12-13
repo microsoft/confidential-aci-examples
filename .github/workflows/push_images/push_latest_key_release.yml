@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths:
-      - .github/workflows/push_latest_key_release.yml
+      - .github/workflows/push_images/push_latest_key_release.yml
       - examples/key_release/**
   workflow_dispatch:
 
 jobs:
   push-latest-key-release:
     name: Push Latest Key Release Image
-    uses: ./.github/workflows/push_all_example_images.yml
+    uses: ./.github/workflows/push_images/push_all_example_images.yml
     secrets: inherit
     with:
       example-name: key_release

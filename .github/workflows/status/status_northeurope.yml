@@ -1,4 +1,4 @@
-name: Status of East US 2 EUAP
+name: Status of North Europe
 
 on:
   schedule:
@@ -8,24 +8,24 @@ on:
 jobs:
   simple-server-0:
     name: Simple Server
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["eastus2euap"]'
+      locations: '["northeurope"]'
 
   simple-server-1:
     name: Simple Server
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["eastus2euap"]'
+      locations: '["northeurope"]'
 
   simple-server-2:
     name: Simple Server
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["eastus2euap"]'
+      locations: '["northeurope"]'

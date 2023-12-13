@@ -70,7 +70,7 @@ jobs:
 
   key-release:
     name: Key Release
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     needs: resolve-image
     secrets: inherit
     with:

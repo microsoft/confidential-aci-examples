@@ -10,7 +10,7 @@ on:
 jobs:
   attestation:
     name: Attestation
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: attestation
@@ -18,7 +18,7 @@ jobs:
 
   key-release:
     name: Key Release
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: key_release
@@ -26,7 +26,7 @@ jobs:
 
   encrypted-filesystem:
     name: Encrypted Filesystem
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: encrypted_filesystem

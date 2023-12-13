@@ -46,7 +46,7 @@ jobs:
           
   push-example-images:
     name: Push Example Images
-    uses: ./.github/workflows/push_example_image.yml
+    uses: ./.github/workflows/push_images/push_example_image.yml
     secrets: inherit
     if: ${{ needs.prepare.outputs.images != '[]' }}
     needs: [prepare, resolve-manifest]

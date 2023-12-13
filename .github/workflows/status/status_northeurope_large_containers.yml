@@ -1,4 +1,4 @@
-name: Status of West Europe (Large Containers)
+name: Status of North Europe (Large Containers)
 
 on:
   schedule:
@@ -8,18 +8,18 @@ on:
 jobs:
   simple-server-8gb:
     name: Simple Server 8GB
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["westeurope"]'
+      locations: '["northeurope"]'
       manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=8"
 
   simple-server-16gb:
     name: Simple Server 16GB
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["westeurope"]'
+      locations: '["northeurope"]'
       manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=16"

@@ -1,4 +1,4 @@
-name: Test Attestation
+name: Test Encrypted Filesystem
 
 on:
   workflow_call:
@@ -6,12 +6,12 @@ on:
       sidecar_registry:
         description: "The registry to get the image from"
         required: true
-        default: http://confidentialsidecars.azurecr.io
+        default: "http://mcr.microsoft.com"
         type: string
-      attestation-image:
-        description: "The image of the Attestation sidecar to use"
+      encrypted_filesystem_image:
+        description: "The image of the ENCFS sidecar to use"
         required: false
-        default: "attestation:main"
+        default: "aci/encfs:2.7"
         type: string
   workflow_dispatch:
     inputs:
@@ -20,11 +20,12 @@ on:
         required: true
         type: choice
         options: 
+          - http://mcr.microsoft.com
           - http://confidentialsidecars.azurecr.io
-      attestation-image:
-        description: "The image of the Attestation sidecar to use"
+      encrypted_filesystem_image:
+        description: "The image of the ENCFS sidecar to use"
         required: false
-        default: "attestation:main"
+        default: "aci/encfs:2.7"
         type: string
   push:
     branches:
@@ -32,14 +33,14 @@ on:
     paths:
       - .github/workflows/**
       - infra/**
-      - examples/attestation/**
+      - examples/encrypted_filesystem/**
   pull_request:
     branches:
       - main
     paths:
       - .github/workflows/**
       - infra/**
-      - examples/attestation/**
+      - examples/encrypted_filesystem/**
   merge_group:
     branches:
       - main
@@ -57,21 +58,21 @@ jobs:
         id: resolve-image
         env:
           SIDECAR_REGISTRY: ${{ inputs.sidecar_registry }}
-          ATTESTATION_SIDECAR_IMAGE: ${{ inputs.attestation-image }}
+          ENCRYPTED_FILESYSTEM_IMAGE: ${{ inputs.encrypted_filesystem_image }}
         run: |
           if [ -z "$SIDECAR_REGISTRY" ]; then
-            SIDECAR_REGISTRY="http://confidentialsidecars.azurecr.io"
+            SIDECAR_REGISTRY="http://mcr.microsoft.com"
           fi
-          if [ -z "$ATTESTATION_SIDECAR_IMAGE" ]; then
-            ATTESTATION_SIDECAR_IMAGE="attestation:main"
+          if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
+            ENCRYPTED_FILESYSTEM_IMAGE="aci/encfs:2.7"
           fi
-          echo "manifest-modifiers=ATTESTATION_SIDECAR_IMAGE=$SIDECAR_REGISTRY/$ATTESTATION_SIDECAR_IMAGE" >> $GITHUB_OUTPUT
+          echo "manifest-modifiers=ENCRYPTED_FILESYSTEM_IMAGE=$SIDECAR_REGISTRY/$ENCRYPTED_FILESYSTEM_IMAGE" >> $GITHUB_OUTPUT
 
-  attestation:
-    name: Attestation
-    uses: ./.github/workflows/test_example.yml
+  encrypted-filesystem:
+    name: Encrypted Filesystem
+    uses: ./.github/workflows/test/test_example.yml
     needs: resolve-image
     secrets: inherit
     with:
-      example-name: attestation
+      example-name: encrypted_filesystem
       manifest-modifiers: ${{ needs.resolve-image.outputs.manifest-modifiers }}

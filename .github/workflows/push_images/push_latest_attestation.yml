@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths:
-      - .github/workflows/push_latest_attestation.yml
+      - .github/workflows/push_images/push_latest_attestation.yml
       - examples/attestation/**
   workflow_dispatch:
 
 jobs:
   push-latest-attestation:
     name: Push Latest Attestation Image
-    uses: ./.github/workflows/push_all_example_images.yml
+    uses: ./.github/workflows/push_images/push_all_example_images.yml
     secrets: inherit
     with:
       example-name: attestation

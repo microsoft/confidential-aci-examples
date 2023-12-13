@@ -24,7 +24,7 @@ on:
 jobs:
   simple-sidecar:
     name: Simple Sidecar
-    uses: ./.github/workflows/test_example.yml
+    uses: ./.github/workflows/test/test_example.yml
     secrets: inherit
     with:
       example-name: simple_sidecar

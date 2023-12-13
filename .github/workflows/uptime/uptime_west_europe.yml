@@ -7,7 +7,7 @@ on:
 
 jobs:
   uptime-westeurope:
-    uses: ./.github/workflows/uptime.yml
+    uses: ./.github/workflows/uptime/uptime.yml
     secrets: inherit
     with:
       location: westeurope

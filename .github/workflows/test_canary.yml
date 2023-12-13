@@ -1,0 +1,29 @@
+name: Test Images in Canary
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"
+  pull_request:
+    paths:
+      - .github/workflows/test_canary.yml
+
+env:
+  ATTESTATION_MODIFIER: ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:main
+  ENCFS_MCR_MODIFIER: ENCRYPTED_FILESYSTEM_IMAGE=http://mcr.microsoft.com/aci/encfs:2.7
+  ENCFS_ACR_MODIFIER: ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecars.azurecr.io/encfs:main
+  SKR_MCR_MODIFIER: KEY_RELEASE_IMAGE=http://mcr.microsoft.com/aci/skr:2.7
+  SKR_ACR_MODIFIER: KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:main
+
+jobs:     
+  canary-test:
+    strategy:
+      matrix: 
+        map: [ {name: Attestation Canary (ACR), ex-name: attestation, modifier: "ATTESTATION_MODIFIER"}, {name: Encrypted Filesystem Canary (MCR), ex-name: encrypted_filesystem, modifier: "ENCFS_MCR_MODIFIER"}, {name: Encrypted Filesystem Canary (ACR), ex-name: encrypted_filesystem, modifier: "ENCFS_ACR_MODIFIER"}, {name: Key Release Canary (MCR), ex-name: key_release, modifier: "SKR_MCR_MODIFIER"}, {name: Key Release Canary (ACR), ex-name: key_release, modifier: "SKR_ACR_MODIFIER"}]
+    name: ${{ matrix.map.name }}
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: ${{ matrix.map.ex-name }}
+      locations: '["eastus2euap"]'
+      manifest-modifiers: "$${{ matrix.map.modifier }}"

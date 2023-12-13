@@ -1,9 +1,12 @@
-name: Status of West Europe
+name: Regional Status
 
 on:
   schedule:
     - cron: "0 7 * * *"
   workflow_dispatch:
+
+env:
+  LOCATIONS: '["eastus2euap", "northeurope", "westeurope"]'
 
 jobs:
   simple-server-0:
@@ -12,7 +15,7 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["westeurope"]'
+      locations: '$LOCATIONS'
 
   simple-server-1:
     name: Simple Server
@@ -20,7 +23,7 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["westeurope"]'
+      locations: '$LOCATIONS'
 
   simple-server-2:
     name: Simple Server
@@ -28,4 +31,4 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["westeurope"]'
+      locations: '$LOCATIONS'

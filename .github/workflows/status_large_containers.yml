@@ -1,9 +1,12 @@
-name: Status of East US 2 EUAP (Large Containers)
+name: Regional Status (Large Containers)
 
 on:
   schedule:
     - cron: "0 4 * * *"
   workflow_dispatch:
+
+env:
+  LOCATIONS: '["eastus2euap", "northeurope", "westeurope"]'
 
 jobs:
   simple-server-8gb:
@@ -12,7 +15,7 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["eastus2euap"]'
+      locations: '$LOCATIONS'
       manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=8"
 
   simple-server-16gb:
@@ -21,7 +24,7 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["eastus2euap"]'
+      locations: '$LOCATIONS'
       manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=16"
 
   simple-server-16core:
@@ -30,7 +33,7 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["eastus2euap"]'
+      locations: '$LOCATIONS'
       manifest-modifiers: "SIMPLE_SERVER_CORES=16;SIMPLE_SERVER_RAM=16"
       
   simple-server-32core:
@@ -39,5 +42,5 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '["eastus2euap"]'
+      locations: '$LOCATIONS'
       manifest-modifiers: "SIMPLE_SERVER_CORES=32;SIMPLE_SERVER_RAM=32"

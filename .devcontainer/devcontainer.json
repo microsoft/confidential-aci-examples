@@ -197,6 +197,9 @@
 								},
 								"preDeployScript": {
 									"type": "string"
+								},
+								"postTestScript": {
+									"type": "string"
 								}
 							},
 							"required": [

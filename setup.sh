@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install Linux dependencies
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cryptsetup

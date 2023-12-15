@@ -3,10 +3,14 @@ name: Regional Status
 on:
   schedule:
     - cron: "0 7 * * *"
+  pull_request:
+    paths:
+      - .github/workflows/status.yml
   workflow_dispatch:
-
-env:
-  LOCATIONS: '["eastus2euap", "northeurope", "westeurope"]'
+    inputs:
+      locations:
+        required: false
+        default: '["northeurope", "westeurope"]'
 
 jobs:
   simple-server-0:
@@ -15,7 +19,7 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '$LOCATIONS'
+      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
 
   simple-server-1:
     name: Simple Server
@@ -23,7 +27,7 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '$LOCATIONS'
+      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
 
   simple-server-2:
     name: Simple Server
@@ -31,4 +35,40 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: '$LOCATIONS'
+      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
+
+  simple-server-8gb:
+    name: Simple Server 8GB
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: simple_server
+      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
+      manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=8"
+    
+  simple-server-16gb:
+    name: Simple Server 16GB
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: simple_server
+      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
+      manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=16"
+
+  simple-server-16core:
+    name: Simple Server 16 Cores
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: simple_server
+      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
+      manifest-modifiers: "SIMPLE_SERVER_CORES=16;SIMPLE_SERVER_RAM=16"
+          
+  simple-server-32core:
+    name: Simple Server 32 Cores
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: simple_server
+      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
+      manifest-modifiers: "SIMPLE_SERVER_CORES=32;SIMPLE_SERVER_RAM=32"

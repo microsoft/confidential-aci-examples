@@ -61,7 +61,7 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
+      locations: ${{ inputs.locations || '["westeurope"]' }}
       manifest-modifiers: "SIMPLE_SERVER_CORES=16;SIMPLE_SERVER_RAM=16"
           
   simple-server-32core:
@@ -70,5 +70,5 @@ jobs:
     secrets: inherit
     with:
       example-name: simple_server
-      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
+      locations: ${{ inputs.locations || '["westeurope"]' }}
       manifest-modifiers: "SIMPLE_SERVER_CORES=32;SIMPLE_SERVER_RAM=32"

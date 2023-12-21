@@ -28,6 +28,7 @@ def setUpAci(cls):
     cls.manifest = resolve_manifest_variables(cls.manifest)
 
     # Check if the deployment already exists
+    print(f"Checking if deployment {cls.deployment_name} exists")
     get_container_ip_func = lambda: get_container_ip(
         resource_client=get_resource_client(os.environ["AZURE_SUBSCRIPTION_ID"]),
         container_client=get_container_client(os.environ["AZURE_SUBSCRIPTION_ID"]),

@@ -9,6 +9,7 @@ import inspect
 
 from infra.container.test_case import setUpAci, tearDownAci
 from infra.vm.test_case import setUpVm, tearDownVm
+from infra.aks.test_case import setUpAks, tearDownAks
 
 
 class TestCase(unittest.TestCase):
@@ -24,8 +25,9 @@ class TestCase(unittest.TestCase):
 
         self.deployment_name = os.getenv("DEPLOYMENT_NAME", f"{self.name}-deployment")
 
-        self.backend = os.getenv("BACKEND", "ACI")
+        self.backend = os.getenv("BACKEND", "AKS")
         {
+            "AKS": setUpAks,
             "ACI": setUpAci,
             "VM": setUpVm,
         }[
@@ -34,6 +36,7 @@ class TestCase(unittest.TestCase):
 
     def tearDown(self):
         {
+            "AKS": tearDownAks,
             "ACI": tearDownAci,
             "VM": tearDownVm,
         }[

@@ -1,0 +1,35 @@
+{
+    "testName": "e2e_kafka_encryption_demo",
+    "images": {
+        "primary": "e2e_kafka_encryption_demo/Dockerfile"
+    },
+    "containerGroups": [
+        {
+            "containers": [
+                {
+                    "image": "primary",
+                    "ports": [
+                        22,
+                        8000
+                    ],
+                    "cores": "$SIMPLE_SERVER_CORES",
+                    "ram": "$SIMPLE_SERVER_RAM"
+                }
+            ],
+            "ports": [
+                22,
+                8000
+            ]
+        }
+    ],
+    "securityPolicies": [
+        "policies/allow_all.rego"
+    ],
+    "registryCredentials": {
+        "$AZURE_REGISTRY_URL": {
+            "username": "$AZURE_REGISTRY_USERNAME",
+            "password": "$AZURE_REGISTRY_PASSWORD"
+        }
+    },
+    "preDeployScript": "enable_workload_identity.py"
+}

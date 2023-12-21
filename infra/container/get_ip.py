@@ -13,13 +13,10 @@ def get_container_ip(
     deployment_name: str,
 ) -> Optional[str]:
     try:
-        resources = resource_client.resources.list_by_resource_group(resource_group)
-        print(f"Resources in {resource_group}: {resources}")
         deployment = resource_client.deployments.get(
             resource_group,
             deployment_name,
         )
-        print(f"Deployment: {deployment}")
         assert deployment.properties.output_resources
     except Exception as e:
         print(e)

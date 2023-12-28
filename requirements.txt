@@ -7,4 +7,3 @@ docker
 pexpect
 protobuf
 grpcio
-grpcio-tools

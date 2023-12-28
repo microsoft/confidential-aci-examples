@@ -25,6 +25,8 @@ from infra.resolve_manifest_variables import resolve_manifest_variables
 def setUpAci(cls):
     if "UNIQUE_ID" not in os.environ:
         os.environ["UNIQUE_ID"] = cls.name
+    if "RUN_ID" not in os.environ:
+        os.environ["RUN_ID"] = cls.image_tag
     cls.manifest = resolve_manifest_variables(cls.manifest)
 
     # Check if the deployment already exists

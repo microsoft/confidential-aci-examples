@@ -24,6 +24,8 @@ def generate_arm_template(
 ):
     if "UNIQUE_ID" not in os.environ:
         os.environ["UNIQUE_ID"] = name
+    if "RUN_ID" not in os.environ:
+        os.environ["RUN_ID"] = image_tag
     manifest = resolve_manifest_variables(manifest)
 
     if security_policy:

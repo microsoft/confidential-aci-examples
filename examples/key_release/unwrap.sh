@@ -15,15 +15,13 @@ if [ ! -f "$infile" ]; then
   exit 1
 fi
 
-if [[ -z "${KEY_PROVIDER_PORT}" ]]; then
-  echo "Info: Env KEY_PROVIDER_PORT is not set. Use default port 50000"
+if [ -z "${KEY_PROVIDER_PORT}" ]; then
   KEY_PROVIDER_PORT=50000
 fi
 
 AAA=`printf aasp | base64 -w0`
 ANNO=`cat ${infile}`
 REQ=`echo "{\"op\":\"keyunwrap\",\"keywrapparams\":{},\"keyunwrapparams\":{\"dc\":{\"Parameters\":{\"attestation-agent\":[\"${AAA}\"]}},\"annotation\":\"${ANNO}\"}}" | base64 -w0`
-echo KeyProviderKeyWrapProtocolInput: ${REQ}
 grpcurl -plaintext -d "{\"KeyProviderKeyWrapProtocolInput\":\"${REQ}\"}" localhost:${KEY_PROVIDER_PORT} keyprovider.KeyProviderService.UnWrapKey > reply.json
 cat reply.json | jq -r '.KeyProviderKeyWrapProtocolOutput'  | base64 -d | jq -r '.keyunwrapresults.optsdata' | base64 -d > ${outfile}
-echo "Unwrapped secret saved to ${outfile}"
+cat ${outfile}

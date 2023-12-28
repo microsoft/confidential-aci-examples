@@ -29,7 +29,7 @@
                     "env": {
                         "SkrClientMAAEndpoint": "$AZURE_ATTESTATION_ENDPOINT",
                         "SkrClientAKVEndpoint": "$AZURE_HSM_ENDPOINT",
-                        "SkrClientKID": "$UNIQUE_ID-key"
+                        "SkrClientKID": "$RUN_ID-key"
                     },
                     "cores": 1,
                     "ram": 2,
@@ -49,6 +49,5 @@
             "username": "$SIDECARS_REGISTRY_USERNAME",
             "password": "$SIDECARS_REGISTRY_PASSWORD"
         }
-    },
-    "preDeployScript": "deploy_key.py"
+    }
 }

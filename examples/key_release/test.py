@@ -41,12 +41,12 @@ class KeyReleaseTest(TestCase):
                 {
                     "maa_endpoint": os.environ["AZURE_ATTESTATION_ENDPOINT"],
                     "akv_endpoint": os.environ["AZURE_HSM_ENDPOINT"],
-                    "kid": f"{self.name}-key",
+                    "kid": f"{self.image_tag}-key",
                 }
             ),
         )
         assert response.status_code == 200, response.content.decode()
-        assert json.loads(json.loads(response.content.decode())["key"])["k"] != ""
+        assert json.loads(json.loads(response.content.decode())["key"])["d"] != ""
 
     def test_raw_attest(self):
         assert self.container_ip is not None
@@ -143,19 +143,17 @@ class KeyReleaseGRPCTest(TestCase):
         assert (
             "\"reportHexString\": \"0" in response.content.decode("utf-8").strip("\n")
         )
-    # To-Do: Configure pipeline to have a pre-image build script where we can
-    # get the SKR executable, make wrapped data and copy it into the primary container image for testing
-    # def test_grpc_key_release(self):
-    #     assert self.container_ip is not None
 
-    #     response = request(f"http://{self.container_ip}:8000/grpc_key_release")
+    def test_grpc_key_release(self):
+        assert self.container_ip is not None
 
-    #     assert response.status_code == 200, response.content.decode("utf-8")
-    #     print(response.content.decode("utf-8"))
-    #     assert (
-    #         "Oceans are full of waterHorses have 4 legs" 
-    #         == response.content.decode("utf-8").strip("\n")
-    #     )
+        response = request(f"http://{self.container_ip}:8000/grpc_key_release")
+
+        assert response.status_code == 200, response.content.decode("utf-8")
+        assert (
+            "Oceans are full of water\nHorses have 4 legs" 
+            == response.content.decode("utf-8")
+        )
 
 
 if __name__ == "__main__":

@@ -1,27 +1,28 @@
-name: Test Sidecar Images in East US 2 EUAP (Canary Region)
+name: Status of East US 2 EUAP (Large Containers)
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 7 * * *"
-  pull_request:
-    paths:
-      - .github/workflows/test_canary.yml
+    - cron: "0 4 * * *"
+  workflow_dispatch:
 
-jobs:     
-  canary-test:
-    name: Canary Region Tests
-    uses: ./.github/workflows/test_sidecars.yml
+jobs:
+  simple-server-8gb:
+    name: Simple Server 8GB
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
+      example-name: simple_server
       locations: '["eastus2euap"]'
+      manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=8"
 
-  canary-status:
-    name: Canary Region Status
-    uses: ./.github/workflows/status.yml
+  simple-server-16gb:
+    name: Simple Server 16GB
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
+      example-name: simple_server
       locations: '["eastus2euap"]'
+      manifest-modifiers: "SIMPLE_SERVER_CORES=4;SIMPLE_SERVER_RAM=16"
 
   simple-server-16core:
     name: Simple Server 16 Cores
@@ -31,7 +32,7 @@ jobs:
       example-name: simple_server
       locations: '["eastus2euap"]'
       manifest-modifiers: "SIMPLE_SERVER_CORES=16;SIMPLE_SERVER_RAM=16"
-          
+      
   simple-server-32core:
     name: Simple Server 32 Cores
     uses: ./.github/workflows/test_example.yml

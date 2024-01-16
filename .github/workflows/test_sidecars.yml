@@ -1,33 +1,11 @@
-name: Test Sidecar Images in Stable Regions (North and West Europe)
+name: Test Sidecar Images
 
 on:
-  schedule:
-    - cron: "0 7 * * *"
-  pull_request:
-    paths:
-      - .github/workflows/test_sidecars.yml
-  workflow_call:
-    inputs:
-      acr-sidecar-tag:
-        required: false
-        default: main
-      mcr-sidecar-tag:
-        required: false
-        default: 2.7
-      locations:
-        required: false
-        default: '["northeurope", "westeurope"]'
   workflow_dispatch:
     inputs:
-      acr-sidecar-tag:
+      sidecar-tag:
         required: false
         default: main
-      mcr-sidecar-tag:
-        required: false
-        default: 2.7
-      locations:
-        required: false
-        default: '["northeurope", "westeurope"]'
 
 jobs:
   attestation:
@@ -36,48 +14,20 @@ jobs:
     secrets: inherit
     with:
       example-name: attestation
-      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
-      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:${{ inputs.acr-sidecar-tag || 'main' }}"
+      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:${{ inputs.sidecar-tag }}"
 
-  key-release-acr:
-    name: Key Release (ACR)
+  key-release:
+    name: Key Release
     uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
       example-name: key_release
-      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
-      manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:${{ inputs.acr-sidecar-tag || 'main' }}"
+      manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:${{ inputs.sidecar-tag }}"
 
-  key-release-mcr:
-    name: Key Release (MCR)
-    uses: ./.github/workflows/test_example.yml
-    secrets: inherit
-    with:
-      example-name: key_release
-      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
-      manifest-modifiers: "KEY_RELEASE_IMAGE=http://mcr.microsoft.com/aci/skr:${{ inputs.mcr-sidecar-tag || '2.7' }}"
-
-  encrypted-filesystem-acr:
-    name: Encrypted Filesystem (ACR)
+  encrypted-filesystem:
+    name: Encrypted Filesystem
     uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
       example-name: encrypted_filesystem
-      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
-      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecars.azurecr.io/encfs:${{ inputs.acr-sidecar-tag || 'main' }}"
-
-  encrypted-filesystem-mcr:
-    name: Encrypted Filesystem (MCR)
-    uses: ./.github/workflows/test_example.yml
-    secrets: inherit
-    with:
-      example-name: encrypted_filesystem
-      locations: ${{ inputs.locations || '["northeurope", "westeurope"]' }}
-      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://mcr.microsoft.com/aci/encfs:${{ inputs.mcr-sidecar-tag || '2.7' }}"
-
-  regional-uptime:
-    name: Regional Uptime
-    uses: ./.github/workflows/_uptime.yml
-    secrets: inherit
-    with:
-      location: ${{ inputs.locations || '["westeurope"]' }}
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecars.azurecr.io/encfs:${{ inputs.sidecar-tag }}"

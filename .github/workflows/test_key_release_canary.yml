@@ -1,0 +1,28 @@
+name: Test Key Release (Canary)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"
+  pull_request:
+    paths:
+      - .github/workflows/test_key_release_canary.yml
+
+jobs:
+  key-release-canary-mcr:
+    name: Key Release Canary (MCR)
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: key_release
+      locations: '["eastus2euap"]'
+      manifest-modifiers: "KEY_RELEASE_IMAGE=http://mcr.microsoft.com/aci/skr:2.7"
+      
+  key-release-canary-azurecr:
+    name: Key Release (Azure CR)
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: key_release
+      locations: '["eastus2euap"]'
+      manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:main"

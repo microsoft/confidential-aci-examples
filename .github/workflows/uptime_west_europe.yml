@@ -1,0 +1,13 @@
+name: Uptime of Containers on West Europe
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  uptime-westeurope:
+    uses: ./.github/workflows/uptime.yml
+    secrets: inherit
+    with:
+      location: westeurope

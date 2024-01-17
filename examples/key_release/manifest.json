@@ -9,8 +9,8 @@
                 {
                     "image": "$KEY_RELEASE_IMAGE",
                     "env": {
-                        "KeyproviderSock": "50000",
-                        "UseGrpc": "true"
+                        "Port": "50000",
+                        "ServerType": "grpc"
                     },
                     "command": [ "/skr.sh" ],
                     "ports": [

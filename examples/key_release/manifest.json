@@ -9,10 +9,13 @@
                 {
                     "image": "$KEY_RELEASE_IMAGE",
                     "env": {
-                        "KEYPROVIDER_SOCK": "127.0.0.1:50000"
+                        "KeyproviderSock": "50000",
+                        "UseGrpc": "true"
                     },
                     "command": [ "/skr.sh" ],
-                    "ports": [ 8080, 50000 ],
+                    "ports": [
+                        50000
+                    ],
                     "cores": 1,
                     "ram": 2
                 },
@@ -28,7 +31,10 @@
                     "ports": [ 8000 ]
                 }
             ],
-            "ports": [ 8000, 50000, 8080 ]
+            "ports": [
+                8000,
+                50000
+            ]
         }
     ],
     "securityPolicies": [],

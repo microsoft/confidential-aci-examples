@@ -1,15 +1,19 @@
 {
-    "testName": "key_release",
+    "testName": "key_release_grpc",
     "images": {
-        "primary": "key_release/Dockerfile.primary"
+        "primary": "key_release_grpc/Dockerfile.primary"
     },
     "containerGroups": [
         {
             "containers": [
                 {
                     "image": "$KEY_RELEASE_IMAGE",
+                    "env": {
+                        "Port": "50000",
+                        "ServerType": "grpc"
+                    },
                     "command": [ "/skr.sh" ],
-                    "ports": [ 8080 ],
+                    "ports": [ 8080, 50000 ],
                     "cores": 1,
                     "ram": 2
                 },
@@ -25,7 +29,7 @@
                     "ports": [ 8000 ]
                 }
             ],
-            "ports": [ 8000, 8080 ]
+            "ports": [ 8080, 8000, 50000 ]
         }
     ],
     "securityPolicies": [],

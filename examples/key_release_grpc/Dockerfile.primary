@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/azureml/minimal-ubuntu20.04-py38-cpu-inference:20231102.v2
+
+USER root
+RUN apt update && apt upgrade -y && apt install -y wget curl jq python3-pip && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY key_release_grpc/payload.py key_release_grpc/unwrap.sh /app/
+RUN chmod +x /app/unwrap.sh
+RUN wget -q https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grpcurl_1.8.7_linux_x86_64.tar.gz &&\
+        tar xfz grpcurl_1.8.7_linux_x86_64.tar.gz &&\
+        chmod +x grpcurl &&\
+        mv grpcurl /bin/
+RUN python -m pip install requests
+CMD ["python", "payload.py"]

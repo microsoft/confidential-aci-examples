@@ -189,6 +189,7 @@
                 "attestation",
                 "remote_image",
                 "key_release",
+                "key_release_grpc",
                 "encrypted_filesystem",
             ],
         },

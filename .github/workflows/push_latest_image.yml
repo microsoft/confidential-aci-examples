@@ -6,19 +6,11 @@ on:
       example-name:
         description: Name of example to test
         type: string
-      tag:
-          description: Tag to push the image with
-          required: true
-          type: string
   workflow_dispatch:
     inputs:
       example-name:
         description: Name of example to test
         type: string
-      tag:
-          description: Tag to push the image with
-          required: true
-          type: string
 
 jobs:
   resolve-manifest:
@@ -29,7 +21,7 @@ jobs:
       manifest: examples/${{ inputs.example-name }}/manifest.json
 
   prepare:
-    name: Prepare Test
+    name: Prepare
     runs-on: ubuntu-latest
     needs: resolve-manifest
     outputs:

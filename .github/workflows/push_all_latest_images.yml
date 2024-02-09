@@ -1,0 +1,18 @@
+name: Push All Latest Images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  push-latest:
+    name: Push Latest Images
+    uses: ./.github/workflows/push_latest_image.yml
+    secrets: inherit
+    strategy:
+      matrix:
+        example-name: [attestation, key_release, encrypted_filesystem, simple_server, simple_sidecar]
+    with:
+      example-name: ${{ matrix.example-name }}

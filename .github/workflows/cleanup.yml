@@ -103,7 +103,7 @@ jobs:
             --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
 
       - name: Login to Azure Container Registry
-        uses: azure/docker-login@v1
+        uses: azure/docker-login@v1.0.1
         with:
           login-server: ${{ secrets.AZURE_REGISTRY_URL }}
           username: ${{ secrets.AZURE_REGISTRY_USERNAME }}

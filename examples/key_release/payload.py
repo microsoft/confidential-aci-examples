@@ -2,10 +2,9 @@
 # Licensed under the MIT License.
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import os
-import subprocess
 
 import requests
+import subprocess
 
 def grpc_ready_test():
     output = subprocess.run("grpcurl -v -plaintext -d '{\"name\":\"GRPC interface test!\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.SayHello", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)
@@ -57,7 +56,6 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             response = requests.get(
                 url=f"http://localhost:8080{self.path}",
                 headers=dict(self.headers),
-                data=self.rfile.read(int(self.headers.get("Content-Length", 0))),
             )
             self.send_response(response.status_code)
             for header, value in response.headers.items():

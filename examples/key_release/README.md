@@ -2,7 +2,7 @@
 
 #### [`Run in Github Actions`](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml)
 
-This example builds on the the [Attestation](../attestation/README.md) example by using the report as evidence to release a key from a Hardware Security Module (HSM) in Azure.
+This example builds on the [Attestation](../attestation/README.md) example by using the report as evidence to release a key from a Hardware Security Module (HSM) in Azure.
 
 It uses the SKR (Secure Key Release) sidecar from the [Confidential Sidecars Repository](https://github.com/microsoft/confidential-sidecar-containers). This means that the primary container simply makes a request to the sidecar with inputs and it gets a key in return.
 
@@ -16,7 +16,7 @@ Access is tightly controlled in mHSMs, the deployment script will also assign Ad
 
 ### 2. Deploy the Key
 
-Keys are deployed to the mHSM via an HTTP request to an endpoint owned by the mHSM. This example uses the preDeployScript feature of the infrastrucure to [deploy a key](deploy_key.py) to the mHSM just before the main ARM template is deployed.
+Keys are deployed to the mHSM via an HTTP request to an endpoint owned by the mHSM. This example uses the preDeployScript feature of the infrastructure to [deploy a key](deploy_key.py) to the mHSM just before the main ARM template is deployed.
 
 The structure of the request is fairly readable in [keys.py](../../infra/keys.py). The key detail is the `release_policy` field. It is a base64 encoded string which uses simple logical statements to construct rules for when a key should be released. In this case, the key can be released either with a valid Azure Attestation token (which is only provided when the service validates an attestation) or with the raw attestation in which case it must contain a correct security policy digest among other things.
 

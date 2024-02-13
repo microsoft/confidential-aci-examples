@@ -24,6 +24,7 @@ ENDPOINTS = {
     "/grpc_key_release": lambda: grpc_key_release(),
 }
 
+
 class MyRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         response = requests.post(

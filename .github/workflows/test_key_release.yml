@@ -34,7 +34,6 @@ on:
       - .github/workflows/**
       - infra/**
       - examples/key_release/**
-      - examples/key_release_grpc/**
   pull_request:
     branches:
       - main
@@ -42,7 +41,6 @@ on:
       - .github/workflows/**
       - infra/**
       - examples/key_release/**
-      - examples/key_release_grpc/**
   merge_group:
     branches:
       - main
@@ -77,13 +75,4 @@ jobs:
     secrets: inherit
     with:
       example-name: key_release
-      manifest-modifiers: ${{ needs.resolve-image.outputs.manifest-modifiers }}
-
-  key-release-grpc:
-    name: Key Release GRPC
-    uses: ./.github/workflows/test_example.yml
-    needs: resolve-image
-    secrets: inherit
-    with:
-      example-name: key_release_grpc
       manifest-modifiers: ${{ needs.resolve-image.outputs.manifest-modifiers }}

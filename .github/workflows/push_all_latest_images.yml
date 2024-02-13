@@ -13,6 +13,6 @@ jobs:
     secrets: inherit
     strategy:
       matrix:
-        example-name: [attestation, key_release, key_release_grpc, encrypted_filesystem, simple_server, simple_sidecar]
+        example-name: [attestation, key_release, encrypted_filesystem, simple_server, simple_sidecar]
     with:
       example-name: ${{ matrix.example-name }}

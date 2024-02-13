@@ -26,22 +26,4 @@ jobs:
       example-name: key_release
       locations: '["eastus2euap"]'
       manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:main"
-
-  key-release-grpc-canary-mcr:
-    name: Key Release GRPC Canary (MCR)
-    uses: ./.github/workflows/test_example.yml
-    secrets: inherit
-    with:
-      example-name: key_release_grpc
-      locations: '["eastus2euap"]'
-      manifest-modifiers: "KEY_RELEASE_IMAGE=http://mcr.microsoft.com/aci/skr:2.7"
-      
-  key-release-grpc-canary-azurecr:
-    name: Key Release GRPC (Azure CR)
-    uses: ./.github/workflows/test_example.yml
-    secrets: inherit
-    with:
-      example-name: key_release_grpc
-      locations: '["eastus2euap"]'
-      manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:main"
   

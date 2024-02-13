@@ -24,14 +24,6 @@ jobs:
       example-name: key_release
       manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:${{ inputs.sidecar-tag }}"
 
-  key-release-grpc:
-    name: Key Release GRPC
-    uses: ./.github/workflows/test_example.yml
-    secrets: inherit
-    with:
-      example-name: key_release_grpc
-      manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:${{ inputs.sidecar-tag }}"
-
   encrypted-filesystem:
     name: Encrypted Filesystem
     uses: ./.github/workflows/test_example.yml

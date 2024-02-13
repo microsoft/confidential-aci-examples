@@ -121,7 +121,6 @@ class KeyReleaseTest(TestCase):
         )
         assert response.status_code == 200, response.content.decode()
         assert json.loads(response.content.decode())["token"] != ""
-
 class KeyReleaseGRPCTest(TestCase):
     def test_grpc_interface_ready(self):
         assert self.container_ip is not None

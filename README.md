@@ -20,7 +20,7 @@ Fetches and validates an SNP Attestation report, locally as well as using the [A
 
 ### [Key Release](examples/key_release/README.md)
 
-Uses attestation to perform a secure key release from an Azure HSM using HTTP and GRPC endpoints.
+Uses attestation to perform a secure key release from an Azure HSM.
 
 ### [Encrypted Filesystem](examples/encrypted_filesystem/README.md)
 

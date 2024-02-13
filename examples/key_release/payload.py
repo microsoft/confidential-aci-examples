@@ -3,7 +3,8 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-import requests, subprocess
+import requests
+import subprocess
 
 def grpc_ready_test():
     output = subprocess.run("grpcurl -v -plaintext -d '{\"name\":\"GRPC interface test!\"}' 127.0.0.1:50000  keyprovider.KeyProviderService.SayHello", stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, input="", shell=True)

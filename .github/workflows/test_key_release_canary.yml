@@ -26,4 +26,3 @@ jobs:
       example-name: key_release
       locations: '["eastus2euap"]'
       manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:main"
-  

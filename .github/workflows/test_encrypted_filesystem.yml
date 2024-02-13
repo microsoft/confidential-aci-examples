@@ -27,6 +27,9 @@ on:
         required: false
         default: "aci/encfs:2.7"
         type: string
+  repository_dispatch:
+    types:
+      - encfs-test
   push:
     branches:
       - main
@@ -59,14 +62,35 @@ jobs:
         env:
           SIDECAR_REGISTRY: ${{ inputs.sidecar_registry }}
           ENCRYPTED_FILESYSTEM_IMAGE: ${{ inputs.encrypted_filesystem_image }}
+          REPO_DISPATCH_TAG: ${{ github.event.client_payload.image_tag }}
         run: |
           if [ -z "$SIDECAR_REGISTRY" ]; then
             SIDECAR_REGISTRY="http://mcr.microsoft.com"
           fi
-          if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
+          if [ -n "$REPO_DISPATCH_TAG" ]; then
+            ENCRYPTED_FILESYSTEM_IMAGE="encfs:$REPO_DISPATCH_TAG"
+          elif [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
             ENCRYPTED_FILESYSTEM_IMAGE="aci/encfs:2.7"
           fi
           echo "manifest-modifiers=ENCRYPTED_FILESYSTEM_IMAGE=$SIDECAR_REGISTRY/$ENCRYPTED_FILESYSTEM_IMAGE" >> $GITHUB_OUTPUT
+
+  pipeline-link-comment:
+    name: Create Pipeline Link Comment in PR
+    if: github.event_name == 'repository_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      RUN_ID: ${{ github.run_id }}
+      PR_NUMBER: ${{ github.event.client_payload.pr_number }}
+    steps:
+      - name: Create Pipeline Link Repo Dispatch Request
+        run: |
+          curl --fail-with-body -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.ACC_REPO_DISPATCH_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/microsoft/confidential-sidecar-containers/dispatches \
+          -d '{"event_type":"pipeline-link-comment","client_payload":{"pipeline_link":"https://github.com/microsoft/confidential-aci-examples/actions/runs/$RUN_ID","pr_number":"$PR_NUMBER"}}'
 
   encrypted-filesystem:
     name: Encrypted Filesystem

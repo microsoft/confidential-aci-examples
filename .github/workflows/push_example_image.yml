@@ -53,14 +53,9 @@ jobs:
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
-        env:
-          DOCKERFILE_CONTEXT: examples
         with:
           context: examples
           file: examples/${{ steps.docker-info.outputs.file }}
           push: true
           tags: |
             ${{ secrets.AZURE_REGISTRY_URL }}/${{ inputs.test-name }}/${{ steps.docker-info.outputs.repository }}:${{ inputs.tag }}
-          # use cache to speed up builds? https://docs.docker.com/build/ci/github-actions/cache/
-          cache-from: type=registry,ref=user/app:latest
-          cache-to: type=inline

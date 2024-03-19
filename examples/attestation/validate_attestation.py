@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import base64
 import json
 import os
@@ -80,71 +83,65 @@ def validate_attestation(
     certificate_chain: bytes,
     expected_report_data: str,
 ) -> bool:
-    try:
-        (
-            version,
-            guest_svn,
-            policy,
-            family_id,
-            image_id,
-            vmpl,
-            signature_algorithm,
-            current_tcb,
-            platform_info,
-            author_key,
-            report_data,
-            measurement,
-            host_data,
-            id_key_digest,
-            author_key_digest,
-            report_id,
-            report_id_ma,
-            reported_tcb,
-            chip_id,
-            committed_tcb,
-            current_build,
-            current_minor,
-            current_major,
-            committed_build,
-            committed_minor,
-            committed_major,
-            launch_tcb,
-            signature,
-        ) = struct.unpack_from(f"<{SNP_REPORT_STRUCTURE}", attestation_bytes, 0)
+    (
+        version,
+        guest_svn,
+        policy,
+        family_id,
+        image_id,
+        vmpl,
+        signature_algorithm,
+        current_tcb,
+        platform_info,
+        author_key,
+        report_data,
+        measurement,
+        host_data,
+        id_key_digest,
+        author_key_digest,
+        report_id,
+        report_id_ma,
+        reported_tcb,
+        chip_id,
+        committed_tcb,
+        current_build,
+        current_minor,
+        current_major,
+        committed_build,
+        committed_minor,
+        committed_major,
+        launch_tcb,
+        signature,
+    ) = struct.unpack_from(f"<{SNP_REPORT_STRUCTURE}", attestation_bytes, 0)
 
-        # Validate report was generated based on the provided report data
-        # (i.e. This is the report we requested)
-        assert report_data.rstrip(b"\x00").decode() == expected_report_data
+    # Validate report was generated based on the provided report data
+    # (i.e. This is the report we requested)
+    assert report_data.rstrip(b"\x00").decode() == expected_report_data
 
-        # Get the certificate chain to validate that the report is ultimately
-        # endorsed by a trusted AMD certificate
-        vcek_cert, ark_cert, root_cert = get_certificate_chain(certificate_chain)
+    # Get the certificate chain to validate that the report is ultimately
+    # endorsed by a trusted AMD certificate
+    vcek_cert, ark_cert, root_cert = get_certificate_chain(certificate_chain)
 
-        # Validate the VCEK certificate signed the report
-        vcek_cert.public_key().verify(  # type: ignore
-            encode_dss_signature(
-                *(
-                    int.from_bytes(n, byteorder="little")
-                    for n in struct.unpack_from(SIGNATURE_STRUCTURE, signature)
-                )
-            ),
-            attestation_bytes[: -len(signature)],
-            ECDSA(SHA384()),  # type: ignore
-        )  # type: ignore
+    # Validate the VCEK certificate signed the report
+    vcek_cert.public_key().verify(  # type: ignore
+        encode_dss_signature(
+            *(
+                int.from_bytes(n, byteorder="little")
+                for n in struct.unpack_from(SIGNATURE_STRUCTURE, signature)
+            )
+        ),
+        attestation_bytes[: -len(signature)],
+        ECDSA(SHA384()),  # type: ignore
+    )  # type: ignore
 
-        # Validate the ARK certificate signed the VCEK certificate
-        assert cert_signed_other_cert(ark_cert, vcek_cert)
+    # Validate the ARK certificate signed the VCEK certificate
+    assert cert_signed_other_cert(ark_cert, vcek_cert)
 
-        # Validate the AMD root certificate signed the ARK certificate
-        assert cert_signed_other_cert(root_cert, ark_cert)
+    # Validate the AMD root certificate signed the ARK certificate
+    assert cert_signed_other_cert(root_cert, ark_cert)
 
-        # Validate the AMD root certificate matches the known good value
-        assert (
-            root_cert.public_key().public_numbers()  # type: ignore
-            == AMD_ROOT_PUBLIC_KEY.public_numbers()  # type: ignore
-        )
-
-        return True
-
-    except Exception as e:
-        return False
+    # Validate the AMD root certificate matches the known good value
+    assert (
+        root_cert.public_key().public_numbers()  # type: ignore
+        == AMD_ROOT_PUBLIC_KEY.public_numbers()  # type: ignore
+    )

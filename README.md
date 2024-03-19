@@ -2,23 +2,6 @@
 
 Example code and end to end test cases for confidential ACI. Contains infrastructure for deploying Confidential Azure Container Instances based on AMD SEV-SNP.
 
-[![Status of East US 2 EUAP](https://github.com/microsoft/confidential-aci-examples/actions/workflows/status_eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/status_eastus2euap.yml)
-[![Status of West Europe](https://github.com/microsoft/confidential-aci-examples/actions/workflows/status_westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/status_westeurope.yml)
-[![Status of North Europe](https://github.com/microsoft/confidential-aci-examples/actions/workflows/status_northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/status_northeurope.yml)
-
-[![Uptime of Containers on East US 2 EUAP](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_eastus2euap.yml/badge.svg)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_eastus2euap.yml)
-[![Uptime of Containers on West Europe](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_west_europe.yml/badge.svg)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/uptime_west_europe.yml)
-
-[![Attestation Test Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_attestation.yml)
-
-[![Key Release Test Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release.yml)
-[![Key Release Test Daily (Sidecar Repo Main Branch)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_daily.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_key_release_daily.yml)
-
-[![Encrypted Filesystem Daily](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem.yml)
-[![Encrypted Filesystem Test Daily (Sidecar Repo Main Branch)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem_daily.yml/badge.svg?event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_encrypted_filesystem_daily.yml)
-
-## Examples
-
 ### [Simple Server](examples/simple_server/README.md)
 
 Hello world server running in a confidential container.
@@ -53,6 +36,15 @@ Every example has a corresponding github action which runs against all security 
 
 See all workflows [here](https://github.com/microsoft/confidential-aci-examples/actions).
 
+Certain workflows are run regularly as an indicator for the health of confidential ACI. You can find them [here](.github/workflows/README.md).
+
+It is also possible to manually run steps in the example testing process with the following workflows:
+
+- [Push Example Images](https://github.com/microsoft/confidential-aci-examples/actions/workflows/push_all_example_images.yml)
+- [Deploy ACI](https://github.com/microsoft/confidential-aci-examples/actions/workflows/manual_aci_deploy.yml)
+- [Test Example](https://github.com/microsoft/confidential-aci-examples/actions/workflows/manual_test_deployment.yml)
+- [Remove ACI](https://github.com/microsoft/confidential-aci-examples/actions/workflows/manual_aci_remove.yml)
+
 ### 2. Whole Tests Locally
 
 The simplest way to run the tests locally is to use Github Codespaces.
@@ -63,7 +55,7 @@ This will set up a full development environment with everything needed to run ex
 
 > **CREDENTIALS:** If you do not have write permissions on this project or you checkout manually i.e. without using Codespaces, you will need to provide your own credentials by modifying the [Environment file](env) and re-running [setup.sh](setup.sh)
 
-> **MANUAL SETUP:** To checkout and setup manually, please refer to the [Dockerfile](.devcontainer/Dockerfile) and [.devcontainer](.devcontainer/devcontainer.json) to follow the setup process.
+> **MANUAL SETUP:** To checkout and setup manually, please refer to the [Dev Container](.devcontainer/devcontainer.json) to follow the setup process.
 
 Then you can open VS Code's testing view, where examples can be run with or without a debugger.
 
@@ -115,15 +107,9 @@ To do so, log into Azure with an account which has access to both the Azure DevO
 
 ### 4. Add Github Actions workflows
 
-- Must contain two jobs
-  - One which generates a unique ID for the run and uploads a version of the test manifest which has been run through [resolve_manifest_variables.py](infra/resolve_manifest_variables.py)
-  - One which depends on the first and calls [run_test.yml](.github/workflows/run_test.yml) with your unique ID and the test name
+- Contains a single job which uses the `test_example.yml` workflow
 - Add a workflow for pushing the latest image to the registry
-
-### 5. Update existing workflows
-
-- Update [run_all.yml](.github/workflows/run_all.yml) to include your new example
-- If the example requires new repository secrets, they need to be added to [local_workflow.yml](.github/workflows/local_workflow.yml). Adding new secrets requires Administrative access on this repository.
+- If the example requires new repository secrets, they need to be added to [local_workflow.yml](.github/workflows/local_workflow.yml) and [_resolve_manifest.yml](.github/workflows/_resolve_manifest.yml). Adding new secrets requires Administrative access on this repository.
 
 ---
 

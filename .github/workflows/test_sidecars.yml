@@ -1,0 +1,33 @@
+name: Test Sidecar Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      sidecar-tag:
+        required: false
+        default: main
+
+jobs:
+  attestation:
+    name: Attestation
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: attestation
+      manifest-modifiers: "ATTESTATION_SIDECAR_IMAGE=http://confidentialsidecars.azurecr.io/attestation:${{ inputs.sidecar-tag }}"
+
+  key-release:
+    name: Key Release
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: key_release
+      manifest-modifiers: "KEY_RELEASE_IMAGE=http://confidentialsidecars.azurecr.io/skr:${{ inputs.sidecar-tag }}"
+
+  encrypted-filesystem:
+    name: Encrypted Filesystem
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: encrypted_filesystem
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecars.azurecr.io/encfs:${{ inputs.sidecar-tag }}"

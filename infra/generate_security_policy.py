@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import argparse
 import json
 import os
@@ -32,10 +35,16 @@ def generate_security_policy(
         with open(arm_template_path, "w") as f:
             json.dump(arm_template, f, indent=2)
 
-        subprocess.check_output(
+        proc = subprocess.run(
             f"az confcom acipolicygen -a {arm_template_path} --outraw > {security_policy_path}",
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE, 
+            universal_newlines=True,
             shell=True,
         )
+
+        if proc.returncode != 0:
+            print(f"Security policy generation failed with output: {proc.__dict__}")
 
         with open(security_policy_path, "rb") as f:
             return f.read()

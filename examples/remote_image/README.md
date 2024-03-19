@@ -1,6 +1,12 @@
 # Remote Image
 
-This is the simplest possible example, rather than building an image as part of deployment, it uses an existing image.
+#### [`Run in Github Actions`](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_remote_image.yml)
+
+This is the simplest possible example, rather than building an image as part of deployment, it uses an existing image. A selection of the most popular docker base images are used:
+- alpine
+- nginx
+- busybox
+- ubuntu
 
 This provides two things:
 

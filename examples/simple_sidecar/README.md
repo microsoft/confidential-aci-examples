@@ -1,5 +1,7 @@
 # Simple Sidecar
 
+#### [`Run in Github Actions`](https://github.com/microsoft/confidential-aci-examples/actions/workflows/test_simple_sidecar.yml)
+
 This example demonstrates how to run multiple containers in the same container group. These containers run on the same Utility Virtual Machine (UVM) and therefore share a kernel. Confidential ACI maintains [several container images](https://github.com/microsoft/confidential-sidecar-containers) which are intended to be deployed alongside a primary container in this way, they can perform specialised tasks such as attestation which means that code doesn't have to live in the primary container.
 
 This example is simpler than those sidecars however, there are two containers:

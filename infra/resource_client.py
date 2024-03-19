@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from functools import lru_cache
 from azure.mgmt.resource import ResourceManagementClient
 from azure.identity import DefaultAzureCredential

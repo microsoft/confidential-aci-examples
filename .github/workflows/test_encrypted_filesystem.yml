@@ -1,19 +1,31 @@
-name: Encrypted Filesystem
+name: Test Encrypted Filesystem
 
 on:
   workflow_call:
     inputs:
+      sidecar_registry:
+        description: "The registry to get the image from"
+        required: true
+        default: "http://mcr.microsoft.com"
+        type: string
       encrypted_filesystem_image:
         description: "The image of the ENCFS sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/encfs:2.2"
+        default: "aci/encfs:2.7"
         type: string
   workflow_dispatch:
     inputs:
+      sidecar_registry:
+        description: "The registry to get the image from"
+        required: true
+        type: choice
+        options: 
+          - http://mcr.microsoft.com
+          - http://confidentialsidecars.azurecr.io
       encrypted_filesystem_image:
         description: "The image of the ENCFS sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/encfs:2.2"
+        default: "aci/encfs:2.7"
         type: string
   push:
     branches:
@@ -36,51 +48,31 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
-  prepare:
-    name: Prepare Test
+  resolve-image:
+    name: Resolve Sidecar Image
     runs-on: ubuntu-latest
     outputs:
-      manifest: ${{ steps.resolve-variables.outputs.manifest }}
-      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
+      manifest-modifiers: ${{ steps.resolve-image.outputs.manifest-modifiers }}
     steps:
-      - name: "Get Workflow ID"
-        id: workflow-id
-        run: |
-          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
-          echo $WORKFLOW_ID
-          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Resolve Variables
-        id: resolve-variables
+      - name: Define Image to Use
+        id: resolve-image
         env:
-          ENCRYPTED_FILESYSTEM_IMAGE: "${{ (github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'merge_group' || github.event_name == 'schedule') && 'http://mcr.microsoft.com/aci/encfs:2.2' || inputs.encrypted_filesystem_image }}"
-          SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
-          SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
-          SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}
-          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
-          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
-          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
-          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
-          AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
-          AZURE_STORAGE_CONTAINER_URL: ${{ secrets.AZURE_STORAGE_CONTAINER_URL }}
-        run: python infra/resolve_manifest_variables.py examples/encrypted_filesystem/manifest.json > manifest.json
-
-      - name: Upload Manifest
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id }}_manifest
-          path: manifest.json
+          SIDECAR_REGISTRY: ${{ inputs.sidecar_registry }}
+          ENCRYPTED_FILESYSTEM_IMAGE: ${{ inputs.encrypted_filesystem_image }}
+        run: |
+          if [ -z "$SIDECAR_REGISTRY" ]; then
+            SIDECAR_REGISTRY="http://mcr.microsoft.com"
+          fi
+          if [ -z "$ENCRYPTED_FILESYSTEM_IMAGE" ]; then
+            ENCRYPTED_FILESYSTEM_IMAGE="aci/encfs:2.7"
+          fi
+          echo "manifest-modifiers=ENCRYPTED_FILESYSTEM_IMAGE=$SIDECAR_REGISTRY/$ENCRYPTED_FILESYSTEM_IMAGE" >> $GITHUB_OUTPUT
 
   encrypted-filesystem:
     name: Encrypted Filesystem
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+    uses: ./.github/workflows/test_example.yml
+    needs: resolve-image
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id }}
-      test: encrypted_filesystem
+      example-name: encrypted_filesystem
+      manifest-modifiers: ${{ needs.resolve-image.outputs.manifest-modifiers }}

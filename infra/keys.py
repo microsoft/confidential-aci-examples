@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from base64 import urlsafe_b64encode, b64encode, b64decode
 import binascii
 import hashlib
@@ -22,7 +25,7 @@ def deploy_key(name: str, arm_template: dict, key: bytes):
     ).hexdigest()
 
     response = requests.put(
-        url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}?api-version=7.3-preview",
+        url=f"https://{os.environ['AZURE_HSM_ENDPOINT']}/keys/{name}?api-version=7.4",
         data=json.dumps(
             {
                 "key": {
@@ -39,7 +42,7 @@ def deploy_key(name: str, arm_template: dict, key: bytes):
                     "data": b64encode(
                         json.dumps(
                             {
-                                "version": "0.2",
+                                "version": "1.0.0",
                                 "anyOf": [
                                     {
                                         "authority": f"https://{os.environ['AZURE_ATTESTATION_ENDPOINT']}",

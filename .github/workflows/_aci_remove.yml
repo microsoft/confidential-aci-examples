@@ -1,0 +1,70 @@
+name: Remove Containers
+
+on:
+  workflow_call:
+    inputs:
+      id:
+        description: Unique Identifier for this run
+        required: true
+        type: string
+      manifest:
+        description: Manifest to remove deployment for
+        required: true
+        type: string
+      location:
+        description: The location which the deployment belonged to
+        required: true
+        type: string
+      security-policy:
+        description: Name of the security policy which was used
+        type: string
+
+jobs:
+  remove-aci:
+    name: Remove ACI (${{ inputs.location }}:${{ inputs.security-policy }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+
+      - name: Decrypt Manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ inputs.manifest }}" | gpg --decrypt > manifest.json
+
+      - name: Generate Per Location & Policy ID
+        id: generate-id
+        run: |
+          testName=$(cat manifest.json | jq -r '.testName')
+          echo "cell-id=$(echo $testName-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+        
+      - name: Generate ARM Template
+        env:
+          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
+          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+        run: |
+          python infra/container/generate_arm_template.py \
+            --name "${{ steps.generate-id.outputs.cell-id }}" \
+            --image-tag ${{ inputs.id }} \
+            --manifest-path manifest.json \
+            --location "${{ inputs.location }}" \
+            --out arm_template.json
+
+      - name: Remove Container on ACI
+        run: |
+          python infra/delete_deployment.py \
+            --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --deployment-name ${{ steps.generate-id.outputs.cell-id }}-deployment \
+            --arm-template-path arm_template.json

@@ -1,30 +1,42 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import os
+from pathlib import Path
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-MOUNT_DIR = "/mnt/remote/share"
+MOUNT_DIR = "/mnt/remote"
 
 
 def read_file(path: str) -> str:
-    with open(path, "r") as f:
-        return f.read()
+    # path should be in mount directory if mount succeeded
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            return f.read()
+    else:
+        return f"{path} in Mount Path does not exist"
 
 
 def write_file(path: str, content: str) -> str:
-    try:
-        # make directory if it doesn't exist
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        # make file if it doesn't exist
+    # mount directory should exist if mount succeeded
+    if os.path.exists(Path(path).parent.resolve()):
+        # make file in mount directory
         with open(path, "w") as f:
             f.write(content)
         return read_file(path)
-    except Exception as e:
-        return "Failed to write file"
+    else:
+        return f"{path} does not exist"
 
 
 ENDPOINTS = {
-    "/read": lambda: read_file(os.path.join(MOUNT_DIR, "file.txt")),
-    "/write": lambda: write_file(
-        os.path.join(MOUNT_DIR, "new_file.txt"),
+    "/read_rw_fs": lambda: read_file(os.path.join(MOUNT_DIR, "share1", "file.txt")),
+    "/write_rw_fs": lambda: write_file(
+        os.path.join(MOUNT_DIR, "share1", "new_file.txt"),
+        "This is a new file in the encrypted filesystem!",
+    ),
+    "/read_ro_fs": lambda: read_file(os.path.join(MOUNT_DIR, "share2", "file.txt")),
+    "/write_ro_fs": lambda: write_file(
+        os.path.join(MOUNT_DIR, "share2", "new_file.txt"),
         "This is a new file in the encrypted filesystem!",
     ),
 }

@@ -1,19 +1,31 @@
-name: Key Release
+name: Test Key Release
 
 on:
   workflow_call:
     inputs:
-      key_release_image:
+      sidecar_registry:
+        description: "The registry to get the image from"
+        required: true
+        default: "http://mcr.microsoft.com"
+        type: string
+      key-release-image:
         description: "The image of the SKR sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/skr:2.2"
+        default: "aci/skr:2.7"
         type: string
   workflow_dispatch:
     inputs:
-      key_release_image:
+      sidecar_registry:
+        description: "The registry to get the image from"
+        required: true
+        type: choice
+        options: 
+          - http://mcr.microsoft.com
+          - http://confidentialsidecars.azurecr.io
+      key-release-image:
         description: "The image of the SKR sidecar to use"
         required: false
-        default: "http://mcr.microsoft.com/aci/skr:2.2"
+        default: "aci/skr:2.7"
         type: string
   push:
     branches:
@@ -36,49 +48,31 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
-  prepare:
-    name: Prepare Test
+  resolve-image:
+    name: Resolve Sidecar Image
     runs-on: ubuntu-latest
     outputs:
-      manifest: ${{ steps.resolve-variables.outputs.manifest }}
-      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
+      manifest-modifiers: ${{ steps.resolve-image.outputs.manifest-modifiers }}
     steps:
-      - name: "Get Workflow ID"
-        id: workflow-id
-        run: |
-          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
-          echo $WORKFLOW_ID
-          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Resolve Variables
-        id: resolve-variables
+      - name: Define Image to Use
+        id: resolve-image
         env:
-          KEY_RELEASE_IMAGE: "${{ (github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'merge_group' || github.event_name == 'schedule' ) && 'http://mcr.microsoft.com/aci/skr:2.2' || inputs.key_release_image }}"
-          SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
-          SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
-          SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}
-          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
-          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
-          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
-          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-          UNIQUE_ID: ${{ steps.workflow-id.outputs.workflow-id }}
-        run: python infra/resolve_manifest_variables.py examples/key_release/manifest.json > manifest.json
-
-      - name: Upload Manifest
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id }}_manifest
-          path: manifest.json
+          SIDECAR_REGISTRY: ${{ inputs.sidecar_registry }}
+          KEY_RELEASE_IMAGE: ${{ inputs.key-release-image }}
+        run: |
+          if [ -z "$SIDECAR_REGISTRY" ]; then
+            SIDECAR_REGISTRY="http://mcr.microsoft.com"
+          fi
+          if [ -z "$KEY_RELEASE_IMAGE" ]; then
+            KEY_RELEASE_IMAGE="aci/skr:2.7"
+          fi
+          echo "manifest-modifiers=KEY_RELEASE_IMAGE=$SIDECAR_REGISTRY/$KEY_RELEASE_IMAGE" >> $GITHUB_OUTPUT
 
   key-release:
     name: Key Release
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+    uses: ./.github/workflows/test_example.yml
+    needs: resolve-image
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id }}
-      test: key_release
+      example-name: key_release
+      manifest-modifiers: ${{ needs.resolve-image.outputs.manifest-modifiers }}

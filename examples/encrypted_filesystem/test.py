@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import unittest
 import sys
 import os
@@ -8,23 +11,48 @@ from infra.http_request import request
 from infra.test_case import TestCase
 
 
-class EncryptedFilesystemTest(TestCase):
-    def test_encfs_read(self):
+class EncryptedFilesystemTestRW(TestCase):
+    def test_encfs_rw_read(self):
         assert self.container_ip is not None
-        response = request(f"http://{self.container_ip}:8000/read")
+
+        response = request(f"http://{self.container_ip}:8000/read_rw_fs")
         assert response.status_code == 200, response.content.decode("utf-8")
         assert (
             response.content.decode("utf-8").strip("\n")
             == "This is a file in the encrypted filesystem!"
         )
 
-    # can't do the write test until the public encfs image is updated
-    # def test_encfs_write(self):
-    #     assert self.container_ip is not None
+    def test_encfs_rw_write(self):
+        assert self.container_ip is not None
 
-    #     response = request(f"http://{self.container_ip}:8000/write")
-    #     assert response.status_code == 200
-    #     assert response.content.decode("utf-8").strip("\n") == "This is a new file in the encrypted filesystem!"
+        response = request(f"http://{self.container_ip}:8000/write_rw_fs")
+        assert response.status_code == 200, response.content.decode("utf-8")
+        assert (
+            response.content.decode("utf-8").strip("\n")
+            == "This is a new file in the encrypted filesystem!"
+        )
+
+
+class EncryptedFilesystemTestRO(TestCase):
+    def test_encfs_ro_read(self):
+        assert self.container_ip is not None
+
+        response = request(f"http://{self.container_ip}:8000/read_ro_fs")
+        assert response.status_code == 200, response.content.decode("utf-8")
+        assert (
+            response.content.decode("utf-8").strip("\n")
+            == "This is a file in the encrypted filesystem!"
+        )
+
+    def test_encfs_ro_write(self):
+        assert self.container_ip is not None
+
+        response = request(f"http://{self.container_ip}:8000/write_ro_fs")
+        assert response.status_code == 400, response.content.decode("utf-8")
+        assert (
+            response.content.decode("utf-8").strip("\n")
+            == "[Errno 30] Read-only file system: '/mnt/remote/share2/new_file.txt'"
+        )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,69 @@
+name: Test Deployment
+
+on:
+  workflow_call:
+    inputs:
+      id:
+        description: Unique Identifier for this run
+        required: true
+        type: string
+      manifest:
+        description: Manifest to test
+        required: true
+        type: string
+      location:
+        description: The location to test
+        required: true
+        type: string
+      security-policy:
+        description: Name of the security policy to use
+        type: string
+      debug:
+        description: Debuggable Security Policy
+        default: false
+        type: boolean
+
+jobs:
+  test-deployment:
+    name: Test Deployment (${{ inputs.location }}:${{ inputs.security-policy }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Log into Azure
+        run: |
+          az login --service-principal \
+            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
+            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
+            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+      
+      - name: Decrypt Manifest
+        id: decrypt-manifest
+        run: |
+          echo -e "${{ secrets.DECRYPTION_KEY }}" | gpg --import
+          echo -e "${{ inputs.manifest }}" | gpg --decrypt > manifest.json
+          echo "test-name=$(cat manifest.json | jq -r '.testName')" >> $GITHUB_OUTPUT
+
+      - name: Generate Per Location & Policy ID
+        id: generate-id
+        run: echo "cell-id=$(echo ${{ steps.decrypt-manifest.outputs.test-name }}-${{ inputs.location }}-${{ inputs.security-policy }}-${{ inputs.id }} | md5sum | sed 's/ //g' | sed 's/-//g')" >> $GITHUB_OUTPUT
+      
+      - name: Run Tests
+        env:
+          DEPLOYMENT_NAME: ${{ steps.generate-id.outputs.cell-id }}-deployment
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
+          AZURE_ATTESTATION_ENDPOINT: ${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
+          AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
+          CLEANUP_ACI: 0
+          UNIQUE_ID: ${{ steps.generate-id.outputs.cell-id }}
+        run: |
+          python -m unittest discover \
+            -s examples/${{ steps.decrypt-manifest.outputs.test-name }} \
+            -v

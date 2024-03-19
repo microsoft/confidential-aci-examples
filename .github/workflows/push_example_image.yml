@@ -1,0 +1,61 @@
+name: Push Example Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to push the image with
+        required: true
+        type: string
+      test-name:
+        description: Name of the Test
+        required: true
+        type: string
+      image:
+        description: Image to Push (e.g. primary:path/to/Dockerfile)
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      tag:
+        description: Tag to push the image with
+        required: true
+        type: string
+      test-name:
+        description: Name of the Test
+        required: true
+        type: string
+      image:
+        description: Image to Push (e.g. primary:path/to/Dockerfile)
+        required: true
+        type: string
+
+jobs:
+  push-example-image:
+    name: Push Example Image (${{ inputs.image }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1.0.1
+        with:
+          login-server: ${{ secrets.AZURE_REGISTRY_URL }}
+          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+
+      - name: Get Docker Info
+        id: docker-info
+        run: |
+          echo "repository=$(echo ${{ inputs.image }} | cut -d':' -f1 )" >> $GITHUB_OUTPUT
+          echo "file=$(echo ${{ inputs.image }} | cut -d':' -f2 )" >> $GITHUB_OUTPUT
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: examples
+          file: examples/${{ steps.docker-info.outputs.file }}
+          push: true
+          tags: |
+            ${{ secrets.AZURE_REGISTRY_URL }}/${{ inputs.test-name }}/${{ steps.docker-info.outputs.repository }}:${{ inputs.tag }}

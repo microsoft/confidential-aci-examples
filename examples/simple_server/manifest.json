@@ -9,15 +9,15 @@
                 {
                     "image": "primary",
                     "ports": [22, 8000],
-                    "cores": 1,
-                    "ram": 4
+                    "cores": "$SIMPLE_SERVER_CORES",
+                    "ram": "$SIMPLE_SERVER_RAM"
                 }
             ],
             "ports": [22, 8000]
         }
     ],
     "securityPolicies": [
-        "simple_server/security_policies/allow_all.rego"
+        "policies/allow_all.rego"
     ],
     "registryCredentials": {
         "$AZURE_REGISTRY_URL": {

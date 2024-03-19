@@ -6,68 +6,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  prepare:
-    name: Prepare Test
-    runs-on: ubuntu-latest
-    outputs:
-      workflow-id-0: ${{ steps.workflow-id.outputs.workflow-id-0 }}
-      workflow-id-1: ${{ steps.workflow-id.outputs.workflow-id-1 }}
-      workflow-id-2: ${{ steps.workflow-id.outputs.workflow-id-2 }}
-    steps:
-      - name: "Get Workflow ID"
-        id: workflow-id
-        run: |
-          for idx in {0..2}; do 
-            echo "workflow-id-$idx=$(openssl rand -hex 8 | tr -d '\n')" >> $GITHUB_OUTPUT
-          done
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Upload Manifest 0
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id-0 }}_manifest
-          path: examples/simple_server/manifest.json
-
-      - name: Upload Manifest 1
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id-1 }}_manifest
-          path: examples/simple_server/manifest.json
-
-      - name: Upload Manifest 2
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id-2 }}_manifest
-          path: examples/simple_server/manifest.json
-
-  simple-server-westeurope-0:
-    name: Simple Server on West Europe
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+  simple-server-0:
+    name: Simple Server
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id-0 }}
-      test: simple_server
+      example-name: simple_server
       locations: '["westeurope"]'
 
-  simple-server-westeurope-1:
-    name: Simple Server on West Europe
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+  simple-server-1:
+    name: Simple Server
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id-1 }}
-      test: simple_server
+      example-name: simple_server
       locations: '["westeurope"]'
 
-  simple-server-westeurope-2:
-    name: Simple Server on West Europe
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+  simple-server-2:
+    name: Simple Server
+    uses: ./.github/workflows/test_example.yml
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id-2 }}
-      test: simple_server
+      example-name: simple_server
       locations: '["westeurope"]'

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import argparse
 import json
 import os
@@ -77,9 +80,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.arm_template_path) as f:
-        with open(
-            "examples/simple_server/security_policies/allow_all.rego"
-        ) as policy_file:  # TODO: Use real security policy
+        # TODO: Use real security policy
+        with open("policies/allow_all.rego") as policy_file:
             arm_template = json.load(f)
             security_policy = policy_file.read()
 

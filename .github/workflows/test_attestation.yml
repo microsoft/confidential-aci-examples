@@ -1,8 +1,31 @@
-name: Attestation
+name: Test Attestation
 
 on:
   workflow_call:
+    inputs:
+      sidecar_registry:
+        description: "The registry to get the image from"
+        required: true
+        default: http://confidentialsidecars.azurecr.io
+        type: string
+      attestation-image:
+        description: "The image of the Attestation sidecar to use"
+        required: false
+        default: "attestation:main"
+        type: string
   workflow_dispatch:
+    inputs:
+      sidecar_registry:
+        description: "The registry to get the image from"
+        required: true
+        type: choice
+        options: 
+          - http://confidentialsidecars.azurecr.io
+      attestation-image:
+        description: "The image of the Attestation sidecar to use"
+        required: false
+        default: "attestation:main"
+        type: string
   push:
     branches:
       - main
@@ -24,46 +47,31 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
-  prepare:
-    name: Prepare Test
+  resolve-image:
+    name: Resolve Sidecar Image
     runs-on: ubuntu-latest
     outputs:
-      workflow-id: ${{ steps.workflow-id.outputs.workflow-id }}
+      manifest-modifiers: ${{ steps.resolve-image.outputs.manifest-modifiers }}
     steps:
-      - name: "Get Workflow ID"
-        id: workflow-id
-        run: |
-          WORKFLOW_ID=$(openssl rand -hex 8 | tr -d '\n')
-          echo $WORKFLOW_ID
-          echo "workflow-id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Resolve Variables
-        id: resolve-variables
+      - name: Define Image to Use
+        id: resolve-image
         env:
-          AZURE_REGISTRY_URL: ${{ secrets.AZURE_REGISTRY_URL }}
-          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-          UNIQUE_ID: ${{ steps.workflow-id.outputs.workflow-id }}
-          ATTESTATION_SIDECAR_IMAGE: ${{ secrets.ATTESTATION_SIDECAR_IMAGE }}
-          SIDECARS_REGISTRY_URL: ${{ secrets.SIDECARS_REGISTRY_URL }}
-          SIDECARS_REGISTRY_USERNAME: ${{ secrets.SIDECARS_REGISTRY_USERNAME }}
-          SIDECARS_REGISTRY_PASSWORD: ${{ secrets.SIDECARS_REGISTRY_PASSWORD }}
-        run: python infra/resolve_manifest_variables.py examples/attestation/manifest.json > manifest.json
-
-      - name: Upload Manifest
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.workflow-id.outputs.workflow-id }}_manifest
-          path: manifest.json
+          SIDECAR_REGISTRY: ${{ inputs.sidecar_registry }}
+          ATTESTATION_SIDECAR_IMAGE: ${{ inputs.attestation-image }}
+        run: |
+          if [ -z "$SIDECAR_REGISTRY" ]; then
+            SIDECAR_REGISTRY="http://confidentialsidecars.azurecr.io"
+          fi
+          if [ -z "$ATTESTATION_SIDECAR_IMAGE" ]; then
+            ATTESTATION_SIDECAR_IMAGE="attestation:main"
+          fi
+          echo "manifest-modifiers=ATTESTATION_SIDECAR_IMAGE=$SIDECAR_REGISTRY/$ATTESTATION_SIDECAR_IMAGE" >> $GITHUB_OUTPUT
 
   attestation:
     name: Attestation
-    uses: ./.github/workflows/run_test.yml
-    needs: prepare
+    uses: ./.github/workflows/test_example.yml
+    needs: resolve-image
     secrets: inherit
     with:
-      id: ${{ needs.prepare.outputs.workflow-id }}
-      test: attestation
+      example-name: attestation
+      manifest-modifiers: ${{ needs.resolve-image.outputs.manifest-modifiers }}

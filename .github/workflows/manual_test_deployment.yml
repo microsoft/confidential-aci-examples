@@ -1,0 +1,43 @@
+name: Manually Test Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      id:
+        description: ID of the deployment
+        required: true
+        type: string
+      example-name:
+        description: Name of the example
+        required: true
+        type: string
+      location:
+        description: The location to test
+        required: true
+        default: "westeurope"
+        type: string
+      security-policy:
+        description: Name of the security policy to use
+        required: true
+        default: _generated.rego
+        type: string
+
+jobs:
+  
+  resolve-manifest:
+    name: Resolve Manifest Variables
+    uses: ./.github/workflows/_resolve_manifest.yml
+    secrets: inherit
+    with:
+      manifest: examples/${{ inputs.example-name }}/manifest.json
+      
+  test-deployment:
+    name: Test Deployment
+    uses: ./.github/workflows/_test_deployment.yml
+    secrets: inherit
+    needs: resolve-manifest
+    with:
+      id: ${{ inputs.id }}
+      manifest: ${{ needs.resolve-manifest.outputs.manifest }}
+      location: ${{ inputs.location }}
+      security-policy: ${{ inputs.security-policy }}

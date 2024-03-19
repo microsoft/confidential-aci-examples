@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import argparse
 from base64 import b64encode
 import json
@@ -8,9 +11,24 @@ def add_security_policy_to_arm_template(
     arm_template: Dict[str, Any],
     security_policy: bytes,
 ):
-    arm_template["resources"][0]["properties"]["confidentialComputeProperties"][
-        "ccePolicy"
-    ] = b64encode(security_policy).decode("utf-8")
+    # ACI policygen returns concactenated policies for each group
+    container_groups = [
+        resource
+        for resource in arm_template["resources"]
+        if resource["type"] == "Microsoft.ContainerInstance/containerGroups"
+    ]
+    policies = [
+        "package" + policy for policy in security_policy.decode().split("package")[1:]
+    ]
+
+    assert len(container_groups) == len(
+        policies
+    ), "Number of container groups does not match number of policies"
+
+    for container_group, policy in zip(container_groups, policies):
+        container_group["properties"]["confidentialComputeProperties"][
+            "ccePolicy"
+        ] = b64encode(policy.encode()).decode("utf-8")
 
     return arm_template
 

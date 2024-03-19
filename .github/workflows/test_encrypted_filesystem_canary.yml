@@ -1,0 +1,28 @@
+name: Test Encrypted Filesystem (Canary)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"
+  pull_request:
+    paths:
+      - .github/workflows/test_encrypted_filesystem_canary.yml
+
+jobs:
+  encrypted-filesystem-canary-mcr:
+    name: Encrypted Filesystem Canary (MCR)
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: encrypted_filesystem
+      locations: '["eastus2euap"]'
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://mcr.microsoft.com/aci/encfs:2.7"
+      
+  encrypted-filesystem-canary-azurecr:
+    name: Encrypted Filesystem (Azure CR)
+    uses: ./.github/workflows/test_example.yml
+    secrets: inherit
+    with:
+      example-name: encrypted_filesystem
+      locations: '["eastus2euap"]'
+      manifest-modifiers: "ENCRYPTED_FILESYSTEM_IMAGE=http://confidentialsidecars.azurecr.io/encfs:main"

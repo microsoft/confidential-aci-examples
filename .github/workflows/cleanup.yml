@@ -1,5 +1,9 @@
 name: Cleanup Azure Resources
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_dispatch:
     inputs:
@@ -24,10 +28,6 @@ on:
         default: false
   schedule:
     - cron: "0 0 * * *"
-
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   cleanup-running-acis:

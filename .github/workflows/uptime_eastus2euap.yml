@@ -1,5 +1,9 @@
 name: Uptime of Containers on East US 2 EUAP
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_dispatch:
   schedule:

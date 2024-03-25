@@ -1,5 +1,9 @@
 name: Test Deployment
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     inputs:
@@ -22,10 +26,6 @@ on:
         description: Debuggable Security Policy
         default: false
         type: boolean
-
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   test-deployment:

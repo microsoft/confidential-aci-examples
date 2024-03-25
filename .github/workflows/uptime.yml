@@ -1,5 +1,9 @@
 name: Uptime of Containers on ACI
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     inputs:
@@ -22,6 +26,7 @@ jobs:
   check-current-containers:
     name: Check Containers Uptime
     runs-on: ubuntu-latest
+    environment: CI
     outputs:
       deployment-needed: ${{ steps.check-container-liveness.outputs.deployment-needed }}
     steps:
@@ -72,6 +77,7 @@ jobs:
   remove-old-container:
     name: Remove Older Containers
     runs-on: ubuntu-latest
+    environment: CI
     steps:
       - name: Log into Azure
         uses: azure/login@v1

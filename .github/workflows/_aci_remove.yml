@@ -1,5 +1,9 @@
 name: Remove Containers
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     inputs:
@@ -18,10 +22,6 @@ on:
       security-policy:
         description: Name of the security policy which was used
         type: string
-
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   remove-aci:

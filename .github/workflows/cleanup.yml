@@ -25,18 +25,23 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   cleanup-running-acis:
     name: Cleanup Running Container Groups
     runs-on: ubuntu-latest
+    environment: CI
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_acis == 'all' }}
     steps:
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Delete All Container Groups
         run: |
@@ -52,14 +57,15 @@ jobs:
   cleanup-failed-acis:
     name: Cleanup Failed Container Groups
     runs-on: ubuntu-latest
+    environment: CI
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_acis == 'all' || inputs.cleanup_acis == 'failed' }}
     steps:
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Delete Failed Container Groups
         run: |
@@ -75,14 +81,15 @@ jobs:
   cleanup-hsm:
     name: Cleanup HSM Keys
     runs-on: ubuntu-latest
+    environment: CI
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_hsm }}
     steps:
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Delete HSM Keys
         run: |
@@ -93,14 +100,15 @@ jobs:
   cleanup_registry:
     name: Cleanup Container Registry
     runs-on: ubuntu-latest
+    environment: CI
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_registry }}
     steps:
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1.0.1
@@ -121,14 +129,15 @@ jobs:
   cleanup-storage-account:
     name: Cleanup Storage Account Blobs
     runs-on: ubuntu-latest
+    environment: CI
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_storage_account }}
     steps:
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Delete Blobs
         run: |
@@ -145,14 +154,15 @@ jobs:
   cleanup-vms:
     name: Cleanup VMs
     runs-on: ubuntu-latest
+    environment: CI
     if: ${{ github.event_name == 'schedule' || inputs.cleanup_vms }}
     steps:
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Delete VMs and Associated Resources
         run: |

@@ -20,6 +20,7 @@ jobs:
   local-workflow:
     name: Local Workflow
     runs-on: ubuntu-latest
+    environment: CI
     steps:
       - name: Checkout
         uses: actions/checkout@v4

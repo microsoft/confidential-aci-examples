@@ -1,5 +1,9 @@
 name: Test Simple Server
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
   workflow_dispatch:

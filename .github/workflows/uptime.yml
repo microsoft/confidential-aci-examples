@@ -1,5 +1,9 @@
 name: Uptime of Containers on ACI
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     inputs:
@@ -22,15 +26,16 @@ jobs:
   check-current-containers:
     name: Check Containers Uptime
     runs-on: ubuntu-latest
+    environment: CI
     outputs:
       deployment-needed: ${{ steps.check-container-liveness.outputs.deployment-needed }}
     steps:
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Check Container Groups Liveness
         id: check-container-liveness
@@ -72,13 +77,14 @@ jobs:
   remove-old-container:
     name: Remove Older Containers
     runs-on: ubuntu-latest
+    environment: CI
     steps:
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Delete Old Container Groups
         run: |

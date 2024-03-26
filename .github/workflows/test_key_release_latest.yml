@@ -1,5 +1,9 @@
 name: Test Key Release (Latest)
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_dispatch:
   schedule:

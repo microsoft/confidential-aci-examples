@@ -1,5 +1,9 @@
 name: Deploy Containers
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     inputs:
@@ -34,6 +38,7 @@ jobs:
   deploy-aci:
     name: Deploy ACI (${{ inputs.location }}:${{ inputs.security-policy }})
     runs-on: ubuntu-latest
+    environment: CI
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,11 +47,11 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       
       - name: Decrypt Manifest
         id: decrypt-manifest

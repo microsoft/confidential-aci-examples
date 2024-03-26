@@ -20,11 +20,6 @@ from infra.add_security_policy_to_arm_template import (
 def generate_security_policy(
     arm_template: Dict[str, Any],
 ) -> bytes:
-    print("Logging into Azure CLI")
-    subprocess.run(
-        "az login --service-principal --username $AZURE_SERVICE_PRINCIPAL_APP_ID --password $AZURE_SERVICE_PRINCIPAL_PASSWORD --tenant $AZURE_SERVICE_PRINCIPAL_TENANT",
-        shell=True,
-    )
 
     login_arm_template_registries(arm_template)
 

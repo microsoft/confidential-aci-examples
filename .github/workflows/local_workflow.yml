@@ -1,5 +1,9 @@
 name: Local Workflow
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_dispatch:
   push:
@@ -16,6 +20,7 @@ jobs:
   local-workflow:
     name: Local Workflow
     runs-on: ubuntu-latest
+    environment: CI
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,18 +31,14 @@ jobs:
           az extension add --name confcom
 
       - name: Log into Azure
-        run: |
-          az login --service-principal \
-            --username ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }} \
-            --password ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }} \
-            --tenant ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Log in to Azure Container Registry
-        uses: azure/docker-login@v1.0.1
-        with:
-          login-server: ${{ secrets.AZURE_REGISTRY_URL }}
-          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+        run: az acr login --name ${{ secrets.AZURE_REGISTRY_USERNAME }}
 
       - name: Set Docker Permissions
         run: sudo usermod -aG docker $USER

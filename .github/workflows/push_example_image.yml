@@ -33,7 +33,6 @@ on:
         description: Image to Push (e.g. primary:path/to/Dockerfile)
         required: true
         type: string
-
 jobs:
   push-example-image:
     name: Push Example Image (${{ inputs.image }})
@@ -61,5 +60,12 @@ jobs:
           context: examples
           file: examples/${{ steps.docker-info.outputs.file }}
           push: true
+          build-args: |
+            RUN_ID=${{ inputs.tag }}
+            AZURE_HSM_ENDPOINT=${{ secrets.AZURE_HSM_ENDPOINT }}
+            AZURE_ATTESTATION_ENDPOINT=${{ secrets.AZURE_ATTESTATION_ENDPOINT }}
+            AZURE_SERVICE_PRINCIPAL_APP_ID=${{ secrets.AZURE_SERVICE_PRINCIPAL_APP_ID }}
+            AZURE_SERVICE_PRINCIPAL_PASSWORD=${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }}
+            AZURE_SERVICE_PRINCIPAL_TENANT=${{ secrets.AZURE_SERVICE_PRINCIPAL_TENANT }}
           tags: |
             ${{ secrets.AZURE_REGISTRY_URL }}/${{ inputs.test-name }}/${{ steps.docker-info.outputs.repository }}:${{ inputs.tag }}

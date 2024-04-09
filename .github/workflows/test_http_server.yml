@@ -1,0 +1,78 @@
+name: Test HTTP Server
+
+# Set permissions to allow logging into Azure
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-http-server:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.MANAGED_ID_CLIENT_ID }}
+        tenant-id: ${{ secrets.MANAGED_ID_TENANT_ID }}
+        subscription-id: ${{ secrets.SUBSCRIPTION }}
+
+    - name: Setup Docker
+      run: sudo usermod -aG docker $USER
+
+    - name: Install c_aci_testing package
+      run: |
+        latest=$(gh release list -R microsoft/confidential-aci-testing -L 1 --json tagName --jq '.[0].tagName')
+        gh release download $latest -R microsoft/confidential-aci-testing
+        pip install c-aci-testing*.tar.gz
+
+    - name: Build Images
+      env:
+        REGISTRY: cacitesting.azurecr.io
+        TAG: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
+      run: python -m c_aci_testing.images_build examples/http_server
+
+    - name: Push Images
+      env:
+        REGISTRY: cacitesting.azurecr.io
+        TAG: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
+      run: python -m c_aci_testing.images_push examples/http_server
+
+    - name: Generate Policies
+      env:
+        REGISTRY: cacitesting.azurecr.io
+        TAG: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
+      run: python -m c_aci_testing.policies_gen examples/http_server
+
+    - name: Deploy Container Groups
+      env:
+        SUBSCRIPTION: ${{ secrets.SUBSCRIPTION }}
+        RESOURCE_GROUP: c-aci-testing
+        MANAGED_IDENTITY: c-aci-testing
+        LOCATION: northeurope
+        DEP_NAME: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
+      run: python -m c_aci_testing.aci_deploy examples/http_server -n $DEP_NAME
+
+    - name: Monitor Container Groups
+      env:
+        SUBSCRIPTION: ${{ secrets.SUBSCRIPTION }}
+        RESOURCE_GROUP: c-aci-testing
+        DEP_NAME: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
+      run: python -m c_aci_testing.aci_monitor -n $DEP_NAME
+
+    - name: Cleanup Container Groups
+      env:
+        SUBSCRIPTION: ${{ secrets.SUBSCRIPTION }}
+        RESOURCE_GROUP: c-aci-testing
+        DEP_NAME: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
+      run: python -m c_aci_testing.aci_remove -n $DEP_NAME

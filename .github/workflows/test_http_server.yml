@@ -31,6 +31,8 @@ jobs:
       run: sudo usermod -aG docker $USER
 
     - name: Install c_aci_testing package
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         latest=$(gh release list -R microsoft/confidential-aci-testing -L 1 --json tagName --jq '.[0].tagName')
         gh release download $latest -R microsoft/confidential-aci-testing

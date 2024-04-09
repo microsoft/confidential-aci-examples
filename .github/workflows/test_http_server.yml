@@ -38,19 +38,19 @@ jobs:
 
     - name: Build Images
       env:
-        REGISTRY: cacitesting.azurecr.io
+        REGISTRY: caciexamples.azurecr.io
         TAG: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
       run: python -m c_aci_testing.images_build examples/http_server
 
     - name: Push Images
       env:
-        REGISTRY: cacitesting.azurecr.io
+        REGISTRY: caciexamples.azurecr.io
         TAG: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
       run: python -m c_aci_testing.images_push examples/http_server
 
     - name: Generate Policies
       env:
-        REGISTRY: cacitesting.azurecr.io
+        REGISTRY: caciexamples.azurecr.io
         TAG: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
       run: python -m c_aci_testing.policies_gen examples/http_server
 

@@ -72,6 +72,7 @@ jobs:
         curl http://$(python -m c_aci_testing.aci_get_ips -n $DEP_NAME):80
 
     - name: Cleanup Container Groups
+      if: always()
       env:
         SUBSCRIPTION: ${{ secrets.SUBSCRIPTION }}
         RESOURCE_GROUP: c-aci-examples

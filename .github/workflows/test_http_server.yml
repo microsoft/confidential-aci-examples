@@ -70,7 +70,6 @@ jobs:
         DEP_NAME: ${{ github.run_id }}-${{ github.job }}-${{ github.run_number }}
       run: |
         curl http://$(python -m c_aci_testing.aci_get_ips -n $DEP_NAME):80
-        python -m c_aci_testing.aci_monitor --no-follow -n $DEP_NAME
 
     - name: Cleanup Container Groups
       env:

@@ -2,30 +2,22 @@
 # Licensed under the MIT License.
 
 import unittest
+import sys
 import os
-import uuid
-import requests
 
-from c_aci_testing.target_run import target_run
-from c_aci_testing.aci_get_ips import aci_get_ips
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-class SimpleServerTest(unittest.TestCase):
-    def test_simple_server(self):
+from infra.http_request import request
+from infra.test_case import TestCase
 
-        target_dir = os.path.realpath(os.path.dirname(__file__))
-        run_id = str(uuid.uuid4())
 
-        with target_run(
-            target=target_dir,
-            name=f"simple_server-{run_id}",
-            tag=run_id,
-            follow=False, # Don't follow because server runs indefinitely
-        ) as deployment_id:
-            response = requests.get(f"http://{aci_get_ips(ids=deployment_id)}:80")
-            self.assertEqual(response.status_code, 200)
-            print(f"Request successful: {response.text}")
+class SimpleServerTest(TestCase):
+    def test_endpoint(self):
+        assert self.container_ip is not None
 
-        # Cleanup happens after block has finished
+        response = request(f"http://{self.container_ip}:8000/hello")
+        assert response.status_code == 200
+        assert response.content.decode("utf-8").strip("\n") == "Hello world!"
 
 
 if __name__ == "__main__":

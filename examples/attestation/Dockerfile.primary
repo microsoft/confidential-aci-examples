@@ -4,5 +4,4 @@ COPY attestation/protobuf protobuf
 COPY attestation/get_attestation.py get_attestation.py
 COPY attestation/payload.py payload.py
 RUN pip install protobuf grpcio grpcio-tools
-RUN alias python=python3
-CMD ["python", "payload.py"]
+CMD ["python3", "payload.py"]

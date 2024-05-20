@@ -1,0 +1,10 @@
+version: '3'
+services:
+  alpine:
+    image: alpine:latest
+  nginx:
+    image: nginx:stable
+  ubuntu:
+    image: ubuntu:latest
+  python:
+    image: python:latest

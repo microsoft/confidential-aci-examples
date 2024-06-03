@@ -68,6 +68,7 @@ jobs:
           AZURE_HSM_ENDPOINT: ${{ secrets.AZURE_HSM_ENDPOINT }}
           CLEANUP_ACI: 0
           UNIQUE_ID: ${{ steps.generate-id.outputs.cell-id }}
+          RUN_ID: ${{ inputs.id }}
         run: |
           python -m unittest discover \
             -s examples/${{ steps.decrypt-manifest.outputs.test-name }} \

@@ -12,13 +12,17 @@ on:
 
 jobs:
   python-server:
+    name: Python Server
     uses: ./.github/workflows/python_server.yml
 
   remote-images:
+    name: Remote Images
     uses: ./.github/workflows/remote_images.yml
 
   sidecar:
+    name: Sidecar
     uses: ./.github/workflows/sidecar.yml
 
   attestation:
+    name: Attestation
     uses: ./.github/workflows/attestation.yml

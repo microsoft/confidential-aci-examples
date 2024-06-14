@@ -1,85 +1,49 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import binascii
-import struct
 import unittest
-import sys
 import os
+import uuid
+import requests
 
+from c_aci_testing.target_run import target_run_ctx
+from c_aci_testing.aci_get_ips import aci_get_ips
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-from infra.http_request import request
-from infra.test_case import TestCase
-
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
-from get_attestation import SNP_REPORT_STRUCTURE
 from validate_attestation import validate_attestation
 
+class AttestationTest(unittest.TestCase):
+    def test_attestation(self):
 
-class AttestationTest(TestCase):
-    def test_attestation_report(self):
-        assert self.container_ip is not None
+        target_dir = os.path.realpath(os.path.dirname(__file__))
+        id = str(uuid.uuid4())
 
-        input_report_data = "EXAMPLEREPORTDATA"
+        with target_run_ctx(
+            target=target_dir,
+            name=f"attestation-{id}",
+            tag=id,
+            follow=False,
+        ) as deployment_ids:
+            ip_address = aci_get_ips(ids=deployment_ids[0])
 
-        response = request(
-            f"http://{self.container_ip}:8000/get_attestation?report_data={input_report_data}",
-        )
-        assert response.status_code == 200
-        report = struct.unpack_from(f"<{SNP_REPORT_STRUCTURE}", response.content, 0)
-        print(f"Raw attestation report: {binascii.hexlify(response.content)}")
-        print(f"Parsed attestation report: {report}")
-        assert report[10].rstrip(b"\x00").decode() == input_report_data
+            input_report_data = "Hello world!"
 
-        sidecar_response = request(
-            f"http://{self.container_ip}:8000/get_attestation_from_sidecar?report_data={input_report_data}",
-        )
-        assert sidecar_response.status_code == 200
-        sidecar_report = struct.unpack_from(
-            f"<{SNP_REPORT_STRUCTURE}", sidecar_response.content, 0
-        )
+            attestation = requests.get(
+                f"http://{ip_address}:8000/get_attestation?report_data={input_report_data}",
+            )
+            assert attestation.status_code == 200
 
-        # We expect the signatures to be different as there are two different calls to the IOCTL
-        # So only compare the body of the attestation report
-        assert sidecar_report[:-1] == report[:-1]
+            cert_chain = requests.get(
+                f"http://{ip_address}:8000/get_cert_chain",
+            )
+            assert cert_chain.status_code == 200
 
-    def test_attestation_validation(self):
-        assert self.container_ip is not None
+            validate_attestation(
+                attestation_bytes=attestation.content,
+                certificate_chain=cert_chain.content,
+                expected_report_data=input_report_data,
+            )
 
-        input_report_data = "EXAMPLEREPORTDATA"
-
-        certificate_chain_response = request(
-            f"http://{self.container_ip}:8000/get_certificate_chain",
-        )
-
-        response = request(
-            f"http://{self.container_ip}:8000/get_attestation?report_data={input_report_data}",
-        )
-        assert response.status_code == 200
-        assert certificate_chain_response.status_code == 200
-        report = struct.unpack_from(f"<{SNP_REPORT_STRUCTURE}", response.content, 0)
-        print(f"Raw attestation report: {binascii.hexlify(response.content)}")
-        print(f"Parsed attestation report: {report}")
-        print(f"Certificate chain: {certificate_chain_response.content}")
-        validate_attestation(
-            response.content,
-            certificate_chain_response.content,
-            input_report_data,
-        )
-
-        response = request(
-            f"http://{self.container_ip}:8000/get_attestation_from_sidecar?report_data={input_report_data}",
-        )
-        assert response.status_code == 200
-        assert certificate_chain_response.status_code == 200
-        validate_attestation(
-            response.content,
-            certificate_chain_response.content,
-            input_report_data,
-        )
+        # Cleanup happens after block has finished
 
 
 if __name__ == "__main__":

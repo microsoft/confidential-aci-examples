@@ -1,0 +1,7 @@
+version: '3'
+services:
+  primary:
+    image: $REGISTRY/attestation/primary:$TAG
+    build:
+      context: .
+      dockerfile: primary.Dockerfile

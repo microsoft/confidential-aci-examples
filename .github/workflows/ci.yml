@@ -1,0 +1,24 @@
+name: CI
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  python-server:
+    uses: ./.github/workflows/python_server.yml
+
+  remote-images:
+    uses: ./.github/workflows/remote_images.yml
+
+  sidecar:
+    uses: ./.github/workflows/sidecar.yml
+
+  attestation:
+    uses: ./.github/workflows/attestation.yml

@@ -1,4 +1,4 @@
-name: Test Remote Images
+name: Remote Images
 
 permissions:
   id-token: write
@@ -7,21 +7,6 @@ permissions:
 on:
   workflow_call:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/**
-      - examples/remote_images/**
-  pull_request:
-    branches:
-      - main
-    paths:
-      - .github/workflows/**
-      - examples/remote_images/**
-  merge_group:
-    branches:
-      - main
 
 jobs:
   test:
@@ -46,7 +31,7 @@ jobs:
       - name: Setup Docker
         run: sudo usermod -aG docker $USER
 
-      - name: Test
+      - name: Run Test
         run: |
           source cacitesting.env
           python -m unittest discover -s tests/remote_images

@@ -34,4 +34,4 @@ jobs:
       - name: Run Test
         run: |
           source cacitesting.env
-          python -m unittest discover -s tests/remote_images
+          python -m unittest discover -s examples/remote_images

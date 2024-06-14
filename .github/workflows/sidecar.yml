@@ -34,4 +34,4 @@ jobs:
       - name: Run Test
         run: |
           source cacitesting.env
-          python -m unittest discover -s tests/sidecar
+          python -m unittest discover -s examples/sidecar

@@ -2,7 +2,7 @@
 
 Example code and end to end test cases for confidential ACI.
 
-All examples utilise the `c_aci_testing` package package to manage images and deployment which can be found at:
+All examples utilise the `c_aci_testing` package to manage images and deployment which can be found at:
 
 [microsoft/confidential-aci-testing](https://github.com/microsoft/confidential-aci-testing).
 

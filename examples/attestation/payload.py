@@ -1,7 +1,10 @@
 import os
 from flask import Flask, request, Response
 
-from get_attestation import get_attestation_report
+try:
+    from get_attestation import get_attestation_report
+except ImportError:
+    from .get_attestation import get_attestation_report
 
 app = Flask(f"{__name__}")
 

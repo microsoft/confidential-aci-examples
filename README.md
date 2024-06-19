@@ -14,6 +14,8 @@ If you're looking for examples of how to use confidential sidecar container imag
 
 [microsoft/confidential-sidecar-containers](https://github.com/microsoft/confidential-sidecar-containers)
 
+## Examples
+
 ### [Python Server](examples/python_server/README.md)
 
 Basic flask based server running in a confidential container.

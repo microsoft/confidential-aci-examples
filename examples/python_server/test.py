@@ -24,7 +24,7 @@ class PythonServerTest(unittest.TestCase):
             ip_address = aci_get_ips(ids=deployment_ids[0])
             response = requests.get(f"http://{ip_address}:8000/hello")
             assert response.status_code == 200
-            assert response.content.decode("utf-8").strip("\n") == "Hello world!"
+            assert response.content.decode("utf-8") == "Hello, World!"
 
         # Cleanup happens after block has finished
 

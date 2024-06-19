@@ -1,239 +1,150 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Build and Push Images",
-            "type": "python",
+            "name": "target_create",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/build_and_push_images.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "module": "c_aci_testing.target_create",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/cacitesting.env",
             "args": [
-                "--manifest-path",
-                "examples/${input:testName}/manifest.json",
-                "--image-tag",
-                "${input:imageTag}",
+                "examples/${input:cacitestingTargetName}"
             ]
         },
         {
-            "name": "Generate Container ARM Template",
-            "type": "python",
+            "name": "vscode_testing",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/container/generate_arm_template.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "module": "c_aci_testing.vscode_testing",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/cacitesting.env",
             "args": [
-                "--image-tag",
-                "${input:imageTag}",
-                "--manifest",
-                "examples/${input:testName}/manifest.json",
-                "--location",
-                "${input:containerLocation}",
-                "--out",
-                "examples/${input:testName}/${input:armTemplateName}"
+                "examples/${input:cacitestingTargetPath}"
             ]
         },
         {
-            "name": "Generate and Add Security Policy",
-            "type": "python",
+            "name": "images_pull",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/generate_security_policy.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "module": "c_aci_testing.images_pull",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/cacitesting.env",
+            "env": {
+                "TAG": "${input:Tag}"
+            },
             "args": [
-                "--arm-template-path",
-                "examples/${input:testName}/${input:armTemplateName}",
-                "--out",
-                "examples/${input:testName}/_generated.rego",
+                "examples/${input:cacitestingTargetPath}"
             ]
         },
         {
-            "name": "Add Security Policy To ARM Template",
-            "type": "python",
+            "name": "images_build",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/add_security_policy_to_arm_template.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "module": "c_aci_testing.images_build",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/cacitesting.env",
+            "env": {
+                "TAG": "${input:Tag}"
+            },
             "args": [
-                "--arm-template-path",
-                "examples/${input:testName}/${input:armTemplateName}",
-                "--security-policy-path",
-                "${input:securityPolicyPath}",
+                "examples/${input:cacitestingTargetPath}"
             ]
         },
         {
-            "name": "Deploy ARM Template",
-            "type": "python",
+            "name": "images_push",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/deploy_arm_template.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "module": "c_aci_testing.images_push",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/cacitesting.env",
+            "env": {
+                "TAG": "${input:Tag}"
+            },
             "args": [
-                "--manifest-path",
-                "examples/${input:testName}/manifest.json",
-                "--arm-template-path",
-                "examples/${input:testName}/${input:armTemplateName}",
+                "examples/${input:cacitestingTargetPath}"
             ]
         },
         {
-            "name": "Delete Deployment",
-            "type": "python",
+            "name": "policies_gen",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/delete_deployment.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "module": "c_aci_testing.policies_gen",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/cacitesting.env",
+            "env": {
+                "TAG": "${input:Tag}"
+            },
             "args": [
+                "examples/${input:cacitestingTargetPath}",
                 "--deployment-name",
-                "${input:deploymentName}",
-                "--arm-template-path",
-                "examples/${input:testName}/${input:armTemplateName}",
-                "--asynchronous",
+                "${input:cacitestingDeploymentName}"
             ]
         },
         {
-            "name": "------------------",
-            "type": "python",
+            "name": "aci_deploy",
+            "type": "debugpy",
             "request": "launch",
-            "program": "examples/simple_server/__init__.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-        },
-        {
-            "name": "Deploy HSM",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/deploy_hsm.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "module": "c_aci_testing.aci_deploy",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/cacitesting.env",
             "args": [
-                "--name",
-                "${input:hsmName}",
+                "examples/${input:cacitestingTargetPath}",
+                "-n",
+                "${input:cacitestingDeploymentName}"
             ]
         },
         {
-            "name": "Deploy Storage Container",
-            "type": "python",
+            "name": "aci_monitor",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/infra/deploy_storage_container.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "module": "c_aci_testing.aci_monitor",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/cacitesting.env",
             "args": [
-                "--name",
-                "${input:storageAccountName}",
-                "--location",
-                "${input:containerLocation}",
-                "--container-name",
-                "${input:storageContainerName}",
+                "-n",
+                "${input:cacitestingDeploymentName}"
             ]
         },
         {
-            "name": "------------------",
-            "type": "python",
+            "name": "aci_remove",
+            "type": "debugpy",
             "request": "launch",
-            "program": "examples/simple_server/__init__.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-        },
-        {
-            "name": "Generate VM ARM Template",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/vm/generate_arm_template.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
+            "module": "c_aci_testing.aci_remove",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/cacitesting.env",
             "args": [
-                "--location",
-                "${input:containerLocation}",
-                "--manifest-path",
-                "examples/${input:testName}/manifest.json",
-                "--out",
-                "examples/${input:testName}/${input:armTemplateName}"
+                "-n",
+                "${input:cacitestingDeploymentName}"
             ]
-        },
-        {
-            "name": "Deploy Container Platform",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/vm/deploy_containerplat.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "--arm-template-path",
-                "examples/${input:testName}/${input:armTemplateName}",
-            ]
-        },
-        {
-            "name": "Run Container Platform",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/infra/vm/run_containerplat.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": [
-                "--arm-template-path",
-                "examples/${input:testName}/${input:armTemplateName}",
-            ]
-        },
+        }
     ],
     "inputs": [
         {
-            "id": "testName",
+            "id": "cacitestingTargetPath",
             "type": "pickString",
-            "description": "Enter the name of the test:",
+            "description": "Enter the name of the target:",
             "options": [
-                "simple_server",
-                "simple_sidecar",
+                "python_server",
+                "remote_images",
+                "sidecar",
                 "attestation",
-                "remote_image",
-                "key_release",
-                "encrypted_filesystem",
-            ],
+            ]
         },
         {
-            "id": "containerLocation",
+            "id": "cacitestingTargetName",
             "type": "promptString",
-            "description": "Enter the location of the container:",
-            "default": "westeurope",
+            "description": "Enter the name of the new target:"
         },
         {
-            "id": "imageTag",
+            "id": "cacitestingDeploymentName",
             "type": "promptString",
-            "description": "Enter the tag of the images:",
+            "description": "Enter the name of the deployment:"
         },
         {
-            "id": "armTemplateName",
+            "id": "Tag",
             "type": "promptString",
-            "default": "arm_template.json",
-            "description": "Enter the name of the ARM template:",
-        },
-        {
-            "id": "securityPolicyPath",
-            "type": "promptString",
-            "description": "Enter the path to Security Policy file:",
-            "default": "policies/allow_all.rego"
-        },
-        {
-            "id": "deploymentName",
-            "type": "promptString",
-            "description": "Enter name of the deployment:",
-        },
-        {
-            "id": "hsmName",
-            "type": "promptString",
-            "description": "Enter name of the hsm:",
-        },
-        {
-            "id": "storageAccountName",
-            "type": "promptString",
-            "description": "Enter a name for the storage account:",
-        },
-        {
-            "id": "storageContainerName",
-            "type": "promptString",
-            "description": "Enter a name for the storage container:",
-        },
+            "description": "Enter the tag to use:"
+        }
     ]
 }

@@ -1,0 +1,32 @@
+name: CI
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  python-server:
+    name: Python Server
+    secrets: inherit
+    uses: ./.github/workflows/python_server.yml
+
+  remote-images:
+    name: Remote Images
+    secrets: inherit
+    uses: ./.github/workflows/remote_images.yml
+
+  sidecar:
+    name: Sidecar
+    secrets: inherit
+    uses: ./.github/workflows/sidecar.yml
+
+  attestation:
+    name: Attestation
+    secrets: inherit
+    uses: ./.github/workflows/attestation.yml

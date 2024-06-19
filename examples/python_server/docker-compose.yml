@@ -1,0 +1,8 @@
+version: '3'
+services:
+  primary:
+    image: $REGISTRY/python_server/primary:$TAG
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: primary.Dockerfile

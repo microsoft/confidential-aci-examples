@@ -1,0 +1,16 @@
+version: '3'
+services:
+  primary:
+    image: $REGISTRY/sidecar/primary:$TAG
+    network_mode: "host"
+    depends_on:
+      - sidecar
+    build:
+      context: .
+      dockerfile: primary.Dockerfile
+  sidecar:
+    image: $REGISTRY/sidecar/sidecar:$TAG
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: sidecar.Dockerfile

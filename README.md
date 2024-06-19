@@ -2,6 +2,12 @@
 
 Example code and end to end test cases for confidential ACI.
 
+All examples utilise the `c_aci_testing` package package to manage images and deployment which can be found at [microsoft/confidential-aci-testing](https://github.com/microsoft/confidential-aci-testing).
+
+If you're looking for a simple tests running in multiple regions, as well as uptime and performance testing, see [microsoft/confidential-aci-dashboard](https://github.com/microsoft/confidential-aci-dashboard).
+
+If you're looking for examples of how to use confidential sidecar container images, see [microsoft/confidential-sidecar-containers](https://github.com/microsoft/confidential-sidecar-containers) under the `tests/` directory.
+
 ### [Python Server](examples/python_server/README.md)
 
 Basic flask based server running in a confidential container.
@@ -17,8 +23,6 @@ Deploys several container groups using popular docker images
 ### [Attestation](examples/attestation/README.md)
 
 Fetches and validates an SNP Attestation report.
-
-> Note: If you're looking for examples of how to use confidential sidecar container images, please look [here](https://github.com/microsoft/confidential-sidecar-containers) under the `tests/` directory
 
 ## How to Run Examples
 

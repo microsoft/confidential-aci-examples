@@ -20,7 +20,6 @@ class SidecarTest(unittest.TestCase):
             name=f"sidecar-{id}",
             tag=id,
             follow=False,
-            cleanup=False,
         ) as deployment_ids:
             ip_address = aci_get_ips(ids=deployment_ids[0])
             response = requests.get(f"http://{ip_address}:8000/check_connection")

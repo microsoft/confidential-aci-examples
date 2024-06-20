@@ -17,18 +17,22 @@ If you're looking for examples of how to use confidential sidecar container imag
 ## Examples
 
 ### [Python Server](examples/python_server/README.md)
+[![Python Server](https://github.com/microsoft/confidential-aci-examples/actions/workflows/python_server.yml/badge.svg?branch=main&event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/python_server.yml)
 
 Basic flask based server running in a confidential container.
 
 ### [Sidecar](examples/sidecar/README.md)
+[![Sidecar](https://github.com/microsoft/confidential-aci-examples/actions/workflows/sidecar.yml/badge.svg?branch=main&event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/sidecar.yml)
 
 Deploys two containers in the same container group and demostrates communication between the two.
 
 ### [Remote Image](examples/remote_image/README.md)
+[![Remote Image](https://github.com/microsoft/confidential-aci-examples/actions/workflows/remote_image.yml/badge.svg?branch=main&event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/remote_image.yml)
 
 Deploys several container groups using popular docker images
 
 ### [Attestation](examples/attestation/README.md)
+[![Attestation](https://github.com/microsoft/confidential-aci-examples/actions/workflows/attestation.yml/badge.svg?branch=main&event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/attestation.yml)
 
 Fetches and validates an SNP Attestation report.
 

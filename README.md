@@ -26,8 +26,8 @@ Basic flask based server running in a confidential container.
 
 Deploys two containers in the same container group and demostrates communication between the two.
 
-### [Remote Image](examples/remote_image/README.md)
-[![Remote Image](https://github.com/microsoft/confidential-aci-examples/actions/workflows/remote_image.yml/badge.svg?branch=main&event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/remote_image.yml)
+### [Remote Images](examples/remote_image/README.md)
+[![Remote Images](https://github.com/microsoft/confidential-aci-examples/actions/workflows/remote_images.yml/badge.svg?branch=main&event=schedule)](https://github.com/microsoft/confidential-aci-examples/actions/workflows/remote_images.yml)
 
 Deploys several container groups using popular docker images
 

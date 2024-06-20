@@ -24,7 +24,7 @@ jobs:
       - name: Delete All Container Groups
         run: |
           RUNNING_CONTAINERS=$(az container list \
-          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }})
 
           for container in $(echo $RUNNING_CONTAINERS | jq -r '.[].id'); do
               echo "Deleting container group: ${container}"

@@ -13,9 +13,7 @@ jobs:
   cleanup-running-acis:
     name: Cleanup Running Container Groups
     runs-on: ubuntu-latest
-    environment: CI
     steps:
-
       - name: Log into Azure
         uses: azure/login@v2
         with:
@@ -36,9 +34,7 @@ jobs:
   cleanup_registry:
     name: Cleanup Container Registry
     runs-on: ubuntu-latest
-    environment: CI
     steps:
-
       - name: Log into Azure
         uses: azure/login@v2
         with:

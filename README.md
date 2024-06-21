@@ -60,7 +60,10 @@ This will set up a full development environment with everything needed to run ex
 
 Then you can open VS Code's testing view, where examples can be run with or without a debugger.
 
-<img src="docs/testing_view.png" alt="VS Codes Testing View" width=400px>
+<p align="center">
+    <img src="docs/testing_view.png" alt="VS Codes Testing View">
+</p>
+
 
 ### 3. Locally Step by Step
 
@@ -74,7 +77,9 @@ If a particular step of an example needs debugging, they can be run manually thr
 6. Monitor running ACIs
 7. Remove ACIs
 
-<img src="docs/debug_view.png" alt="VS Codes Testing View" width=400px>
+<p align="center">
+    <img src="docs/debug_view.png" alt="VS Codes Testing View">
+</p>
 
 Once the deployment is complete, you can run the corresponding test against it without doing a full deployment again.
 

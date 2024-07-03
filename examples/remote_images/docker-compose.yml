@@ -1,10 +1,10 @@
 version: '3'
 services:
   alpine:
-    image: alpine:latest
+    image: $REGISTRY/alpine:latest
   nginx:
-    image: nginx:stable
+    image: $REGISTRY/nginx:stable
   ubuntu:
-    image: ubuntu:latest
+    image: $REGISTRY/ubuntu:latest
   python:
-    image: python:latest
+    image: $REGISTRY/python:latest

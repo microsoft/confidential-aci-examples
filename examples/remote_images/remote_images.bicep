@@ -37,7 +37,7 @@ resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01
       {
         name: 'primary'
         properties: {
-          image: image
+          image: '${registry}/${image}'
           ports: []
           resources: {
             requests: {

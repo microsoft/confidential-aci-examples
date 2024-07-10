@@ -1,7 +1,7 @@
 version: '3'
 services:
   primary:
-    image: $REGISTRY/attestation/primary:$TAG
+    image: $REGISTRY/attestation/primary:${TAG:-latest}
     build:
       context: .
       dockerfile: primary.Dockerfile

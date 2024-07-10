@@ -40,7 +40,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'primary'
         properties: {
-          image: '${registry}/attestation/primary:${tag}'
+          image: '${registry}/attestation/primary:${empty(tag) ? 'latest': tag}'
           ports: [
             {
               protocol: 'TCP'

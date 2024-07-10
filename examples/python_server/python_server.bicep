@@ -40,7 +40,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'primary'
         properties: {
-          image: '${registry}/python_server/primary:${tag}'
+          image: '${registry}/python_server/primary:${empty(tag) ? 'latest': tag}'
           ports: [
             {
               protocol: 'TCP'

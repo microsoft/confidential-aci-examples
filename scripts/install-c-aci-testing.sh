@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="0.1.17"
+version="1.0.0"
 gh release download $version -R microsoft/confidential-aci-testing
-pip install c-aci-testing*.tar.gz
-rm c-aci-testing*.tar.gz
+pip install c_aci_testing*.tar.gz
+rm c_aci_testing*.tar.gz

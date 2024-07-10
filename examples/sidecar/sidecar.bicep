@@ -40,7 +40,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'primary'
         properties: {
-          image: '${registry}/sidecar/primary:${tag}'
+          image: '${registry}/sidecar/primary:${empty(tag) ? 'latest': tag}'
           ports: [
             {
               protocol: 'TCP'
@@ -58,7 +58,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'sidecar'
         properties: {
-          image: '${registry}/sidecar/sidecar:${tag}'
+          image: '${registry}/sidecar/sidecar:${empty(tag) ? 'latest': tag}'
           ports: [
             {
               protocol: 'TCP'

@@ -106,7 +106,7 @@ To do so, log into Azure with an account which has access to both the Azure DevO
 Either use the `target_create` Run & Debug option, or run in terminal:
 
 ```
-python -m c_aci_testing.target_create examples/my_example --name my_example
+c-aci-testing target create examples/my_example --name my_example
 ```
 
 This creates a template for the new target, containing a bicep file and a docker compose file where you can specify the images to build and deploy.
@@ -116,7 +116,7 @@ This creates a template for the new target, containing a bicep file and a docker
 Either use the `vscode_testing` Run & Debug option, or run in terminal:
 
 ```
-python -m c_aci_testing.vscode_testing examples/my_example
+c-aci-testing target add_test examples/my_example
 ```
 
 This adds a placeholder python `unittest` based test which will deploy the target and give you a context in which to do your testing.
@@ -126,7 +126,7 @@ This adds a placeholder python `unittest` based test which will deploy the targe
 Either use the `github_workflow_create` Run & Debug option, or run in terminal:
 
 ```
-python -m c_aci_testing.github_workflow_create examples/my_example
+c-aci-testing github workflow examples/my_example
 ```
 
 This creates a placeholder github actions workflow.

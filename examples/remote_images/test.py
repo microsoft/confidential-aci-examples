@@ -5,7 +5,7 @@ import unittest
 import os
 import uuid
 
-from c_aci_testing.target_run import target_run_ctx
+from c_aci_testing.tools.target_run import target_run_ctx
 
 class RemoteImagesTest(unittest.TestCase):
     def test_remote_images(self):

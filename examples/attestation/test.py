@@ -6,8 +6,8 @@ import os
 import uuid
 import requests
 
-from c_aci_testing.target_run import target_run_ctx
-from c_aci_testing.aci_get_ips import aci_get_ips
+from c_aci_testing.tools.target_run import target_run_ctx
+from c_aci_testing.tools.aci_get_ips import aci_get_ips
 
 try:
     from validate_attestation import validate_attestation

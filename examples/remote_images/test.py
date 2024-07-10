@@ -35,7 +35,7 @@ class RemoteImagesTest(unittest.TestCase):
             tag=id,
             follow=True,
             prefer_pull=True,
-            **args,
+            **vars(args),
         ) as deployment_ids:
             ...
 

@@ -121,12 +121,14 @@ The DID:x509 string contains a hash of the root certificate and the eku (extende
 
 These are examples that validate COSE_Sign1 envelope:
 - https://github.com/microsoft/hcsshim/blob/36359c002b0df048ea65a4c7fd27d5a4ec1310c5/internal/guest/runtime/hcsv2/uvm.go#L182
-- https://github.com/microsoft/CCF/blob/2f7cb7df831ba8be7e8b1376a416d742a283633b/src/node/uvm_endorsements.h#L241
+- https://github.com/microsoft/CCF/blob/65fe3d896e479d931c2d892bb3fe65aee47df605/src/node/uvm_endorsements.h#L268
 
 The first is the code that validates the similar security policy fragments, the second is code that validates these UVM reference information documents.
 
 In Go, [cosesign1go](https://pkg.go.dev/github.com/Microsoft/cosesign1go) and [didx509go](https://pkg.go.dev/github.com/Microsoft/didx509go) are available to handle COSE_Sign1 and did:x509 respectively.
 In C++, [t_cose](https://github.com/laurencelundblade/t_cose) and [didx509cpp](https://github.com/microsoft/didx509cpp) are available.
+
+Note that the certificate chain expiry date applies to the signing time and not the use time. A particular UVM can still be in use after the signing certificate expires. When validating the either a fragment or a uvm endorsement the current time is not used.
 
 ## security-policy-base64
 

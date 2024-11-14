@@ -39,7 +39,7 @@ class AttestationTest(unittest.TestCase):
 
         with target_run_ctx(
             target_path=os.path.realpath(os.path.dirname(__file__)),
-            deployment_name=f"attestation-{id}",
+            deployment_name=deployment_name,
             tag=id,
             policy_type="allow_all",
             **vars(args),

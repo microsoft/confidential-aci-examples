@@ -30,14 +30,18 @@ class PythonServerTest(unittest.TestCase):
         args, _ = parser.parse_known_args()
 
         id = str(uuid.uuid4())
+        deployment_name = f"python-server-{id}"
 
         with target_run_ctx(
             target_path=os.path.realpath(os.path.dirname(__file__)),
-            deployment_name=f"python-server-{str(uuid.uuid4())}",
+            deployment_name=deployment_name,
             tag=id,
             **vars(args),
         ) as deployment_ids:
-            ip_address = aci_get_ips(ids=deployment_ids[0])
+            ip_address = aci_get_ips(
+                deployment_name=deployment_name,
+                **vars(args),
+            )[0]
             response = requests.get(f"http://{ip_address}:8000/hello")
             assert response.status_code == 200
             assert response.content.decode("utf-8") == "Hello, World!"

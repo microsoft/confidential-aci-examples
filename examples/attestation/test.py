@@ -35,14 +35,18 @@ class AttestationTest(unittest.TestCase):
         args, _ = parser.parse_known_args()
 
         id = str(uuid.uuid4())
+        deployment_name = f"attestation-{id}"
 
         with target_run_ctx(
             target_path=os.path.realpath(os.path.dirname(__file__)),
-            deployment_name=f"attestation-{id}",
+            deployment_name=deployment_name,
             tag=id,
             **vars(args),
         ) as deployment_ids:
-            ip_address = aci_get_ips(ids=deployment_ids[0])
+            ip_address = aci_get_ips(
+                deployment_name=deployment_name,
+                **vars(args),
+            )[0]
 
             input_report_data = "Hello world!"
 

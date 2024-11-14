@@ -41,7 +41,6 @@ class AttestationTest(unittest.TestCase):
             target_path=os.path.realpath(os.path.dirname(__file__)),
             deployment_name=deployment_name,
             tag=id,
-            policy_type="allow_all",
             **vars(args),
         ) as deployment_ids:
             ip_address = aci_get_ips(

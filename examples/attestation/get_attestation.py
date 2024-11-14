@@ -106,7 +106,7 @@ REPORT_RSP_STRUCTURE = "".join(
         "I",  # Report Size
         "24x",  # -----
         SNP_REPORT_STRUCTURE,
-        "64x",  # padding to the size of SEV_SNP_REPORT_RSP_BUF_SZ
+        "2784x",  # padding to the size of SEV_SNP_REPORT_RSP_BUF_SZ
     ]
 )
 REPORT_RSP_SIZE = struct.calcsize(REPORT_RSP_STRUCTURE)
@@ -125,7 +125,7 @@ def get_attestation_report(report_data: bytes):
     )
 
     # Create blank MSG_REPORT_RSP to be populated by the IOCTL call
-    report_rsp = bytearray(4000)
+    report_rsp = bytearray(REPORT_RSP_SIZE)
 
     # Create the SEV-SNP Guest Request
     guest_req = bytearray(SNP_GUEST_REQ_SIZE)

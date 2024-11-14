@@ -33,18 +33,11 @@ KEY_SEL = 0
 SNP_GUEST_REQ_STRUCTURE = "".join(
     [
         "<",  # Little Endian
-        "B",  # Request Type
-        "B",  # Response Type
-        "B",  # Guest Message Version
-        "x",  # -----
-        "H",  # Request Size
-        "2x",  # -----
+        "B",  # Message Version
+        "7x",  # -----
         "Q",  # Request Pointer
-        "H",  # Response Size
-        "6x",  # -----
         "Q",  # Response Pointer
-        "4x",  # -----
-        "I",  # Guest Error
+        "Q",  # Guest Error
     ]
 )
 SNP_GUEST_REQ_SIZE = struct.calcsize(SNP_GUEST_REQ_STRUCTURE)
@@ -54,8 +47,8 @@ SNP_GUEST_MSG_VERSION = 1
 GUEST_ERROR = 0
 
 # IOCTL (sev-snp driver include/uapi/linux/psp-sev-guest.h)
-SNP_GUEST_MSG_IOCTL_PATH = "/dev/sev"
-SNP_GUEST_MSG_IOCTL_CODE = 3223868161
+SNP_GUEST_MSG_IOCTL_PATH = "/dev/sev-guest"
+SNP_GUEST_MSG_IOCTL_CODE = 3223343872
 
 SIGNATURE_STRUCTURE = "".join(
     [
@@ -132,7 +125,7 @@ def get_attestation_report(report_data: bytes):
     )
 
     # Create blank MSG_REPORT_RSP to be populated by the IOCTL call
-    report_rsp = bytearray(REPORT_RSP_SIZE)
+    report_rsp = bytearray(4000)
 
     # Create the SEV-SNP Guest Request
     guest_req = bytearray(SNP_GUEST_REQ_SIZE)
@@ -140,19 +133,15 @@ def get_attestation_report(report_data: bytes):
         SNP_GUEST_REQ_STRUCTURE,
         guest_req,
         0,
-        REPORT_REQ_CODE,
-        REPORT_RSP_CODE,
         SNP_GUEST_MSG_VERSION,
-        REPORT_REQ_SIZE,
         ctypes.addressof(ctypes.c_byte.from_buffer(report_req)),
-        REPORT_RSP_SIZE,
         ctypes.addressof(ctypes.c_byte.from_buffer(report_rsp)),
         GUEST_ERROR,
     )
 
     # Call the IOCTL
     fd = os.open(SNP_GUEST_MSG_IOCTL_PATH, os.O_RDWR | os.O_CLOEXEC)
-    ioctl(fd, SNP_GUEST_MSG_IOCTL_CODE, bytes(guest_req))
+    ioctl(fd, SNP_GUEST_MSG_IOCTL_CODE, guest_req)
 
     status, _report_size, *report = struct.unpack_from(
         REPORT_RSP_STRUCTURE, report_rsp, 0

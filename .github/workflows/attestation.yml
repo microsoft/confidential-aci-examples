@@ -41,4 +41,8 @@ jobs:
       - name: Run Test
         run: |
           source cacitesting.env
+          printenv
+          which python
+          python --version
+          pip freeze
           python -m unittest discover -s examples/attestation

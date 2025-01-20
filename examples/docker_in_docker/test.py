@@ -2,7 +2,9 @@
 # Licensed under the MIT License.
 
 import argparse
-import time
+from contextlib import contextmanager
+import io
+import sys
 import unittest
 import os
 import uuid
@@ -16,6 +18,16 @@ from c_aci_testing.args.parameters.resource_group import parse_resource_group
 from c_aci_testing.args.parameters.subscription import parse_subscription
 from c_aci_testing.tools.target_run import target_run_ctx
 from c_aci_testing.tools.aci_monitor import aci_monitor
+
+@contextmanager
+def capture_stdout():
+    old_stdout = sys.stdout
+    buffer = io.StringIO()
+    try:
+        sys.stdout = buffer
+        yield buffer
+    finally:
+        sys.stdout = old_stdout
 
 class DockerInDockerTest(unittest.TestCase):
     def test_docker_in_docker(self):
@@ -38,8 +50,11 @@ class DockerInDockerTest(unittest.TestCase):
             tag=id,
             **vars(args),
         ) as deployment_ids:
-            time.sleep(60)
-            aci_monitor(deployment_name=deployment_name, **vars(args))
+            with capture_stdout() as buffer:
+                aci_monitor(deployment_name=deployment_name, **vars(args))
+            container_logs = buffer.getvalue()
+            print(container_logs)
+            assert "Hello from Docker!" in container_logs
 
         # Cleanup happens after block has finished
 

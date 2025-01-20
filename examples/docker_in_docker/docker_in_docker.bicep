@@ -51,8 +51,7 @@ resource docker_in_docker 'Microsoft.ContainerInstance/containerGroups@2023-05-0
                     join([
                       'dockerd-entrypoint.sh --host=unix:///var/run/docker.sock & '
                       'while ! docker info &>/dev/null; do sleep 1; done && '
-                      'docker run mcr.microsoft.com/mcr/hello-world:latest || true && '
-                      'sleep infinity'
+                      'docker run mcr.microsoft.com/mcr/hello-world:latest'
                     ], ' ')
                 ]
             }

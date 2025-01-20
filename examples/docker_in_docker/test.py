@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 
 import argparse
+import time
 import unittest
 import os
 import uuid
-import requests
 
 from c_aci_testing.args.parameters.location import parse_location
 from c_aci_testing.args.parameters.managed_identity import \
@@ -15,7 +15,6 @@ from c_aci_testing.args.parameters.repository import parse_repository
 from c_aci_testing.args.parameters.resource_group import parse_resource_group
 from c_aci_testing.args.parameters.subscription import parse_subscription
 from c_aci_testing.tools.target_run import target_run_ctx
-from c_aci_testing.tools.aci_get_ips import aci_get_ips
 from c_aci_testing.tools.aci_monitor import aci_monitor
 
 class DockerInDockerTest(unittest.TestCase):
@@ -39,6 +38,7 @@ class DockerInDockerTest(unittest.TestCase):
             tag=id,
             **vars(args),
         ) as deployment_ids:
+            time.sleep(60)
             aci_monitor(deployment_name=deployment_name, **vars(args))
 
         # Cleanup happens after block has finished

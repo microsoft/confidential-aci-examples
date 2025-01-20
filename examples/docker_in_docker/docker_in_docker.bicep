@@ -60,3 +60,5 @@ resource docker_in_docker 'Microsoft.ContainerInstance/containerGroups@2023-05-0
       ]
     }
 }
+
+output ids array = [docker_in_docker.id]

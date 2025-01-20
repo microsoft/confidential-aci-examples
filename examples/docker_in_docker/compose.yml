@@ -1,0 +1,19 @@
+services:
+
+  docker_in_docker:
+    image: $REGISTRY/docker:dind
+    build:
+      dockerfile_inline: |
+        FROM docker:dind
+    privileged: true
+    environment:
+      DOCKER_HOST: "unix:///var/run/docker.sock"
+    command: |
+      sh -c '
+        dockerd-entrypoint.sh --host=unix:///var/run/docker.sock > /dev/null 2>&1 &
+        while ! docker info &>/dev/null; do
+          echo "Waiting for docker daemon..."
+          sleep 2
+        done
+        docker run mcr.microsoft.com/mcr/hello-world:latest
+      '

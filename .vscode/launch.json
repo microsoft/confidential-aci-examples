@@ -129,6 +129,7 @@
                 "remote_images",
                 "sidecar",
                 "attestation",
+                "docker_in_docker",
             ]
         },
         {

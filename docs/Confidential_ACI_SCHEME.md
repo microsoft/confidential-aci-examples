@@ -31,7 +31,7 @@ These are the AMD platform certificates, as per Trusted Hardware Identity Manage
     },
     "tcbm": {
       "type": "string",
-      "pattern": "^[0-9]+$"
+      "pattern": "^[0-9A-F]+$"
     },
     "certificateChain": {
       "type": "string"

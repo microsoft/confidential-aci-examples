@@ -7,6 +7,9 @@
       "type": "string",
       "pattern": "^[0-9]+$"
     },
+    "x-ms-sevsnpvm-guestsvn-int": {
+      "type": "integer"
+    },
     "x-ms-sevsnpvm-launchmeasurement": {
       "type": "string",
       "pattern": "^[0-9a-f]+$"

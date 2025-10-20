@@ -1,0 +1,23 @@
+
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "x-ms-sevsnpvm-guestsvn": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "x-ms-sevsnpvm-guestsvn-int": {
+      "type": "integer"
+    },
+    "x-ms-sevsnpvm-launchmeasurement": {
+      "type": "string",
+      "pattern": "^[0-9a-f]+$"
+    }
+  },
+  "required": [
+    "x-ms-sevsnpvm-guestsvn",
+    "x-ms-sevsnpvm-guestsvn-int",
+    "x-ms-sevsnpvm-launchmeasurement"
+  ]
+}

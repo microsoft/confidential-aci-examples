@@ -30,3 +30,8 @@ jobs:
     name: Attestation
     secrets: inherit
     uses: ./.github/workflows/attestation.yml
+
+  docker_in_docker:
+    name: Docker in Docker
+    secrets: inherit
+    uses: ./.github/workflows/docker_in_docker.yml

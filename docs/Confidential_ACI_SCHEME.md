@@ -1,6 +1,6 @@
 # Confidential ACI scheme to support verification that a container group is genuine
 
-Confidential ACI uses [AMD SEV-SNP features](https://www.amd.com/en/support/tech-docs/sev-secure-nested-paging-firmware-abi-specification) to ensure the VM hosting running containers is secure against threats from the host operating system. The host starts a Utility VM (UVM) running a minimalist Linux in SNP mode for this purpose. 
+Confidential ACI uses [AMD SEV-SNP features](https://docs.amd.com/v/u/en-US/56860) to ensure the VM hosting running containers is secure against threats from the host operating system. The host starts a Utility VM (UVM) running a minimalist Linux in SNP mode for this purpose. 
 
 It is essential to check that sensitive workloads are indeed running in SNP VMs. This is done by obtaining an attestation report signed by the AMD hardware and passing that to a relying party to verify. You can also verify the attestation report manually.
 

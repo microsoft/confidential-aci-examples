@@ -2,7 +2,7 @@
 
 Confidential ACI uses [AMD SEV-SNP features](https://docs.amd.com/v/u/en-US/56860) to ensure the VM hosting running containers is secure against threats from the host operating system. The host starts a Utility VM (UVM) running a minimalist Linux in SNP mode for this purpose. 
 
-There are two enfoircement points to consider:
+There are two enforcement points to consider:
 
   Rules applies by a relying party
   Rules in the ccepolicy (confidential container execution policy)

@@ -1,13 +1,13 @@
 # Confidential ACI scheme to support verification that a container group is genuine
 
-Confidential ACI uses [AMD SEV-SNP features](https://docs.amd.com/v/u/en-US/56860) to ensure the VM hosting running containers is secure against threats from the host operating system. The host starts a Utility VM (UVM) running a minimalist Linux in SNP mode for this purpose. 
+Confidential ACI uses [AMD SEV-SNP features](https://docs.amd.com/v/u/en-US/56860) to ensure the VM hosting running containers is secure against threats from the host operating system. The host starts a Utility VM (UVM) running a minimalist Linux in SNP mode for this purpose.
 
 There are two enforcement points to consider:
 
   Rules applied by a relying party
   Rules in the ccepolicy (confidential container execution policy)
 
-# Relying party checks on the attestion report  
+# Relying party checks on the attestion report
 
 It is essential to check that sensitive workloads are indeed running in SNP VMs. This is done by obtaining an attestation report signed by the AMD hardware and passing that to a relying party to verify. You can also verify the attestation report manually.
 
@@ -177,7 +177,7 @@ Relying party steps:
 
 The az cli "confcom" extension is used to generate the cce policy which controls what a running container group can be asked to do by the host. This includes exactly what containers can be loaded, the command that they can run and various other important pieces of configuration.
 
-In the default case the policy allows an "infrastruture fragment" to be loaded. That contains rules regarding ACI supplied utility "sidecar" containers. These provide various platform features such as fetching managed identities, mounting remote disks and so forth. The measurements and configuration of these containers change over time as they are updated. This rule looks like:
+In the default case the policy allows an "infrastructure fragment" to be loaded. That contains rules regarding ACI supplied utility "sidecar" containers. These provide various platform features such as fetching managed identities, mounting remote disks and so forth. The measurements and configuration of these containers change over time as they are updated. This rule looks like:
 
 ```rego
 fragments := [
@@ -193,7 +193,7 @@ fragments := [
 ]
 ```
 
-It says "trust this issuer to provide more rules with the label "mcr.microsoft.com/aci/aci-cc-infra-fragment" with an SVN greater than 4. The issuer here is the ACI team, guaranteed by a certificate chain rooted in a long lived and highly controlled Microsoft certificate. The label is essentially a name given by that team to another collection of rules.
+It says "trust this issuer to provide more rules with the label "mcr.microsoft.com/aci/aci-cc-infra-fragment" with an SVN greater than 4". The issuer here is the ACI team, guaranteed by a certificate chain rooted in a long lived and highly controlled Microsoft certificate. The label is essentially a name given by that team to another collection of rules.
 
 The issuer and feed are stable, they will never change (even when the actual signing certificate is rotated). Fragments have an SVN. When a CVE is found in any of the sidecars permitted by this infra fragment the fragment is updated with rules for the fixed sidecar and the SVN is incremented. Thus, to be protected from that CVE the cce policy rule must be updated with a minimum SVN to match.
 
@@ -201,7 +201,7 @@ Use (at least) version 1.2.8 of the az cli confcom tooling, which defaults the i
 
 # Platform update timing
 
-Confidential ACI is a hosted service. It runs in dozens of regions around the world and is constantly running workloads which cannot be disturbed. This means that there is a gradual roll out of updates and for a time worloads might land on one release or the next. Restarting a particular instance may result in it going back a release. Customers must not rely on observations of deployed versions to decide on what minimums to enforce.
+Confidential ACI is a hosted service. It runs in dozens of regions around the world and is constantly running workloads which cannot be disturbed. This means that there is a gradual roll out of updates and for a time workloads might land on one release or the next. Restarting a particular instance may result in it going back a release. Customers must not rely on observations of deployed versions to decide on what minimums to enforce.
 
 Once an update is complete, this document is updated with the minimum SVNs for both the UVM and the infrastructure fragment. At the same time the confcom tooling default for the infra fragment minimum SVN is changed.
 
@@ -211,6 +211,5 @@ When security bugs are discovered in the C-ACI stack they are fixed and once dep
 
 Two actions may be required:
 
-  Regenerate the cce policy and adjust relying party policies to match (eg mHSM key release policy)
-  Update minumum UVM SVN required by your relying party (eg mSHM key release policy to range check the claim `x-ms-sevsnpvm-guestsvn-int`)
-  
+1. Regenerate the cce policy and adjust relying party policies to match (eg mHSM key release policy)
+2. Update minimum UVM SVN required by your relying party (eg mHSM key release policy to range check the claim `x-ms-sevsnpvm-guestsvn-int`)

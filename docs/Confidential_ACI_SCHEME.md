@@ -193,7 +193,7 @@ fragments := [
 ]
 ```
 
-It says "trust this issuer to provide more rules with the label "mcr.microsoft.com/aci/aci-cc-infra-fragment" with an SVN greater than 4". The issuer here is the ACI team, guaranteed by a certificate chain rooted in a long lived and highly controlled Microsoft certificate. The label is essentially a name given by that team to another collection of rules.
+It says "trust this issuer to provide more rules with the label "mcr.microsoft.com/aci/aci-cc-infra-fragment" with an SVN greater than or equal to 4". The issuer here is the ACI team, guaranteed by a certificate chain rooted in a long lived and highly controlled Microsoft certificate. The label is essentially a name given by that team to another collection of rules.
 
 The issuer and feed are stable, they will never change (even when the actual signing certificate is rotated). Fragments have an SVN. When a CVE is found in any of the sidecars permitted by this infra fragment the fragment is updated with rules for the fixed sidecar and the SVN is incremented. Thus, to be protected from that CVE the cce policy rule must be updated with a minimum SVN to match.
 

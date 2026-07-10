@@ -1,0 +1,85 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the container group to deploy."
+            }
+        },
+        "location": {
+            "type": "string"
+        },
+        "registry": {
+            "type": "string",
+            "metadata": {
+                "description": "Login server of the container registry, e.g. myregistry.azurecr.io"
+            }
+        },
+        "image": {
+            "type": "string",
+            "metadata": {
+                "description": "Full image reference for the (single) workload container to run."
+            }
+        },
+        "managedIDName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the user-assigned managed identity used to pull from the registry."
+            }
+        },
+        "managedIDGroup": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "apiVersion": "2023-05-01",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[resourceId(parameters('managedIDGroup'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIDName'))]": {}
+                }
+            },
+            "properties": {
+                "osType": "Linux",
+                "sku": "Confidential",
+                "restartPolicy": "Never",
+                "confidentialComputeProperties": {
+                    "ccePolicy": ""
+                },
+                "imageRegistryCredentials": [
+                    {
+                        "server": "[parameters('registry')]",
+                        "identity": "[resourceId(parameters('managedIDGroup'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIDName'))]"
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "workloadcontainer",
+                        "properties": {
+                            "image": "[parameters('image')]",
+                            "ports": [
+                                {
+                                    "protocol": "TCP",
+                                    "port": 8000
+                                }
+                            ],
+                            "resources": {
+                                "requests": {
+                                    "memoryInGB": 1,
+                                    "cpu": 1
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

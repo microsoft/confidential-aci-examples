@@ -1,0 +1,24 @@
+{
+    "version": "1.0",
+    "scenario": "aci",
+    "containers": [
+        {
+            "name": "workloadcontainer",
+            "properties": {
+                "image": "$WORKLOAD_IMAGE",
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 8000
+                    }
+                ],
+                "resources": {
+                    "requests": {
+                        "memoryInGB": 1,
+                        "cpu": 1
+                    }
+                }
+            }
+        }
+    ]
+}

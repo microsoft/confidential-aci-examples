@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $POD_NAME
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $POD_NAME
+  template:
+    metadata:
+      labels:
+        app: $POD_NAME
+      annotations:
+        microsoft.containerinstance.virtualnode.injectdns: "false"
+        # The CCE policy annotation will be added by `az confcom acipolicygen`.
+    spec:
+      imagePullSecrets:
+        - name: $PULL_SECRET
+      containers:
+        - name: workloadcontainer
+          image: $IMAGE
+          resources:
+            requests:
+              memory: "1G"
+              cpu: "1"
+          ports:
+            - containerPort: 8000
+      nodeSelector:
+        virtualization: virtualnode2
+      tolerations:
+        - key: "virtual-kubelet.io/provider"
+          operator: "Exists"
+          effect: "NoSchedule"

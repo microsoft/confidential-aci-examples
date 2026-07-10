@@ -1,0 +1,12 @@
+# Downloaded tools
+/bin/
+
+# Generated container configs / fragments / policies / params
+workload-*-config.json
+*.rego
+*.rego.cose
+fragment_import_rules.json
+import-*.json
+deployment.policy.json
+deployment.parameters.*.json
+logs-*.txt

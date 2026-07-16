@@ -1,17 +1,17 @@
 # Confidential VN2 demo: image-attached CCE policy fragments (VN2)
 #
-# This demo shows how an image attached fragment lets a stable main policy
+# This demo shows how an image attached fragment lets a stable top level policy
 # authorise different versions of an image. This deployment uses VN2.
 #
 # We build two different workload images (A and B), and each image is pushed to
 # the registry with their fragments attached via ORAS. Because both fragments
 # are signed by the same issuer and uses the same "feed", either one is allowed
-# by the main policy.
+# by the top level policy.
 #
 # We render (via envsubst) both pods from a template into a single manifest that
-# differs only by name + image, let confcom generate + inject the main policy
+# differs only by name + image, let confcom generate + inject the top level policy
 # into each, and show the two injected policies are byte-for-byte identical. The
-# workload image layer hashes only appear in the fragments, not the main policy.
+# workload image layer hashes only appear in the fragments, not the top level policy.
 #
 # Flow (just run `make && make deploy && make verify`):
 #    tools     download oras + sign1util if not already on PATH
@@ -20,7 +20,7 @@
 #    images    build + push workload A and workload B
 #    fragments For each image, generate a fragment, sign with sign1util, attach
 #              with oras, and emit its import rule
-#    yaml      render both pods + inject one main policy into each (in place)
+#    yaml      render both pods + inject one top level policy into each (in place)
 #    deploy    create an ACR pull secret and `kubectl apply` the manifest
 #    verify    check both pods started
 #
@@ -130,7 +130,7 @@ fragments: certs tools images
 	  oras attach $$image \
 	      --artifact-type application/x-ms-ccepolicy-frag \
 	      workload-$$suffix-fragment.rego.cose:application/cose-x509+rego; \
-	  echo "# 4. export the fragment's import rule (input for main policy generation)"; \
+	  echo "# 4. export the fragment's import rule (input for top level policy generation)"; \
 	  az confcom acifragmentgen --generate-import \
 	      -p workload-$$suffix-fragment.rego.cose --minimum-svn 1 \
 	      --fragments-json import-$$suffix.json; \
@@ -150,14 +150,14 @@ fragments: certs tools images
 	@echo
 
 # yaml: render both pods (differing only by name + image) into one
-# multi-document manifest, then let confcom generate the main policy and add it
+# multi-document manifest, then let confcom generate the top level policy and add it
 # into each pod's annotation. Omitting --outraw* makes confcom modify the yaml
 # in place. Because each workload is covered by its attached fragment, their
-# definitions do not appear in the main policy, which is why both pods end up
-# with an identical main policy.
+# definitions do not appear in the top level policy, which is why both pods end up
+# with an identical top level policy.
 #
-# The main policy does still contain the "pause" container which is required in
-# all main policies.
+# The top level policy does still contain the "pause" container which is required in
+# all top level policies.
 yaml: fragments
 	POD_NAME=$(DEPLOYMENT_NAME)-a IMAGE=$(WORKLOAD_A_IMAGE) PULL_SECRET=$(PULL_SECRET) \
 	    envsubst '$$POD_NAME $$IMAGE $$PULL_SECRET' < deployment.yaml.template > deployment.yaml
@@ -169,9 +169,9 @@ yaml: fragments
 	@a=$$(grep 'ccepolicy' deployment.yaml | sed -n 1p | awk -F': ' '{print $$2}'); \
 	 b=$$(grep 'ccepolicy' deployment.yaml | sed -n 2p | awk -F': ' '{print $$2}'); \
 	 if [ "$$a" = "$$b" ]; then \
-	   echo "OK: both pods share an identical main policy (fragment-based)"; \
+	   echo "OK: both pods share an identical top level policy (fragment-based)"; \
 	 else echo "ERROR: the two injected policies differ" >&2; exit 1; fi
-	@echo "--- main policy (decoded) ---"
+	@echo "--- top level policy (decoded) ---"
 	@grep 'ccepolicy' deployment.yaml | sed -n 1p | awk -F': ' '{print $$2}' | base64 -d
 	@echo
 
@@ -197,7 +197,7 @@ verify:
 	  kubectl logs deployment/$$name | tee logs-$$name.txt; \
 	  grep -q "Workload container started" logs-$$name.txt; \
 	done
-	@echo "Both workloads started under the same main policy -- fragments work."
+	@echo "Both workloads started under the same top level policy -- fragments work."
 
 remove:
 	-kubectl delete -f deployment.yaml --ignore-not-found

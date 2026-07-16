@@ -1,17 +1,17 @@
 # Confidential ACI demo: image-attached CCE policy fragments (ACI)
 #
-# This demo shows how an image attached fragment lets a stable main policy
+# This demo shows how an image attached fragment lets a stable top level policy
 # authorise different versions of an image. This deployment uses ACI (without
 # VN2).
 #
 # We build two different workload images (A and B), and each image is pushed to
 # the registry with their fragments attached via ORAS. Because both fragments
 # are signed by the same issuer and uses the same "feed", either one is allowed
-# by the main policy.
+# by the top level policy.
 #
-# We then deploy that same main policy twice, once with image A and once with
+# We then deploy that same top level policy twice, once with image A and once with
 # image B, and both succeed. The workload image layer hashes only appear in the
-# fragments, not the main policy.
+# fragments, not the top level policy.
 #
 # Flow (just run `make && make deploy && make verify`):
 #    tools     download oras + sign1util if not already on PATH
@@ -20,7 +20,7 @@
 #    images    build + push workload A and workload B
 #    fragments For each image, generate a fragment, sign with sign1util, attach
 #              with oras, and emit its import rule
-#    policy    generate one main policy that imports the fragment
+#    policy    generate one top level policy that imports the fragment
 #    deploy    deploy that same policy with image A, then with image B
 #    verify    check both container groups started
 #
@@ -132,7 +132,7 @@ fragments: certs tools images
 	  oras attach $$image \
 	      --artifact-type application/x-ms-ccepolicy-frag \
 	      workload-$$suffix-fragment.rego.cose:application/cose-x509+rego; \
-	  echo "# 4. export the fragment's import rule (input for main policy generation)"; \
+	  echo "# 4. export the fragment's import rule (input for top level policy generation)"; \
 	  az confcom acifragmentgen --generate-import \
 	      -p workload-$$suffix-fragment.rego.cose --minimum-svn 1 \
 	      --fragments-json import-$$suffix.json; \
@@ -160,10 +160,10 @@ params:
 	  IMAGE=$(WORKLOAD_B_IMAGE) MANAGED_IDENTITY=$(MANAGED_IDENTITY) \
 	  envsubst < deployment.parameters.json.template > deployment.parameters.b.json
 
-# policy: generate one main policy and inject it into the ARM template. Running
+# policy: generate one top level policy and inject it into the ARM template. Running
 # acipolicygen without --outraw* injects the base64 policy directly into the
 # (blank) ccePolicy field. Because each workload is covered by its attached
-# fragment, their definitions do not appear in the main policy, which is why the
+# fragment, their definitions do not appear in the top level policy, which is why the
 # same policy authorises both images.
 policy: fragments params login
 	cp deployment.arm.json deployment.policy.json
@@ -171,7 +171,7 @@ policy: fragments params login
 	    -a deployment.policy.json \
 	    -p deployment.parameters.a.json \
 	    --include-fragments --fragments-json fragment_import_rules.json
-	@echo "--- main policy (decoded) ---"
+	@echo "--- top level policy (decoded) ---"
 	@python3 -c "import json, base64; print(base64.b64decode(json.load(open('deployment.policy.json'))['resources'][0]['properties']['confidentialComputeProperties']['ccePolicy']).decode())"
 	@echo
 
@@ -201,7 +201,7 @@ verify:
 	  cat logs-$$name.txt; \
 	  grep -q "Workload container started" logs-$$name.txt; \
 	done
-	@echo "Both workloads started under the same main policy -- fragments work."
+	@echo "Both workloads started under the same top level policy -- fragments work."
 
 remove:
 	-az container delete --yes --resource-group $(RESOURCE_GROUP) --name $(DEPLOYMENT_NAME)-a

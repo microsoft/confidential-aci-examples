@@ -1,56 +1,87 @@
-# Image-attached fragments with VN2
+## A stable policy
 
-A walkthrough of using an image-attached CCE policy fragment with VN2
-(Confidential ACI via
-[Virtual Node 2](https://github.com/microsoft/virtualnodesOnAzureContainerInstances)
-on AKS).
+A typical Confidential workload uses an attestation in order to gate access to a secret. In this example, we will discuss using mHSM to store the secret.
 
-This README shows how to produce and use an image-attached fragment step by
-step. The terms *policy*, *fragment*, *issuer*, *feed* and *DID:x509* are
-introduced inline as they come up.
+```text
+ C-WCOW Container        Microsoft Azure Attestation        Managed HSM
+        |                            |                            |
+        |  Attestation report        |                            |
+        |  + collaterals             |                            |
+        |--------------------------->|                            |
+        |                            |                            |
+        |         MAA token          |                            |
+        |<---------------------------|                            |
+        |                                                         |
+        |             MAA token + wrapping key                    |
+        |-------------------------------------------------------->|
+        |                                                         |
+        |               Encrypted key material                    |
+        |<--------------------------------------------------------|
+        |                                                         |
+```
 
-Not all regions support fragments for VN2 yet.
+mHSM has a key release policy. That key release policy must be immutable to prevent operators with RBAC access stealing the key, and this means that a new key needs to be generated every time the key release policy changes. This means that it is expensive to change the CCE security policy of a confidential container when the image needs to be updated. This makes servicing container workloads difficult.
+
+Our goal is to keep the key release policy stable to avoid this as much as possible. The hash of the CCE policy is part of the mHSM key release policy, thus the CCE policy must be stable as well.
+
+We do this by adding a layer of indirection between the CCE policy provided at pod startup (to avoid confusion we will call that the "top level policy") and the effective policy. This allows the effective policy to be serviced without changing the initial startup policy.
+
+This top level policy contains rules which allow in "fragments" of policy. A fragment is some Rego which itself contains rules. For example:
+
+```rego
+fragments := [
+  {
+    "feed": "mcr.microsoft.com/aci/aci-cc-infra-fragment",
+    "includes": [
+      "containers",
+      "fragments"
+    ],
+    "issuer": "did:x509:0:sha256:I__iuL25oXEVFdTP_aBLx_eT1RPHbCQ_ECBQfYZpt9s::eku:1.3.6.1.4.1.311.76.59.1.3",
+    "minimum_svn": "4"
+  },
+  {
+    "feed": "nginx-prod",
+    "includes": [
+      "containers",
+      "fragments"
+    ],
+    "issuer": "did:x509:0:sha256:FIuESyeGxgk6G95ajmhKjKy-_yXikkINAbaYcKj8V1E::subject:CN:Contoso",
+    "minimum_svn": "1"
+  }
+]
+```
+
+This rule allows in two fragments. First the "ACI infrastructure fragment" which in turn allows in ACI infrastructure sidecars such as providing managed identities, secondly a user-provided fragment which contains rules for an actual workload container.
+
+A fragment is a COSE_Sign1 [1] wrapper over some Rego. The signing process requires a certificate chain and a feed string. That certificate chain can be represented as a did:x509 [2]. Since the did:x509 typically uses the hash of the root cert, it can be stable for decades, even if the signing certificate is rotated, and thus can be used as an identity of a signing party. The feed can be used to scope trust within the set of things signed by that party.
+
+Two examples feeds for the same issuer `did:x509:0:sha256:FIuESyeGxgk6G95ajmhKjKy-_yXikkINAbaYcKj8V1E::subject:CN:Contoso` might be `nginx-debug` and `nginx-prod`. This allows us to write rules that prevents us accidentally releasing secrets to the wrong code.
+
+A fragment rule specifies such a issuer and feed. Then we can consider the fragment iself to be late bound policy.
+
+## How does a customer provide fragments
+
+A container image can have fragments "attached" by means of ORAS [3], and the attached fragments will automatically be offered to a container group before the matching container is loaded. This means that rules for a particular container can be placed in an "image attached" fragment.
+
+[1]: https://datatracker.ietf.org/doc/html/rfc8152#section-2
+[2]: https://github.com/microsoft/did-x509
+[3]: https://oras.land/
 
 ---
 
-## The goal: a stable policy
+## What this example demonstrates
 
-The workload runs under a CCE security policy. A relying party (the gatekeeper)
-releases secrets based, in part, on the hash of that policy. If the policy
-changes, its hash changes, and the relying party must be reconfigured to trust
-the new hash.
-
-A "normal" policy pins the exact layer hashes of every container image, so every
-rebuild changes the policy and its hash — coupling your key-release
-configuration to your image release cadence.
-
-An image-attached fragment breaks that coupling:
-
-- The main policy contains only a *fragment rule*: "trust any fragment signed by
-  *this issuer* under *this feed* with SVN ≥ *N*". It does not name the workload
-  image.
-- The workload's real authorisation (its image layer hashes) lives in a fragment
-  that is signed and attached to the image in the registry.
-- At load time the runtime discovers the attached fragment, *offers* it to the
-  policy engine inside the TEE, and merges its rules in if the fragment rule is
-  satisfied.
-
-Because the workload's hashes are in the fragment, the main policy stays
-byte-for-byte identical across image versions. This example proves it: it builds
-two *different* workload images (A and B) and shows both run under the same main
-policy hash.
-
----
-
-## What this example does
+Putting the above into practice: an image-attached fragment keeps the top level
+policy stable across image updates, so the mHSM key release policy never has to
+change when the workload image does. Concretely, it:
 
 - Builds two different workload images, `workload-a` and `workload-b` (they
   differ only in the string they print, so their image hashes differ).
 - Signs and attaches an image-attached fragment to each image, both under the
   same issuer and feed.
-- Generates one main policy that imports that fragment, and injects it into two
+- Generates one top level policy that imports that fragment, and injects it into two
   VN2 pod definitions (one per image).
-- Verifies that the two injected main policies are identical, and that both pods
+- Verifies that the two injected top level policies are identical, and that both pods
   start.
 
 ```mermaid
@@ -63,7 +94,7 @@ flowchart TD
     Chain -->|"same issuer + feed"| FragB["fragment B (COSE_Sign1)"]
     FragA -->|oras attach| IA
     FragB -->|oras attach| IB
-    Rule["Import rule<br/>(issuer, feed, minimum_svn)"] --> MainPolicy["Main policy<br/>(identical for A & B)"]
+    Rule["Import rule<br/>(issuer, feed, minimum_svn)"] --> MainPolicy["Top level policy<br/>(identical for A & B)"]
     MainPolicy --> PodA["VN2 pod A"]
     MainPolicy --> PodB["VN2 pod B"]
     IA -.->|"offered at load"| PodA
@@ -94,7 +125,7 @@ The `Makefile` *does* download two helper tools on demand into `./bin`:
 ## Quick start
 
 ```bash
-make            # build images, create + sign + attach fragments, generate the main policy
+make            # build images, create + sign + attach fragments, generate the top level policy
 make deploy     # create the ACR pull secret and kubectl apply the two pods
 make verify     # wait for both pods and confirm they started
 ```
@@ -154,7 +185,7 @@ make images
 Builds and pushes [`containers/workload-a`](containers/workload-a) and
 [`containers/workload-b`](containers/workload-b). They differ only in the string
 they print (`Hello from workload A` vs `B`), so their image layer hashes differ
-— which is what lets us later prove the main policy is stable *despite* the
+— which is what lets us later prove the top level policy is stable *despite* the
 images being different.
 
 The build flags `--provenance=false --sbom=false` keep each pushed image a
@@ -197,7 +228,7 @@ For each image, the `Makefile` runs four sub-steps:
    The feed (`$(REGISTRY)/$(REPO_BASE)`, e.g.
    `myregistry.azurecr.io/fragment-vn2`) is the stable label a policy uses to
    refer to a fragment. Both workloads use the same issuer and feed — the reason
-   a single main-policy rule can admit either one.
+   a single top level policy rule can admit either one.
 
 3. **Attach** the signed fragment to the image in the registry with `oras`:
 
@@ -211,7 +242,7 @@ For each image, the `Makefile` runs four sub-steps:
    registry, so the runtime discovers and *offers* it whenever that image is
    loaded.
 
-4. **Emit the import rule** — the small JSON snippet the main policy uses to
+4. **Emit the import rule** — the small JSON snippet the top level policy uses to
    *trust* this fragment:
 
    ```bash
@@ -223,14 +254,14 @@ For each image, the `Makefile` runs four sub-steps:
    Because both fragments share the same issuer + feed + SVN, `import-a.json` and
    `import-b.json` are identical; the `Makefile` asserts this with `cmp` and
    keeps one as `fragment_import_rules.json` — an
-   `{issuer, feed, minimum_svn, includes}` entry that a main policy can trust.
+   `{issuer, feed, minimum_svn, includes}` entry that a top level policy can trust.
 
 > The `Makefile` splits generate/sign/attach into separate commands for clarity.
 > `az confcom acifragmentgen` can do all three in one call if you pass the
 > signing key/chain and an `--image-target`; see the comment above the
 > `fragments:` target in the [`Makefile`](Makefile).
 
-### Step 4 — Generate the stable main policy and inject it into the VN2 pods
+### Step 4 — Generate the stable top level policy and inject it into the VN2 pods
 
 ```bash
 make yaml
@@ -239,7 +270,7 @@ make yaml
 This renders two VN2 pod definitions from
 [`deployment.yaml.template`](deployment.yaml.template) — differing only by name
 and image — into a single multi-document `deployment.yaml`, then generates and
-injects the main policy:
+injects the top level policy:
 
 ```bash
 az confcom acipolicygen --virtual-node-yaml deployment.yaml \
@@ -249,20 +280,20 @@ az confcom acipolicygen --virtual-node-yaml deployment.yaml \
 - `--virtual-node-yaml` targets a VN2 pod manifest (rather than an ACI ARM
   template).
 - `--include-fragments --fragments-json fragment_import_rules.json` adds the
-  import rule to the main policy instead of pinning the workload image directly.
+  import rule to the top level policy instead of pinning the workload image directly.
 
-The generated main policy therefore contains the *fragment rule* plus the
-mandatory `pause` container every VN2 main policy needs — but not the workload
+The generated top level policy therefore contains the *fragment rule* plus the
+mandatory `pause` container every VN2 top level policy needs — but not the workload
 image's layer hashes, which only exist in the attached fragment.
 
 The `Makefile` then extracts the injected `ccepolicy` annotation from each pod
 and checks they are equal:
 
 ```
-OK: both pods share an identical main policy (fragment-based)
+OK: both pods share an identical top level policy (fragment-based)
 ```
 
-Two different images, one identical, stable main policy.
+Two different images, one identical, stable top level policy.
 
 ### Step 5 — Deploy to VN2
 
@@ -307,11 +338,11 @@ Waits for both deployments to roll out and confirms each pod logged
 `Workload container started`:
 
 ```
-Both workloads started under the same main policy -- fragments work.
+Both workloads started under the same top level policy -- fragments work.
 ```
 
 That completes the loop: two independently versioned images, each authorised by
-its own image-attached fragment, both admitted by a single stable main policy —
+its own image-attached fragment, both admitted by a single stable top level policy —
 the property that lets a relying party keep trusting the same policy hash across
 image updates.
 
@@ -335,16 +366,14 @@ and the downloaded `bin/` are git-ignored.
 - **Protect the signing key.** Use a secret store / HSM (e.g. Azure Key Vault)
   rather than an on-disk key, and use a real (globally trusted) root so your
   issuer is meaningful. Keep the root long-lived and the leaf short-lived.
-- **Keep the issuer + feed stable.** They are the identity the main policy trusts.
+- **Keep the issuer + feed stable.** They are the identity the top level policy trusts.
   Rotating the *leaf* is fine as long as the pinned field (here, the CN) and the
   root stay the same, so the DID:x509 is unchanged.
 - **Use SVN as a floor.** `--minimum-svn` in the import rule lets you raise the
-  accepted version over time to retire older fragments without changing the main
+  accepted version over time to retire older fragments without changing the top level
   policy hash.
 
 ## References
 
 - `confcom` extension: <https://github.com/Azure/azure-cli-extensions/blob/main/src/confcom/azext_confcom/README.md>
 - `sign1util` / cosesign1go: <https://github.com/microsoft/cosesign1go>
-- `oras`: <https://oras.land/>
-- DID:x509: <https://github.com/microsoft/did-x509>

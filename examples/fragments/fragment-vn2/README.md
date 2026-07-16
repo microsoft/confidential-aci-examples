@@ -183,6 +183,11 @@ issuing a leaf with that CN".
 > and the leaf a shorter one (~1 year). The *issuer* stays stable as long as the
 > root and the leaf's pinned field stay stable.
 
+> **Note about signing scope**: The issuer and feed of a fragment essentially identify
+> a trust relationship. It is important that only the authorized entity can sign using
+> that issuer. You should refer to the did:x509 documentation to fully understand the
+> implications of pinning to the root cert, and the stable CN or EKU of the leaf cert.
+
 ### Step 2 — Build and push the workload images
 
 ```bash
@@ -194,10 +199,6 @@ Builds and pushes [`containers/workload-a`](containers/workload-a) and
 they print (`Hello from workload A` vs `B`), so their image layer hashes differ
 — which is what lets us later prove the top level policy is stable *despite* the
 images being different.
-
-The build flags `--provenance=false --sbom=false` keep each pushed image a
-single manifest, required so a fragment can be attached directly to it with
-`oras`.
 
 ### Step 3 — Generate, sign and attach the fragment
 
@@ -218,9 +219,7 @@ For each image, the `Makefile` runs four sub-steps:
        --no-print --output-filename workload-a-fragment
    ```
 
-   This produces the *fragment* that authorises this specific image. The `--svn`
-   (security version number) and `--namespace` are part of the fragment's
-   identity.
+   This produces the fragment that authorises this specific image.
 
 2. **Sign it** into a COSE_Sign1 envelope with `sign1util`, using the chain and
    key from Step 1 and the shared feed:
@@ -242,14 +241,18 @@ For each image, the `Makefile` runs four sub-steps:
    ```bash
    oras attach "$WORKLOAD_A_IMAGE" \
        --artifact-type application/x-ms-ccepolicy-frag \
+       --platform linux/amd64 \
        workload-a-fragment.rego.cose:application/cose-x509+rego
    ```
 
    This makes it an image-attached fragment: it lives next to the image in the
-   registry, so the runtime discovers and *offers* it whenever that image is
+   registry, so the runtime discovers and offers it whenever that image is
    loaded.
 
-4. **Emit the import rule** — the small JSON snippet the top level policy uses to
+   `--platform linux/amd64` is required here to attach the fragment to the
+   manifest for the image itself, and not any multiarch image index.
+
+5. **Emit the import rule** — the small JSON snippet the top level policy uses to
    *trust* this fragment:
 
    ```bash
@@ -263,10 +266,10 @@ For each image, the `Makefile` runs four sub-steps:
    keeps one as `fragment_import_rules.json` — an
    `{issuer, feed, minimum_svn, includes}` entry that a top level policy can trust.
 
-> The `Makefile` splits generate/sign/attach into separate commands for clarity.
-> `az confcom acifragmentgen` can do all three in one call if you pass the
-> signing key/chain and an `--image-target`; see the comment above the
-> `fragments:` target in the [`Makefile`](Makefile).
+Although `az confcom acifragmentgen` has built-in support to do the signing and the
+attaching of the fragment, we don't expect production systems to be able to obtain
+the certificates locally as they are very valuable. We expect this to be done in a
+particular secure environment.
 
 ### Step 4 — Generate the stable top level policy and inject it into the VN2 pods
 
@@ -289,8 +292,8 @@ az confcom acipolicygen --virtual-node-yaml deployment.yaml \
 - `--include-fragments --fragments-json fragment_import_rules.json` adds the
   import rule to the top level policy instead of pinning the workload image directly.
 
-The generated top level policy therefore contains the *fragment rule* plus the
-mandatory `pause` container every VN2 top level policy needs — but not the workload
+The generated top level policy therefore contains the fragment rule plus the
+mandatory `pause` container every top level policy needs — but not the workload
 image's layer hashes, which only exist in the attached fragment.
 
 The `Makefile` then extracts the injected `ccepolicy` annotation from each pod
@@ -311,8 +314,7 @@ make deploy
 This does two things:
 
 1. `make pullsecret` — creates a Kubernetes `docker-registry` secret so VN2 can
-   pull from your ACR (VN2 requires an explicit pull secret), using a short-lived
-   ACR token:
+   pull from your ACR, using a short-lived ACR token:
 
    ```bash
    token=$(az acr login -n "$REGISTRY_NAME" --expose-token --query accessToken -o tsv)

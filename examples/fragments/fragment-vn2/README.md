@@ -119,7 +119,7 @@ You must provide these yourself (the `Makefile` will *not* install them):
 - Azure CLI with the `confcom` extension: `az extension add --name confcom`
 - `docker` (with `buildx`) and `kubectl`
 - An AKS cluster with VN2 installed, and your `kubeconfig` pointing at it
-- An Azure Container Registry you can push to
+- An Azure Container Registry you can push to. Set this as the `REGISTRY` environment variable or in the `Makefile` (e.g. `export REGISTRY=myregistry.azurecr.io`).
 - `envsubst` and `curl` (used by the `Makefile`)
 
 The `Makefile` *does* download two helper tools on demand into `./bin`:

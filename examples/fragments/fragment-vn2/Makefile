@@ -129,6 +129,7 @@ fragments: certs tools images
 	  echo "# 3. attach the signed fragment to the image"; \
 	  oras attach $$image \
 	      --artifact-type application/x-ms-ccepolicy-frag \
+		  --platform linux/amd64 \
 	      workload-$$suffix-fragment.rego.cose:application/cose-x509+rego; \
 	  echo "# 4. export the fragment's import rule (input for top level policy generation)"; \
 	  az confcom acifragmentgen --generate-import \

@@ -1,4 +1,4 @@
-## A stable policy
+## Servicable containers using stable policy
 
 A typical Confidential workload uses an attestation in order to gate access to a secret. In this example, we will discuss using mHSM to store the secret.
 
@@ -57,19 +57,30 @@ A fragment is a COSE_Sign1 [1] wrapper over some Rego. The signing process requi
 
 Two examples feeds for the same issuer `did:x509:0:sha256:FIuESyeGxgk6G95ajmhKjKy-_yXikkINAbaYcKj8V1E::subject:CN:Contoso` might be `nginx-debug` and `nginx-prod`. This allows us to write rules that prevents us accidentally releasing secrets to the wrong code.
 
-A fragment rule specifies such a issuer and feed. Then we can consider the fragment iself to be late bound policy.
+Note that when the feed is a container reference within an ACR, it does not include a tag. In the example above, we would not use e.g. `nginx-prod:v1.0.0` as the feed, but would use `nginx-prod`, so that when `v1.0.1` comes along, it is still allowed in.
 
-## How does a customer provide fragments
+A fragment rule specifies such a issuer and feed. Then we can consider the fragment iself to be late bound policy. The fragment rule also specifies the minimum SVN (security version number). In the event that you must prevent previous versions being loaded, the top level policy will increase its `minimum_svn`. This means that you will need to manage the servicing of the key.
+
+## How a customer provides fragments
 
 A container image can have fragments "attached" by means of ORAS [3], and the attached fragments will automatically be offered to a container group before the matching container is loaded. This means that rules for a particular container can be placed in an "image attached" fragment.
+
+## Servicing
+
+When a container needs to change, the typical process would be pushing a new version to an ACR, then updating the ARM template or pod yaml to use that new version. Without using fragments, a new policy would need to be generated. That policy would be different and so have a different hash, and so need a new key release policy at the mHSM.
+
+Making a top level policy which then defers the actual policy to the image attached fragment means that only the image attached fragment has to change, and so the top level policy hash remains the same, and so the key release policy at the mHSM remains the same.
+
+This means that not only do you not have to update your key release policy for your new containers, you can also have multiple versions of containers being used at the same time.
+
+Further, if the threat model allows, you can choose to have a one top level policy that allows for many different workload containers to be used, by choosing to use a common feed for containers of different purposes. This isn't something we would recommend as it expands the TCB to include many workloads.
 
 [1]: https://datatracker.ietf.org/doc/html/rfc8152#section-2
 [2]: https://github.com/microsoft/did-x509
 [3]: https://oras.land/
 
----
 
-## What this example demonstrates
+## An example of using image attached fragments and a stable top level policy to enable servicability and stable key release policies.
 
 Putting the above into practice: an image-attached fragment keeps the top level
 policy stable across image updates, so the mHSM key release policy never has to
@@ -94,14 +105,12 @@ flowchart TD
     Chain -->|"same issuer + feed"| FragB["fragment B (COSE_Sign1)"]
     FragA -->|oras attach| IA
     FragB -->|oras attach| IB
-    Rule["Import rule<br/>(issuer, feed, minimum_svn)"] --> MainPolicy["Top level policy<br/>(identical for A & B)"]
+    Rule["Import rule<br/>(issuer, feed, minimum_svn)"] --> MainPolicy["<b>Top level policy</b><br/>(identical for A & B)"]
     MainPolicy --> PodA["VN2 pod A"]
     MainPolicy --> PodB["VN2 pod B"]
     IA -.->|"offered at load"| PodA
     IB -.->|"offered at load"| PodB
 ```
-
----
 
 ## Prerequisites
 
@@ -120,15 +129,15 @@ The `Makefile` *does* download two helper tools on demand into `./bin`:
 - [`sign1util`](https://github.com/microsoft/cosesign1go/tree/main/cmd/sign1util)
   — creates and inspects the COSE_Sign1 envelope that wraps the fragment.
 
----
-
 ## Quick start
 
 ```bash
-make            # build images, create + sign + attach fragments, generate the top level policy
+make            # create example certificates, build images, create + sign + attach fragments, generate the top level policy
 make deploy     # create the ACR pull secret and kubectl apply the two pods
 make verify     # wait for both pods and confirm they started
 ```
+
+(The certificate created here are just for demonstration. In production, a proper signing pipeline should be used.)
 
 Configuration is set at the top of the [`Makefile`](Makefile) and can be
 overridden on the command line, e.g.:
@@ -138,8 +147,6 @@ make REGISTRY=myregistry.azurecr.io REPO_BASE=fragment-vn2 TAG=demo
 ```
 
 The sections below walk through each phase.
-
----
 
 ## Step-by-step walk-through
 

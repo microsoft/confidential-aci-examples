@@ -119,7 +119,26 @@ You must provide these yourself (the `Makefile` will *not* install them):
 - Azure CLI with the `confcom` extension: `az extension add --name confcom`
 - `docker` (with `buildx`) and `kubectl`
 - An AKS cluster with VN2 installed, and your `kubeconfig` pointing at it
-- An Azure Container Registry you can push to. Set this as the `REGISTRY` environment variable or in the `Makefile` (e.g. `export REGISTRY=myregistry.azurecr.io`).
+- An Azure Container Registry you can push to. Set this as the `REGISTRY`
+  environment variable or in the `Makefile` (e.g. `export
+  REGISTRY=myregistry.azurecr.io`).
+- The AKS agent pool identity must have the `AcrPull` role on that registry. For
+  an AKS cluster using a kubelet identity, assign it with:
+
+  ```bash
+  AKS_RESOURCE_GROUP=<aks-resource-group>
+  AKS_CLUSTER=<aks-cluster-name>
+  REGISTRY_NAME=<acr-name>
+
+  az role assignment create \
+      --assignee-object-id "$(az aks show \
+          --resource-group "$AKS_RESOURCE_GROUP" \
+          --name "$AKS_CLUSTER" \
+          --query identityProfile.kubeletidentity.objectId -o tsv)" \
+      --assignee-principal-type ServicePrincipal \
+      --role AcrPull \
+      --scope "$(az acr show --name "$REGISTRY_NAME" --query id -o tsv)"
+  ```
 - `envsubst` and `curl` (used by the `Makefile`)
 
 The `Makefile` *does* download two helper tools on demand into `./bin`:
@@ -133,7 +152,7 @@ The `Makefile` *does* download two helper tools on demand into `./bin`:
 
 ```bash
 make            # create example certificates, build images, create + sign + attach fragments, generate the top level policy
-make deploy     # create the ACR pull secret and kubectl apply the two pods
+make deploy     # kubectl apply the two pods
 make verify     # wait for both pods and confirm they started
 ```
 
@@ -311,20 +330,9 @@ Two different images, one identical, stable top level policy.
 make deploy
 ```
 
-This does two things:
-
-1. `make pullsecret` — creates a Kubernetes `docker-registry` secret so VN2 can
-   pull from your ACR, using a short-lived ACR token:
-
-   ```bash
-   token=$(az acr login -n "$REGISTRY_NAME" --expose-token --query accessToken -o tsv)
-   kubectl create secret docker-registry "$PULL_SECRET" \
-       --docker-server="$REGISTRY" \
-       --docker-username=00000000-0000-0000-0000-000000000000 \
-       --docker-password="$token"
-   ```
-
-2. `kubectl apply -f deployment.yaml` — schedules both pods.
+This runs `kubectl apply -f deployment.yaml` to schedule both pods. VN2 uses
+the AKS agent pool identity to pull the images from ACR, as configured in the
+prerequisites.
 
 The VN2-specific bits of the manifest ([`deployment.yaml.template`](deployment.yaml.template))
 are:
@@ -332,7 +340,6 @@ are:
 - `nodeSelector: { virtualization: virtualnode2 }` and the
   `virtual-kubelet.io/provider` toleration, which place the pod on the VN2
   virtual node.
-- `imagePullSecrets`, referencing the secret above.
 - The `microsoft.containerinstance.virtualnode.injectdns: "false"` annotation.
 - The `ccepolicy` annotation, filled in by `confcom` in Step 4 (left as a
   comment in the template).
@@ -360,7 +367,7 @@ image updates.
 ## Cleanup
 
 ```bash
-make remove     # delete the pods and the pull secret from the cluster
+make remove     # delete the pods from the cluster
 make clean      # remove generated configs, fragments, policies, manifest and ./bin
 ```
 

@@ -21,7 +21,7 @@
 #    fragments For each image, generate a fragment, sign with sign1util, attach
 #              with oras, and emit its import rule
 #    yaml      render both pods + inject one top level policy into each (in place)
-#    deploy    create an ACR pull secret and `kubectl apply` the manifest
+#    deploy    apply the manifest
 #    verify    check both pods started
 #
 # Requirements you must provide yourself (not installed here):
@@ -37,10 +37,8 @@ TAG              ?= demo
 DEPLOYMENT_NAME  ?= fragment-vn2-demo
 
 # Derived values
-REGISTRY_NAME    := $(firstword $(subst ., ,$(REGISTRY)))
 WORKLOAD_A_IMAGE := $(REGISTRY)/$(REPO_BASE)/workload-a:$(TAG)
 WORKLOAD_B_IMAGE := $(REGISTRY)/$(REPO_BASE)/workload-b:$(TAG)
-PULL_SECRET      := acr-auth-$(REGISTRY_NAME)
 
 # The "feed" is the stable name a policy uses to refer to a fragment. Both
 # workloads publish under this single feed, so one import rule covers both.
@@ -56,7 +54,7 @@ export PATH := $(BIN):$(PATH)
 ORAS_VERSION      := 1.2.2
 SIGN1UTIL_VERSION := 1.4.0
 
-.PHONY: all tools certs login images fragments yaml pullsecret deploy verify remove clean
+.PHONY: all tools certs login images fragments yaml deploy verify remove clean
 
 all: yaml
 
@@ -83,7 +81,7 @@ certs:
 	@test -f $(KEY) || ./certs/create_certchain.sh
 
 login:
-	az acr login --name $(REGISTRY_NAME)
+	az acr login --name $(REGISTRY)
 
 # images: --provenance=false --sbom=false keeps the pushed image a single
 # manifest so a fragment can be attached to it directly with oras.
@@ -160,11 +158,11 @@ fragments: certs tools images
 # The top level policy does still contain the "pause" container which is required in
 # all top level policies.
 yaml: fragments
-	POD_NAME=$(DEPLOYMENT_NAME)-a IMAGE=$(WORKLOAD_A_IMAGE) PULL_SECRET=$(PULL_SECRET) \
-	    envsubst '$$POD_NAME $$IMAGE $$PULL_SECRET' < deployment.yaml.template > deployment.yaml
+	POD_NAME=$(DEPLOYMENT_NAME)-a IMAGE=$(WORKLOAD_A_IMAGE) \
+	    envsubst '$$POD_NAME $$IMAGE' < deployment.yaml.template > deployment.yaml
 	echo '---' >> deployment.yaml
-	POD_NAME=$(DEPLOYMENT_NAME)-b IMAGE=$(WORKLOAD_B_IMAGE) PULL_SECRET=$(PULL_SECRET) \
-	    envsubst '$$POD_NAME $$IMAGE $$PULL_SECRET' < deployment.yaml.template >> deployment.yaml
+	POD_NAME=$(DEPLOYMENT_NAME)-b IMAGE=$(WORKLOAD_B_IMAGE) \
+	    envsubst '$$POD_NAME $$IMAGE' < deployment.yaml.template >> deployment.yaml
 	az confcom acipolicygen --virtual-node-yaml deployment.yaml \
 	    --include-fragments --fragments-json fragment_import_rules.json
 	@a=$$(grep 'ccepolicy' deployment.yaml | sed -n 1p | awk -F': ' '{print $$2}'); \
@@ -176,17 +174,8 @@ yaml: fragments
 	@grep 'ccepolicy' deployment.yaml | sed -n 1p | awk -F': ' '{print $$2}' | base64 -d
 	@echo
 
-# pullsecret: Add a pullsecret for our ACR, required for VN2.
-pullsecret:
-	token=$$(az acr login -n $(REGISTRY_NAME) --expose-token --query accessToken -o tsv); \
-	kubectl delete secret $(PULL_SECRET) --ignore-not-found; \
-	kubectl create secret docker-registry $(PULL_SECRET) \
-	    --docker-server=$(REGISTRY) \
-	    --docker-username=00000000-0000-0000-0000-000000000000 \
-	    --docker-password=$$token
-
 # deploy
-deploy: yaml pullsecret
+deploy: yaml
 	kubectl apply -f deployment.yaml
 
 verify:
@@ -202,7 +191,6 @@ verify:
 
 remove:
 	-kubectl delete -f deployment.yaml --ignore-not-found
-	-kubectl delete secret $(PULL_SECRET) --ignore-not-found
 
 clean:
 	rm -f workload-*-config.json *.rego *.rego.cose import-*.json fragment_import_rules.json \

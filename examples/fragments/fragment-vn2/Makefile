@@ -37,7 +37,6 @@ TAG              ?= demo
 DEPLOYMENT_NAME  ?= fragment-vn2-demo
 
 # Derived values
-REGISTRY_NAME    := $(firstword $(subst ., ,$(REGISTRY)))
 WORKLOAD_A_IMAGE := $(REGISTRY)/$(REPO_BASE)/workload-a:$(TAG)
 WORKLOAD_B_IMAGE := $(REGISTRY)/$(REPO_BASE)/workload-b:$(TAG)
 
@@ -82,7 +81,7 @@ certs:
 	@test -f $(KEY) || ./certs/create_certchain.sh
 
 login:
-	az acr login --name $(REGISTRY_NAME)
+	az acr login --name $(REGISTRY)
 
 # images: --provenance=false --sbom=false keeps the pushed image a single
 # manifest so a fragment can be attached to it directly with oras.

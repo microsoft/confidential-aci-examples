@@ -15,8 +15,6 @@ spec:
         microsoft.containerinstance.virtualnode.injectdns: "false"
         # The CCE policy annotation will be added by `az confcom acipolicygen`.
     spec:
-      imagePullSecrets:
-        - name: $PULL_SECRET
       containers:
         - name: workloadcontainer
           image: $IMAGE

@@ -108,7 +108,7 @@ The COSE_Sign1 envelope has a JSON object as payload. The following is the JSON 
 
 It contains the SVN of Confidential ACI as `x-ms-sevsnpvm-guestsvn` and hex encoded launch time measurement of UVM as `x-ms-sevsnpvm-launchmeasurement`. As of October 20th 2025 there is an addition field `x-ms-sevsnpvm-guestsvn-int` which is a JSON integer field, rather than a JSON string field.
 
-The production SVN starts from 100, the current (as of October 20th 2025) SVN is 103. This is the minimum value, only when all production instances are updated will this document be updated.
+The production SVN starts from 100 (numbers below 100 should not be trusted), the current (as of August 4th 2026) SVN is 104. This is the minimum value, only when all production instances are updated will this document be updated.
 
 This is the SVN of the UVM, ie the kernel and userland including the guest agent (GCS). This is NOT the AMD SEV-SNP guestsvn that is located in the ID BLOCK used to launch the UVM and that is reflected in attestation reports.
 
@@ -119,9 +119,9 @@ There may be more fields in the JSON in future.
 The following is an example payload:
 ```json
 {
-  "x-ms-sevsnpvm-launchmeasurement": "d0c9e2be22046e60779be88868cff64c2aa22047c15d3127ba495cee3fbc2854c5633f9da2096e6c64ae2b69bbff8082",
-  "x-ms-sevsnpvm-guestsvn": "103",
-  "x-ms-sevsnpvm-guestsvn-int": 103
+  "x-ms-sevsnpvm-launchmeasurement": "dc3f5a934489232a9b1818f12a0a88d2324ced00f8ab370f40451a76b7880bc3e211849a0739642d3d6c3b2b4bfb9866",
+  "x-ms-sevsnpvm-guestsvn": "104",
+  "x-ms-sevsnpvm-guestsvn-int": 104
 }
 ```
 
